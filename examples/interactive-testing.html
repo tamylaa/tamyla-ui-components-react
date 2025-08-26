@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamyla UI Components - Interactive Testing Suite</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2D1B69 0%, #11998e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .testing-suite {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2D1B69 0%, #11998e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 600px;
+        }
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #dee2e6;
+        }
+        .test-content {
+            padding: 30px;
+        }
+        .component-list {
+            list-style: none;
+        }
+        .component-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .component-item:hover {
+            background: #e9ecef;
+        }
+        .component-item.active {
+            background: #2D1B69;
+            color: white;
+            border-left-color: #11998e;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2D1B69;
+        }
+        .test-demo {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .props-panel {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .prop-control {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .prop-control label {
+            font-weight: 500;
+            min-width: 80px;
+        }
+        .prop-control input, .prop-control select {
+            padding: 6px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            flex: 1;
+        }
+        .code-preview {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        .factory-bridge-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="testing-suite">
+        <div class="header">
+            <h1>🧪 Interactive Component Testing Suite</h1>
+            <p>Test and explore ui-components with real-time Factory Bridge integration</p>
+        </div>
+        
+        <div class="test-grid">
+            <div class="sidebar">
+                <h3 style="margin-bottom: 15px; color: #2D1B69;">Components</h3>
+                <ul class="component-list" id="component-list">
+                    <!-- Components will be populated by JavaScript -->
+                </ul>
+            </div>
+            
+            <div class="test-content" id="test-content">
+                <!-- Test content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock Tamyla UI Components Library
+        const TamylaUIComponents = {
+            Button: ({ children, variant = 'primary', size = 'medium', disabled = false, onClick, ...props }) => {
+                const variants = {
+                    primary: { bg: '#2D1B69', color: 'white' },
+                    secondary: { bg: '#11998e', color: 'white' },
+                    danger: { bg: '#dc3545', color: 'white' },
+                    success: { bg: '#28a745', color: 'white' },
+                    outline: { bg: 'transparent', color: '#2D1B69', border: '2px solid #2D1B69' }
+                };
+                
+                const sizes = {
+                    small: { padding: '6px 12px', fontSize: '14px' },
+                    medium: { padding: '10px 20px', fontSize: '16px' },
+                    large: { padding: '14px 28px', fontSize: '18px' }
+                };
+
+                return React.createElement('button', {
+                    onClick,
+                    disabled,
+                    style: {
+                        background: variants[variant]?.bg || variants.primary.bg,
+                        color: variants[variant]?.color || variants.primary.color,
+                        border: variants[variant]?.border || 'none',
+                        borderRadius: '6px',
+                        cursor: disabled ? 'not-allowed' : 'pointer',
+                        opacity: disabled ? 0.6 : 1,
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease',
+                        ...sizes[size],
+                        ...props.style
+                    }
+                }, children);
+            },
+
+            Input: ({ type = 'text', placeholder, value, onChange, disabled = false, ...props }) => (
+                React.createElement('input', {
+                    type,
+                    placeholder,
+                    value,
+                    onChange,
+                    disabled,
+                    style: {
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #ced4da',
+                        borderRadius: '6px',
+                        fontSize: '16px',
+                        transition: 'border-color 0.2s ease',
+                        backgroundColor: disabled ? '#f8f9fa' : 'white',
+                        ...props.style
+                    }
+                })
+            ),
+
+            Card: ({ children, shadow = true, ...props }) => (
+                React.createElement('div', {
+                    style: {
+                        background: 'white',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        boxShadow: shadow ? '0 2px 10px rgba(0,0,0,0.1)' : 'none',
+                        border: '1px solid #e1e5e9',
+                        ...props.style
+                    }
+                }, children)
+            ),
+
+            Avatar: ({ src, alt, size = 40, shape = 'circle' }) => (
+                React.createElement('div', {
+                    style: {
+                        width: size,
+                        height: size,
+                        borderRadius: shape === 'circle' ? '50%' : '8px',
+                        background: src ? `url(${src})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        backgroundSize: 'cover',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: size / 2.5
+                    }
+                }, !src && (alt ? alt.charAt(0).toUpperCase() : 'U'))
+            ),
+
+            Badge: ({ children, variant = 'primary', size = 'medium' }) => {
+                const variants = {
+                    primary: '#2D1B69',
+                    success: '#28a745',
+                    warning: '#ffc107',
+                    danger: '#dc3545',
+                    info: '#17a2b8'
+                };
+                
+                const sizes = {
+                    small: { padding: '2px 6px', fontSize: '10px' },
+                    medium: { padding: '4px 8px', fontSize: '12px' },
+                    large: { padding: '6px 12px', fontSize: '14px' }
+                };
+
+                return React.createElement('span', {
+                    style: {
+                        background: variants[variant],
+                        color: variant === 'warning' ? '#212529' : 'white',
+                        borderRadius: '12px',
+                        fontWeight: '500',
+                        display: 'inline-block',
+                        ...sizes[size]
+                    }
+                }, children);
+            },
+
+            Alert: ({ children, variant = 'info', dismissible = false, onDismiss }) => {
+                const variants = {
+                    success: { bg: '#d4edda', border: '#c3e6cb', color: '#155724' },
+                    warning: { bg: '#fff3cd', border: '#ffeaa7', color: '#856404' },
+                    danger: { bg: '#f8d7da', border: '#f5c6cb', color: '#721c24' },
+                    info: { bg: '#cce8f4', border: '#b3d9ed', color: '#0c5460' }
+                };
+
+                return React.createElement('div', {
+                    style: {
+                        padding: '12px 16px',
+                        borderRadius: '6px',
+                        border: `1px solid ${variants[variant].border}`,
+                        backgroundColor: variants[variant].bg,
+                        color: variants[variant].color,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }
+                }, [
+                    React.createElement('span', { key: 'content' }, children),
+                    dismissible && React.createElement('button', {
+                        key: 'dismiss',
+                        onClick: onDismiss,
+                        style: {
+                            background: 'none',
+                            border: 'none',
+                            color: variants[variant].color,
+                            cursor: 'pointer',
+                            fontSize: '18px',
+                            padding: '0'
+                        }
+                    }, '×')
+                ]);
+            },
+
+            Modal: ({ isOpen, onClose, title, children }) => {
+                if (!isOpen) return null;
+                
+                return React.createElement('div', {
+                    style: {
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000
+                    },
+                    onClick: (e) => e.target === e.currentTarget && onClose()
+                }, React.createElement('div', {
+                    style: {
+                        background: 'white',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        maxWidth: '500px',
+                        width: '90%',
+                        maxHeight: '80vh',
+                        overflow: 'auto'
+                    }
+                }, [
+                    React.createElement('div', {
+                        key: 'header',
+                        style: {
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '15px'
+                        }
+                    }, [
+                        React.createElement('h3', { key: 'title', style: { margin: 0 } }, title),
+                        React.createElement('button', {
+                            key: 'close',
+                            onClick: onClose,
+                            style: {
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '24px',
+                                cursor: 'pointer'
+                            }
+                        }, '×')
+                    ]),
+                    React.createElement('div', { key: 'body' }, children)
+                ]));
+            }
+        };
+
+        // Factory Bridge
+        const createFactoryComponent = (VanillaComponent) => {
+            return React.forwardRef((props, ref) => {
+                return React.createElement(VanillaComponent, { ...props, ref });
+            });
+        };
+
+        // React Components
+        const ReactButton = createFactoryComponent(TamylaUIComponents.Button);
+        const ReactInput = createFactoryComponent(TamylaUIComponents.Input);
+        const ReactCard = createFactoryComponent(TamylaUIComponents.Card);
+        const ReactAvatar = createFactoryComponent(TamylaUIComponents.Avatar);
+        const ReactBadge = createFactoryComponent(TamylaUIComponents.Badge);
+        const ReactAlert = createFactoryComponent(TamylaUIComponents.Alert);
+        const ReactModal = createFactoryComponent(TamylaUIComponents.Modal);
+
+        // Component Testing Data
+        const components = [
+            {
+                name: 'Button',
+                component: ReactButton,
+                props: {
+                    variant: { type: 'select', options: ['primary', 'secondary', 'danger', 'success', 'outline'], default: 'primary' },
+                    size: { type: 'select', options: ['small', 'medium', 'large'], default: 'medium' },
+                    disabled: { type: 'boolean', default: false },
+                    children: { type: 'text', default: 'Click me!' }
+                },
+                examples: [
+                    { name: 'Default', props: { children: 'Default Button' } },
+                    { name: 'Secondary Large', props: { variant: 'secondary', size: 'large', children: 'Large Button' } },
+                    { name: 'Disabled', props: { disabled: true, children: 'Disabled' } }
+                ]
+            },
+            {
+                name: 'Input',
+                component: ReactInput,
+                props: {
+                    type: { type: 'select', options: ['text', 'email', 'password', 'number', 'search'], default: 'text' },
+                    placeholder: { type: 'text', default: 'Enter text...' },
+                    disabled: { type: 'boolean', default: false }
+                },
+                examples: [
+                    { name: 'Text Input', props: { placeholder: 'Enter your name' } },
+                    { name: 'Email Input', props: { type: 'email', placeholder: 'Enter email' } },
+                    { name: 'Disabled', props: { disabled: true, placeholder: 'Disabled input' } }
+                ]
+            },
+            {
+                name: 'Avatar',
+                component: ReactAvatar,
+                props: {
+                    alt: { type: 'text', default: 'User' },
+                    size: { type: 'number', default: 40, min: 20, max: 100 },
+                    shape: { type: 'select', options: ['circle', 'square'], default: 'circle' }
+                },
+                examples: [
+                    { name: 'Default', props: { alt: 'John Doe' } },
+                    { name: 'Large Square', props: { alt: 'JS', size: 60, shape: 'square' } },
+                    { name: 'Small', props: { alt: 'TU', size: 30 } }
+                ]
+            },
+            {
+                name: 'Badge',
+                component: ReactBadge,
+                props: {
+                    variant: { type: 'select', options: ['primary', 'success', 'warning', 'danger', 'info'], default: 'primary' },
+                    size: { type: 'select', options: ['small', 'medium', 'large'], default: 'medium' },
+                    children: { type: 'text', default: 'Badge' }
+                },
+                examples: [
+                    { name: 'Success', props: { variant: 'success', children: 'Success' } },
+                    { name: 'Warning', props: { variant: 'warning', children: 'Warning' } },
+                    { name: 'Large Danger', props: { variant: 'danger', size: 'large', children: 'Error' } }
+                ]
+            },
+            {
+                name: 'Alert',
+                component: ReactAlert,
+                props: {
+                    variant: { type: 'select', options: ['success', 'warning', 'danger', 'info'], default: 'info' },
+                    dismissible: { type: 'boolean', default: false },
+                    children: { type: 'text', default: 'This is an alert message!' }
+                },
+                examples: [
+                    { name: 'Success', props: { variant: 'success', children: 'Operation completed successfully!' } },
+                    { name: 'Warning', props: { variant: 'warning', children: 'Please check your input.' } },
+                    { name: 'Dismissible', props: { variant: 'danger', dismissible: true, children: 'This can be dismissed.' } }
+                ]
+            },
+            {
+                name: 'Card',
+                component: ReactCard,
+                props: {
+                    shadow: { type: 'boolean', default: true },
+                    children: { type: 'text', default: 'Card content goes here...' }
+                },
+                examples: [
+                    { name: 'Default', props: { children: 'This is a card with shadow' } },
+                    { name: 'No Shadow', props: { shadow: false, children: 'Card without shadow' } }
+                ]
+            }
+        ];
+
+        // Component Tester
+        const ComponentTester = () => {
+            const [activeComponent, setActiveComponent] = useState(components[0]);
+            const [props, setProps] = useState({});
+            const [showModal, setShowModal] = useState(false);
+
+            useEffect(() => {
+                const defaultProps = {};
+                Object.entries(activeComponent.props).forEach(([key, config]) => {
+                    defaultProps[key] = config.default;
+                });
+                setProps(defaultProps);
+            }, [activeComponent]);
+
+            const updateProp = (key, value) => {
+                setProps(prev => ({ ...prev, [key]: value }));
+            };
+
+            const renderPropControl = (key, config) => {
+                const value = props[key];
+                
+                switch (config.type) {
+                    case 'text':
+                        return React.createElement('input', {
+                            type: 'text',
+                            value: value || '',
+                            onChange: (e) => updateProp(key, e.target.value)
+                        });
+                    case 'number':
+                        return React.createElement('input', {
+                            type: 'number',
+                            value: value || 0,
+                            min: config.min,
+                            max: config.max,
+                            onChange: (e) => updateProp(key, parseInt(e.target.value))
+                        });
+                    case 'boolean':
+                        return React.createElement('input', {
+                            type: 'checkbox',
+                            checked: value || false,
+                            onChange: (e) => updateProp(key, e.target.checked)
+                        });
+                    case 'select':
+                        return React.createElement('select', {
+                            value: value || config.default,
+                            onChange: (e) => updateProp(key, e.target.value)
+                        }, config.options.map(option => 
+                            React.createElement('option', { key: option, value: option }, option)
+                        ));
+                    default:
+                        return null;
+                }
+            };
+
+            const generateCode = () => {
+                const propsString = Object.entries(props)
+                    .filter(([key, value]) => value !== activeComponent.props[key]?.default)
+                    .map(([key, value]) => {
+                        if (typeof value === 'string') return `${key}="${value}"`;
+                        if (typeof value === 'boolean') return value ? key : '';
+                        return `${key}={${value}}`;
+                    })
+                    .filter(Boolean)
+                    .join(' ');
+
+                const children = props.children || activeComponent.props.children?.default || '';
+                
+                if (children) {
+                    return `<React${activeComponent.name}${propsString ? ' ' + propsString : ''}>\n  ${children}\n</React${activeComponent.name}>`;
+                } else {
+                    return `<React${activeComponent.name}${propsString ? ' ' + propsString : ''} />`;
+                }
+            };
+
+            return React.createElement('div', null, [
+                // Factory Bridge Info
+                React.createElement('div', {
+                    key: 'bridge-info',
+                    className: 'factory-bridge-info'
+                }, [
+                    React.createElement('h3', { key: 'title' }, '🌉 Factory Bridge Integration'),
+                    React.createElement('p', { key: 'desc' }, 'These React components are created using the Factory Bridge pattern from vanilla ui-components.'),
+                    React.createElement('code', { 
+                        key: 'code',
+                        style: { 
+                            background: 'rgba(255,255,255,0.2)', 
+                            padding: '4px 8px', 
+                            borderRadius: '4px',
+                            fontSize: '14px'
+                        }
+                    }, `const React${activeComponent.name} = createFactoryComponent(TamylaUIComponents.${activeComponent.name});`)
+                ]),
+
+                // Component Demo
+                React.createElement('div', { key: 'demo', className: 'test-section' }, [
+                    React.createElement('h2', { key: 'title', className: 'test-title' }, `${activeComponent.name} Component`),
+                    
+                    React.createElement('div', { key: 'demo-area', className: 'test-demo' }, [
+                        React.createElement('h4', { key: 'demo-title' }, 'Live Demo:'),
+                        React.createElement('div', {
+                            key: 'component',
+                            style: { padding: '20px', background: 'white', borderRadius: '6px', margin: '10px 0' }
+                        }, React.createElement(activeComponent.component, {
+                            ...props,
+                            ...(activeComponent.name === 'Modal' ? { 
+                                isOpen: showModal, 
+                                onClose: () => setShowModal(false),
+                                title: 'Test Modal'
+                            } : {}),
+                            ...(activeComponent.name === 'Alert' && props.dismissible ? {
+                                onDismiss: () => updateProp('children', 'Alert dismissed!')
+                            } : {})
+                        })),
+                        
+                        activeComponent.name === 'Modal' && React.createElement(ReactButton, {
+                            key: 'modal-trigger',
+                            onClick: () => setShowModal(true),
+                            style: { marginTop: '10px' }
+                        }, 'Open Modal')
+                    ]),
+
+                    // Props Controls
+                    React.createElement('div', { key: 'props', className: 'props-panel' }, [
+                        React.createElement('h4', { key: 'props-title' }, 'Props:'),
+                        ...Object.entries(activeComponent.props).map(([key, config]) =>
+                            React.createElement('div', {
+                                key,
+                                className: 'prop-control'
+                            }, [
+                                React.createElement('label', { key: 'label' }, key + ':'),
+                                renderPropControl(key, config)
+                            ])
+                        )
+                    ]),
+
+                    // Code Preview
+                    React.createElement('div', { key: 'code', className: 'code-preview' }, [
+                        React.createElement('div', { key: 'title', style: { marginBottom: '10px', fontWeight: 'bold' } }, 'Generated Code:'),
+                        React.createElement('pre', { key: 'code-block' }, generateCode())
+                    ])
+                ]),
+
+                // Examples
+                React.createElement('div', { key: 'examples', className: 'test-section' }, [
+                    React.createElement('h3', { key: 'title', className: 'test-title' }, 'Examples:'),
+                    React.createElement('div', {
+                        key: 'examples-grid',
+                        style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }
+                    }, activeComponent.examples.map((example, index) =>
+                        React.createElement('div', {
+                            key: index,
+                            className: 'test-demo',
+                            style: { cursor: 'pointer' },
+                            onClick: () => setProps({ ...props, ...example.props })
+                        }, [
+                            React.createElement('h5', { key: 'name' }, example.name),
+                            React.createElement('div', {
+                                key: 'component',
+                                style: { padding: '10px', background: 'white', borderRadius: '4px', marginTop: '10px' }
+                            }, React.createElement(activeComponent.component, example.props))
+                        ])
+                    ))
+                ])
+            ]);
+        };
+
+        // Sidebar Component
+        const Sidebar = ({ activeComponent, onComponentSelect }) => {
+            useEffect(() => {
+                const listContainer = document.getElementById('component-list');
+                listContainer.innerHTML = '';
+                
+                components.forEach(comp => {
+                    const li = document.createElement('li');
+                    li.className = `component-item ${comp.name === activeComponent.name ? 'active' : ''}`;
+                    li.textContent = comp.name;
+                    li.onclick = () => onComponentSelect(comp);
+                    listContainer.appendChild(li);
+                });
+            }, [activeComponent]);
+
+            return null;
+        };
+
+        // Main App
+        const App = () => {
+            const [activeComponent, setActiveComponent] = useState(components[0]);
+
+            return React.createElement('div', null, [
+                React.createElement(Sidebar, {
+                    key: 'sidebar',
+                    activeComponent,
+                    onComponentSelect: setActiveComponent
+                }),
+                React.createElement('div', { key: 'content' }, [
+                    React.createElement(ComponentTester, { 
+                        key: 'tester',
+                        activeComponent,
+                        setActiveComponent
+                    })
+                ])
+            ]);
+        };
+
+        // Render
+        ReactDOM.render(React.createElement(App), document.getElementById('test-content'));
+    </script>
+</body>
+</html>
