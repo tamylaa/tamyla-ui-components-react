@@ -7,7 +7,8 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "dist"
   },
   "files": [
     "dist",
@@ -28,18 +29,21 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
-    "prepublishOnly": "npm run type-check && npm run build",
+    "check:cjs": "node scripts/check-cjs.js",
+    "prepublishOnly": "npm run check:cjs && npm run type-check && npm run build",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
     "analyze": "npm run build && npx bundle-analyzer dist/index.esm.js",
-    "validate": "node scripts/basic-validate.js",
-    "status": "node scripts/repo-status.js",
-    "certify": "node scripts/working-certify.js",
-    "complete": "node scripts/complete-automation.js",
+    "validate": "node scripts/esm/basic-validate.js",
+    "status": "node scripts/esm/repo-status.js",
+    "certify": "node scripts/esm/working-certify.js",
+    "complete": "node scripts/esm/complete-automation.js",
     "certify-comprehensive": "node scripts/comprehensive-certify.js",
     "certify-zero-issues": "node scripts/comprehensive-certify.js",
-    "quick-certify": "node scripts/working-certify.js",
-    "deploy": "node scripts/deploy-to-github.js"
+    "quick-certify": "node scripts/esm/working-certify.js",
+    "deploy": "node scripts/esm/deploy-to-github.js",
+    "build:clean": "rimraf dist",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",

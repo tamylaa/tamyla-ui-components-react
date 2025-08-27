@@ -1,0 +1,1 @@
+//# sourceMappingURL=simple-factory-bridge.d.ts.map
