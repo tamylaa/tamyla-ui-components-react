@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Application Test - UI Components React</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #2d3748;
+        }
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-header {
+            background: linear-gradient(135deg, #2D1B69 0%, #11998e 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f7fafc;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .data-table th,
+        .data-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .label {
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0.5rem 0;
+        }
+        .metric-label {
+            color: #718096;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status-active { background: #c6f6d5; color: #2f855a; }
+        .status-pending { background: #fef5e7; color: #c05621; }
+        .status-error { background: #fed7e2; color: #c53030; }
+        .chart-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 200px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="react-app"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // Enhanced Component Library
+        const Button = ({ children, variant = 'primary', size = 'medium', onClick, disabled = false, loading = false, ...props }) => {
+            const baseStyles = {
+                border: 'none',
+                borderRadius: '6px',
+                cursor: disabled || loading ? 'not-allowed' : 'pointer',
+                fontWeight: '500',
+                transition: 'all 0.2s ease',
+                opacity: disabled ? 0.6 : 1,
+                fontFamily: 'inherit',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+            };
+
+            const variants = {
+                primary: { background: '#2D1B69', color: 'white' },
+                secondary: { background: '#11998e', color: 'white' },
+                danger: { background: '#dc3545', color: 'white' },
+                success: { background: '#28a745', color: 'white' },
+                warning: { background: '#ffc107', color: '#212529' },
+                outline: { background: 'transparent', color: '#2D1B69', border: '2px solid #2D1B69' }
+            };
+
+            const sizes = {
+                small: { padding: '6px 12px', fontSize: '14px' },
+                medium: { padding: '10px 20px', fontSize: '16px' },
+                large: { padding: '14px 28px', fontSize: '18px' }
+            };
+
+            const style = {
+                ...baseStyles,
+                ...variants[variant],
+                ...sizes[size],
+                ...props.style
+            };
+
+            return React.createElement('button', { onClick, disabled: disabled || loading, style }, [
+                loading && React.createElement('span', { key: 'spinner', style: { animation: 'spin 1s linear infinite' } }, '⟳'),
+                children
+            ]);
+        };
+
+        const Input = ({ label, placeholder = 'Enter text...', type = 'text', value, onChange, disabled = false, error, ...props }) => {
+            const inputStyle = {
+                width: '100%',
+                padding: '10px 12px',
+                border: `1px solid ${error ? '#dc3545' : '#ced4da'}`,
+                borderRadius: '6px',
+                fontSize: '16px',
+                fontFamily: 'inherit',
+                transition: 'border-color 0.2s ease',
+                backgroundColor: disabled ? '#f8f9fa' : 'white',
+                cursor: disabled ? 'not-allowed' : 'text'
+            };
+
+            return React.createElement('div', { className: 'form-group' }, [
+                label && React.createElement('label', { key: 'label', className: 'label' }, label),
+                React.createElement('input', {
+                    key: 'input',
+                    type,
+                    placeholder,
+                    value,
+                    onChange,
+                    disabled,
+                    style: inputStyle
+                }),
+                error && React.createElement('span', { 
+                    key: 'error', 
+                    style: { fontSize: '0.875rem', color: '#dc3545', marginTop: '0.25rem' } 
+                }, error)
+            ]);
+        };
+
+        const Select = ({ label, options = [], value, onChange, disabled = false, ...props }) => {
+            const style = {
+                width: '100%',
+                padding: '10px 12px',
+                border: '1px solid #ced4da',
+                borderRadius: '6px',
+                fontSize: '16px',
+                fontFamily: 'inherit',
+                backgroundColor: disabled ? '#f8f9fa' : 'white',
+                cursor: disabled ? 'not-allowed' : 'pointer'
+            };
+
+            return React.createElement('div', { className: 'form-group' }, [
+                label && React.createElement('label', { key: 'label', className: 'label' }, label),
+                React.createElement('select', {
+                    key: 'select',
+                    value,
+                    onChange,
+                    disabled,
+                    style
+                }, [
+                    React.createElement('option', { key: 'default', value: '' }, 'Select an option...'),
+                    ...options.map((option, index) => 
+                        React.createElement('option', { key: index, value: option.value }, option.label)
+                    )
+                ])
+            ]);
+        };
+
+        // Complex Application: Trading Dashboard
+        const TradingDashboard = () => {
+            const [portfolio, setPortfolio] = useState([
+                { symbol: 'AAPL', shares: 50, price: 175.43, change: +2.34 },
+                { symbol: 'GOOGL', shares: 25, price: 2847.92, change: -15.67 },
+                { symbol: 'TSLA', shares: 30, price: 892.45, change: +12.88 },
+                { symbol: 'MSFT', shares: 75, price: 334.11, change: +5.23 }
+            ]);
+
+            const [watchlist, setWatchlist] = useState(['BTC', 'ETH', 'SPY', 'QQQ']);
+            const [activeOrders, setActiveOrders] = useState(3);
+            const [totalValue, setTotalValue] = useState(0);
+
+            useEffect(() => {
+                const total = portfolio.reduce((sum, stock) => sum + (stock.shares * stock.price), 0);
+                setTotalValue(total);
+            }, [portfolio]);
+
+            const addToWatchlist = (symbol) => {
+                if (symbol && !watchlist.includes(symbol)) {
+                    setWatchlist([...watchlist, symbol]);
+                }
+            };
+
+            const removeFromWatchlist = (symbol) => {
+                setWatchlist(watchlist.filter(s => s !== symbol));
+            };
+
+            return React.createElement('div', null, [
+                // Metrics Row
+                React.createElement('div', { key: 'metrics', className: 'metrics-grid' }, [
+                    React.createElement('div', { key: 'total', className: 'metric-card' }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Total Portfolio Value'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, `$${totalValue.toLocaleString()}`),
+                        React.createElement('div', { key: 'change', style: { color: '#28a745', fontSize: '0.875rem' } }, '+2.4% Today')
+                    ]),
+                    React.createElement('div', { key: 'positions', className: 'metric-card', style: { borderColor: '#28a745' } }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Open Positions'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, portfolio.length),
+                        React.createElement('div', { key: 'change', style: { color: '#718096', fontSize: '0.875rem' } }, 'Across 4 stocks')
+                    ]),
+                    React.createElement('div', { key: 'orders', className: 'metric-card', style: { borderColor: '#ffc107' } }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Active Orders'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, activeOrders),
+                        React.createElement('div', { key: 'change', style: { color: '#718096', fontSize: '0.875rem' } }, 'Pending execution')
+                    ]),
+                    React.createElement('div', { key: 'watchlist', className: 'metric-card', style: { borderColor: '#dc3545' } }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Watchlist Items'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, watchlist.length),
+                        React.createElement('div', { key: 'change', style: { color: '#718096', fontSize: '0.875rem' } }, 'Monitored symbols')
+                    ])
+                ]),
+
+                // Portfolio Table
+                React.createElement('div', { key: 'portfolio', className: 'card' }, [
+                    React.createElement('div', { key: 'header', className: 'card-header' }, [
+                        React.createElement('h3', { key: 'title', className: 'card-title' }, '📊 Portfolio Holdings'),
+                        React.createElement('span', { key: 'status', className: 'status-indicator status-active' }, [
+                            React.createElement('span', { key: 'dot', style: { width: '8px', height: '8px', borderRadius: '50%', background: 'currentColor' } }),
+                            'Live Data'
+                        ])
+                    ]),
+                    React.createElement('table', { key: 'table', className: 'data-table' }, [
+                        React.createElement('thead', { key: 'head' }, [
+                            React.createElement('tr', { key: 'row' }, [
+                                React.createElement('th', { key: 'symbol' }, 'Symbol'),
+                                React.createElement('th', { key: 'shares' }, 'Shares'),
+                                React.createElement('th', { key: 'price' }, 'Price'),
+                                React.createElement('th', { key: 'value' }, 'Value'),
+                                React.createElement('th', { key: 'change' }, 'Change'),
+                                React.createElement('th', { key: 'action' }, 'Action')
+                            ])
+                        ]),
+                        React.createElement('tbody', { key: 'body' }, 
+                            portfolio.map((stock, index) => 
+                                React.createElement('tr', { key: stock.symbol }, [
+                                    React.createElement('td', { key: 'symbol' }, [
+                                        React.createElement('strong', null, stock.symbol)
+                                    ]),
+                                    React.createElement('td', { key: 'shares' }, stock.shares.toLocaleString()),
+                                    React.createElement('td', { key: 'price' }, `$${stock.price.toFixed(2)}`),
+                                    React.createElement('td', { key: 'value' }, `$${(stock.shares * stock.price).toLocaleString()}`),
+                                    React.createElement('td', { key: 'change' }, [
+                                        React.createElement('span', { 
+                                            style: { color: stock.change >= 0 ? '#28a745' : '#dc3545' } 
+                                        }, `${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}`)
+                                    ]),
+                                    React.createElement('td', { key: 'action' }, [
+                                        React.createElement(Button, { 
+                                            key: 'trade', 
+                                            size: 'small', 
+                                            variant: 'outline',
+                                            onClick: () => alert(`Trading ${stock.symbol}`)
+                                        }, 'Trade')
+                                    ])
+                                ])
+                            )
+                        )
+                    ])
+                ]),
+
+                // Watchlist Manager
+                React.createElement('div', { key: 'watchlist-card', className: 'card' }, [
+                    React.createElement('div', { key: 'header', className: 'card-header' }, [
+                        React.createElement('h3', { key: 'title', className: 'card-title' }, '👁️ Watchlist Manager'),
+                        React.createElement(Button, { 
+                            key: 'add', 
+                            size: 'small',
+                            onClick: () => {
+                                const symbol = prompt('Enter symbol to watch:');
+                                if (symbol) addToWatchlist(symbol.toUpperCase());
+                            }
+                        }, '+ Add Symbol')
+                    ]),
+                    React.createElement('div', { key: 'content', style: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem' } },
+                        watchlist.map(symbol => 
+                            React.createElement('div', { 
+                                key: symbol,
+                                style: {
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    padding: '0.5rem 1rem',
+                                    background: '#f7fafc',
+                                    borderRadius: '20px',
+                                    border: '1px solid #e2e8f0'
+                                }
+                            }, [
+                                React.createElement('span', { key: 'symbol', style: { fontWeight: '500' } }, symbol),
+                                React.createElement('button', {
+                                    key: 'remove',
+                                    onClick: () => removeFromWatchlist(symbol),
+                                    style: {
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#dc3545',
+                                        cursor: 'pointer',
+                                        padding: '0',
+                                        fontSize: '14px'
+                                    }
+                                }, '×')
+                            ])
+                        )
+                    )
+                ])
+            ]);
+        };
+
+        // Complex Application: User Management System
+        const UserManagementApp = () => {
+            const [users, setUsers] = useState([
+                { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', lastLogin: '2 hours ago' },
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Manager', status: 'Active', lastLogin: '1 day ago' },
+                { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User', status: 'Pending', lastLogin: 'Never' },
+                { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'User', status: 'Inactive', lastLogin: '1 week ago' }
+            ]);
+
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                role: '',
+                status: 'Active'
+            });
+
+            const [editingUser, setEditingUser] = useState(null);
+            const [showForm, setShowForm] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (editingUser) {
+                    setUsers(users.map(user => 
+                        user.id === editingUser.id 
+                            ? { ...user, ...formData, lastLogin: user.lastLogin }
+                            : user
+                    ));
+                    setEditingUser(null);
+                } else {
+                    const newUser = {
+                        id: Date.now(),
+                        ...formData,
+                        lastLogin: 'Never'
+                    };
+                    setUsers([...users, newUser]);
+                }
+                setFormData({ name: '', email: '', role: '', status: 'Active' });
+                setShowForm(false);
+            };
+
+            const editUser = (user) => {
+                setFormData({
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    status: user.status
+                });
+                setEditingUser(user);
+                setShowForm(true);
+            };
+
+            const deleteUser = (userId) => {
+                if (confirm('Are you sure you want to delete this user?')) {
+                    setUsers(users.filter(user => user.id !== userId));
+                }
+            };
+
+            const roleOptions = [
+                { value: 'Admin', label: 'Administrator' },
+                { value: 'Manager', label: 'Manager' },
+                { value: 'User', label: 'User' }
+            ];
+
+            const statusOptions = [
+                { value: 'Active', label: 'Active' },
+                { value: 'Inactive', label: 'Inactive' },
+                { value: 'Pending', label: 'Pending' }
+            ];
+
+            return React.createElement('div', null, [
+                // User Stats
+                React.createElement('div', { key: 'stats', className: 'metrics-grid' }, [
+                    React.createElement('div', { key: 'total', className: 'metric-card' }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Total Users'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, users.length),
+                        React.createElement('div', { key: 'change', style: { color: '#718096', fontSize: '0.875rem' } }, 'Registered accounts')
+                    ]),
+                    React.createElement('div', { key: 'active', className: 'metric-card', style: { borderColor: '#28a745' } }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Active Users'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, users.filter(u => u.status === 'Active').length),
+                        React.createElement('div', { key: 'change', style: { color: '#28a745', fontSize: '0.875rem' } }, 'Currently online')
+                    ]),
+                    React.createElement('div', { key: 'pending', className: 'metric-card', style: { borderColor: '#ffc107' } }, [
+                        React.createElement('div', { key: 'label', className: 'metric-label' }, 'Pending Users'),
+                        React.createElement('div', { key: 'value', className: 'metric-value' }, users.filter(u => u.status === 'Pending').length),
+                        React.createElement('div', { key: 'change', style: { color: '#ffc107', fontSize: '0.875rem' } }, 'Awaiting approval')
+                    ])
+                ]),
+
+                // User Form
+                showForm && React.createElement('div', { key: 'form', className: 'card' }, [
+                    React.createElement('div', { key: 'header', className: 'card-header' }, [
+                        React.createElement('h3', { key: 'title', className: 'card-title' }, 
+                            editingUser ? '✏️ Edit User' : '👤 Add New User'),
+                        React.createElement(Button, {
+                            key: 'cancel',
+                            variant: 'outline',
+                            size: 'small',
+                            onClick: () => {
+                                setShowForm(false);
+                                setEditingUser(null);
+                                setFormData({ name: '', email: '', role: '', status: 'Active' });
+                            }
+                        }, 'Cancel')
+                    ]),
+                    React.createElement('form', { key: 'form', onSubmit: handleSubmit }, [
+                        React.createElement('div', { key: 'grid', className: 'form-grid' }, [
+                            React.createElement(Input, {
+                                key: 'name',
+                                label: 'Full Name',
+                                placeholder: 'Enter full name',
+                                value: formData.name,
+                                onChange: (e) => setFormData({...formData, name: e.target.value}),
+                                required: true
+                            }),
+                            React.createElement(Input, {
+                                key: 'email',
+                                label: 'Email Address',
+                                type: 'email',
+                                placeholder: 'Enter email address',
+                                value: formData.email,
+                                onChange: (e) => setFormData({...formData, email: e.target.value}),
+                                required: true
+                            }),
+                            React.createElement(Select, {
+                                key: 'role',
+                                label: 'Role',
+                                options: roleOptions,
+                                value: formData.role,
+                                onChange: (e) => setFormData({...formData, role: e.target.value})
+                            }),
+                            React.createElement(Select, {
+                                key: 'status',
+                                label: 'Status',
+                                options: statusOptions,
+                                value: formData.status,
+                                onChange: (e) => setFormData({...formData, status: e.target.value})
+                            })
+                        ]),
+                        React.createElement('div', { key: 'buttons', style: { display: 'flex', gap: '1rem', marginTop: '1rem' } }, [
+                            React.createElement(Button, {
+                                key: 'submit',
+                                type: 'submit',
+                                variant: 'primary'
+                            }, editingUser ? 'Update User' : 'Create User'),
+                            React.createElement(Button, {
+                                key: 'reset',
+                                type: 'button',
+                                variant: 'outline',
+                                onClick: () => setFormData({ name: '', email: '', role: '', status: 'Active' })
+                            }, 'Reset Form')
+                        ])
+                    ])
+                ]),
+
+                // Users Table
+                React.createElement('div', { key: 'users', className: 'card' }, [
+                    React.createElement('div', { key: 'header', className: 'card-header' }, [
+                        React.createElement('h3', { key: 'title', className: 'card-title' }, '👥 User Management'),
+                        React.createElement(Button, {
+                            key: 'add',
+                            onClick: () => setShowForm(true)
+                        }, '+ Add User')
+                    ]),
+                    React.createElement('table', { key: 'table', className: 'data-table' }, [
+                        React.createElement('thead', { key: 'head' }, [
+                            React.createElement('tr', { key: 'row' }, [
+                                React.createElement('th', { key: 'name' }, 'Name'),
+                                React.createElement('th', { key: 'email' }, 'Email'),
+                                React.createElement('th', { key: 'role' }, 'Role'),
+                                React.createElement('th', { key: 'status' }, 'Status'),
+                                React.createElement('th', { key: 'login' }, 'Last Login'),
+                                React.createElement('th', { key: 'actions' }, 'Actions')
+                            ])
+                        ]),
+                        React.createElement('tbody', { key: 'body' },
+                            users.map(user => 
+                                React.createElement('tr', { key: user.id }, [
+                                    React.createElement('td', { key: 'name' }, [
+                                        React.createElement('strong', null, user.name)
+                                    ]),
+                                    React.createElement('td', { key: 'email' }, user.email),
+                                    React.createElement('td', { key: 'role' }, user.role),
+                                    React.createElement('td', { key: 'status' }, [
+                                        React.createElement('span', {
+                                            className: `status-indicator status-${user.status.toLowerCase()}`
+                                        }, user.status)
+                                    ]),
+                                    React.createElement('td', { key: 'login' }, user.lastLogin),
+                                    React.createElement('td', { key: 'actions' }, [
+                                        React.createElement('div', { style: { display: 'flex', gap: '0.5rem' } }, [
+                                            React.createElement(Button, {
+                                                key: 'edit',
+                                                size: 'small',
+                                                variant: 'outline',
+                                                onClick: () => editUser(user)
+                                            }, 'Edit'),
+                                            React.createElement(Button, {
+                                                key: 'delete',
+                                                size: 'small',
+                                                variant: 'danger',
+                                                onClick: () => deleteUser(user.id)
+                                            }, 'Delete')
+                                        ])
+                                    ])
+                                ])
+                            )
+                        )
+                    ])
+                ])
+            ]);
+        };
+
+        // Main Application Shell
+        const ComplexApplicationTest = () => {
+            const [activeApp, setActiveApp] = useState('trading');
+            const [notifications, setNotifications] = useState(3);
+
+            const apps = {
+                trading: { name: 'Trading Dashboard', icon: '📈', component: TradingDashboard },
+                users: { name: 'User Management', icon: '👥', component: UserManagementApp }
+            };
+
+            return React.createElement('div', { className: 'app-container' }, [
+                // Navigation Header
+                React.createElement('nav', { key: 'nav', className: 'nav-header' }, [
+                    React.createElement('div', { key: 'left', style: { display: 'flex', alignItems: 'center', gap: '2rem' } }, [
+                        React.createElement('h1', { key: 'logo', style: { margin: 0, fontSize: '1.5rem' } }, '🚀 Tamyla Apps'),
+                        React.createElement('div', { key: 'tabs', style: { display: 'flex', gap: '1rem' } },
+                            Object.entries(apps).map(([key, app]) =>
+                                React.createElement('button', {
+                                    key,
+                                    onClick: () => setActiveApp(key),
+                                    style: {
+                                        background: activeApp === key ? 'rgba(255,255,255,0.2)' : 'transparent',
+                                        border: 'none',
+                                        color: 'white',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        fontFamily: 'inherit'
+                                    }
+                                }, [app.icon, app.name])
+                            )
+                        )
+                    ]),
+                    React.createElement('div', { key: 'right', style: { display: 'flex', alignItems: 'center', gap: '1rem' } }, [
+                        React.createElement('div', { key: 'notifications', style: { position: 'relative' } }, [
+                            React.createElement('button', {
+                                key: 'bell',
+                                style: {
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    padding: '0.5rem',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                    fontSize: '1.2rem'
+                                }
+                            }, '🔔'),
+                            notifications > 0 && React.createElement('span', {
+                                key: 'badge',
+                                style: {
+                                    position: 'absolute',
+                                    top: '-2px',
+                                    right: '-2px',
+                                    background: '#dc3545',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    width: '20px',
+                                    height: '20px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: 'bold'
+                                }
+                            }, notifications)
+                        ]),
+                        React.createElement('div', { key: 'user', style: { display: 'flex', alignItems: 'center', gap: '0.5rem' } }, [
+                            React.createElement('div', {
+                                key: 'avatar',
+                                style: {
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 'bold'
+                                }
+                            }, 'JD'),
+                            React.createElement('span', { key: 'name' }, 'John Doe')
+                        ])
+                    ])
+                ]),
+
+                // Main Content Area
+                React.createElement('main', { key: 'main', className: 'main-content' }, [
+                    React.createElement('div', { key: 'app', className: 'full-width' },
+                        React.createElement(apps[activeApp].component)
+                    )
+                ])
+            ]);
+        };
+
+        // Render the complex application
+        ReactDOM.render(React.createElement(ComplexApplicationTest), document.getElementById('react-app'));
+    </script>
+
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>
