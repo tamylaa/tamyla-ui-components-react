@@ -25,15 +25,15 @@ jobs:
       
     - name: Check NPM Token
       run: |
-        if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
-          echo "NPM_TOKEN secret not found - publishing will be skipped"
-          echo "npm_token_available=false" >> $GITHUB_OUTPUT
+        if [ -z "${{ secrets.NPM_GITHUB_ACTION_AUTO }}" ]; then
+          echo "NPM_GITHUB_ACTION_AUTO secret not found - publishing will be skipped"
+          echo "NPM_GITHUB_ACTION_AUTO_available=false" >> $GITHUB_OUTPUT
         else
-          echo "NPM_TOKEN found - publishing enabled"
-          echo "npm_token_available=true" >> $GITHUB_OUTPUT
+          echo "NPM_GITHUB_ACTION_AUTO found - publishing enabled"
+          echo "NPM_GITHUB_ACTION_AUTO_available=true" >> $GITHUB_OUTPUT
         fi
       id: token_check
-    
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -125,11 +125,11 @@ jobs:
     
     - name: Publish to NPM
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_GITHUB_ACTION_AUTO }}
       run: |
-        # Check if NPM_TOKEN is available
+        # Check if NPM_GITHUB_ACTION_AUTO is available
         if [ -z "$NODE_AUTH_TOKEN" ]; then
-          echo "NPM_TOKEN not available - skipping publish"
+          echo "NPM_GITHUB_ACTION_AUTO not available - skipping publish"
           exit 0
         fi
         
