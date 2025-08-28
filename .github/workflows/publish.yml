@@ -10,7 +10,6 @@ on:
       - 'tsconfig.json'
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 env:
   NODE_VERSION: '18.x'
@@ -116,12 +115,6 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: |
-        # Check if NPM_TOKEN is available
-        if [ -z "$NODE_AUTH_TOKEN" ]; then
-          echo "NPM_TOKEN not available - skipping publish"
-          exit 0
-        fi
-        
         # Check if this version is already published
         VERSION="${{ steps.package-version.outputs.version }}"
         if npm view @tamyla/ui-components-react@$VERSION version 2>/dev/null; then
