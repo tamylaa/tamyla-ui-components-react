@@ -54,6 +54,7 @@
     "styled-components": "^6.1.8"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
     "@reduxjs/toolkit": "^2.0.1",
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -66,6 +67,7 @@
     "@storybook/react": "^7.6.10",
     "@storybook/react-vite": "^7.6.10",
     "@storybook/test": "^7.6.10",
+    "@testing-library/jest-dom": "^6.8.0",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
@@ -116,5 +118,26 @@
   "bugs": {
     "url": "https://github.com/tamylaa/ui-components-react/issues"
   },
-  "homepage": "https://ui-react.tamyla.com"
+  "homepage": "https://ui-react.tamyla.com",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true,
+          "tarballDir": "dist"
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 }

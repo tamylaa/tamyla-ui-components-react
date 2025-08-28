@@ -56,3 +56,55 @@ export const RewardSystem = class {
     return this;
   }
 };
+
+// Mock factory classes with setSharedFoundation method
+class MockFactory {
+  constructor() {
+    this.tokens = {};
+    this.utilities = {};
+  }
+
+  setSharedFoundation(tokens, utilities) {
+    this.tokens = tokens;
+    this.utilities = utilities;
+    return this;
+  }
+
+  create() {
+    return document.createElement('div');
+  }
+}
+
+// Factory exports
+export const ButtonFactory = MockFactory;
+export const InputFactory = MockFactory;
+export const CardFactory = MockFactory;
+export const StatusIndicatorFactory = MockFactory;
+
+// Molecule factories
+export const ActionCardFactory = MockFactory;
+export const SearchBarFactory = MockFactory;
+
+// Application-level systems and factories
+export const CampaignSelectorSystem = MockFactory;
+export const EnhancedSearchApplicationFactory = () => new MockFactory();
+export const ContentManagerApplicationFactory = () => new MockFactory();
+export const TamylaUISystem = () => new MockFactory();
+
+// Function factory for InputGroup and content components  
+export const InputGroupFactory = () => new MockFactory();
+export const ContentCardFactory = () => new MockFactory();
+export const FileListFactory = () => new MockFactory();
+export const AchievementListFactory = () => new MockFactory();
+
+// Legacy function exports
+export const createActionCard = () => new MockFactory();
+export const createStatusIndicator = () => new MockFactory();
+export const createRewardSystem = () => new MockFactory();
+export const createButton = () => new MockFactory();
+export const createInput = () => new MockFactory();
+export const createCard = () => new MockFactory();
+
+// Legacy exports for compatibility
+export const ActionCard = RewardSystem;
+export const StatusIndicator = RewardSystem;

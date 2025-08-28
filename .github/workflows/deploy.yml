@@ -21,6 +21,16 @@ jobs:
     
     steps:
     - name: Checkout code
+      - name: Check NPM Token
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "NPM_TOKEN secret not found - publishing will be skipped"
+            echo "npm_token_available=false" >> $GITHUB_OUTPUT
+          else
+            echo "NPM_TOKEN found - publishing enabled"
+            echo "npm_token_available=true" >> $GITHUB_OUTPUT
+          fi
+        id: token_check
       uses: actions/checkout@v4
     
     - name: Setup Node.js

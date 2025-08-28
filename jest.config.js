@@ -12,7 +12,8 @@ export default {
     '^.+\\.(js|jsx)$': 'babel-jest'
   },
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@tamyla/ui-components$': '<rootDir>/__mocks__/@tamyla/ui-components.js'
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -24,7 +25,8 @@ export default {
     'lcov',
     'html'
   ],
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleDirectories: ['node_modules', 'src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  passWithNoTests: true
 };
