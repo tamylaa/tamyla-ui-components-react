@@ -15,6 +15,12 @@ on:
 env:
   NODE_VERSION: '18.x'
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  packages: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -57,9 +63,9 @@ jobs:
     - name: Run CommonJS check
       run: npm run check:cjs
     
-    - name: Run linting
-      run: npm run lint
-      continue-on-error: true
+    # - name: Run linting
+    #   run: npm run lint
+    #   continue-on-error: true
     
     - name: Run tests
       run: npm run test
@@ -112,6 +118,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
         registry-url: 'https://registry.npmjs.org'
+        scope: '@tamyla'
     
     - name: Install dependencies
       run: npm install

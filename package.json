@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/ui-components-react",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "React-based UI component library with Factory Bridge pattern - integrates with @tamyla/ui-components",
   "type": "module",
   "main": "dist/index.esm.js",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
-    "@tamyla/ui-components": "^2.0.0",
+    "@tamyla/ui-components": "workspace:*",
     "framer-motion": "^10.16.16",
     "react-redux": "^9.0.4",
     "redux-persist": "^6.0.0",
@@ -113,10 +113,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tamylaa/ui-components-react"
+    "url": "https://github.com/tamylaa/tamyla-ui-components-react.git"
   },
   "bugs": {
-    "url": "https://github.com/tamylaa/ui-components-react/issues"
+    "url": "https://github.com/tamylaa/tamyla-ui-components-react/issues"
   },
   "homepage": "https://ui-react.tamyla.com",
   "release": {
