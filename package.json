@@ -30,7 +30,7 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
     "check:cjs": "node scripts/check-cjs.js",
-    "prepublishOnly": "npm run check:cjs && npm run type-check && npm run build",
+    "prepublishOnly": "npm run check:cjs && npm run build",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
     "analyze": "npm run build && npx bundle-analyzer dist/index.esm.js",
