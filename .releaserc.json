@@ -40,7 +40,8 @@
     }],
     ["@semantic-release/npm", {
       "npmPublish": true,
-      "tarballDir": "dist"
+      "tarballDir": "dist",
+      "pkgRoot": "."
     }],
     ["@semantic-release/git", {
       "assets": ["package.json", "CHANGELOG.md"],
