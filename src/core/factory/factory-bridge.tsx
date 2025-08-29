@@ -42,7 +42,7 @@ try {
   // Import Dashboard organism capabilities
   OrganismFactory = additionalImports.OrganismFactory;
   OrganismTemplates = additionalImports.OrganismTemplates;
-} catch (e) {
+} catch {
   // Optional imports not available
 }// Factory instances - CORRECTED: They're already objects with .create() methods!
 const factoryInstances = {
