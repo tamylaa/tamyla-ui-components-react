@@ -74,7 +74,7 @@ jobs:
         cache: 'npm'
     
     - name: Install dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
     
     - name: Build package
       run: npm run build
@@ -113,7 +113,7 @@ jobs:
         scope: '@tamyla'
     
     - name: Install dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
     
     - name: Build for release
       run: npm run build
@@ -148,7 +148,7 @@ jobs:
         scope: '@tamyla'
     
     - name: Install dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
     
     - name: Build packages
       run: npm run build
