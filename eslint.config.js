@@ -1,18 +1,14 @@
-import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
-  // Base JavaScript configuration
-  js.configs.recommended,
-
   // JavaScript files configuration (including JSX)
   {
     files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
-      ecmaVersion: 'latest',
+      ecmaVersion: 2022,
       sourceType: 'module',
       parserOptions: {
         ecmaFeatures: {
@@ -68,7 +64,6 @@ export default [
       'no-console': 'warn',
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
-      'indent': ['error', 2],
       'no-trailing-spaces': 'error',
       'eol-last': 'error',
       'comma-dangle': ['error', 'never'],
