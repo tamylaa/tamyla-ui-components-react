@@ -123,7 +123,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_GITHUB_ACTION_AUTO }}
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_GITHUB_ACTION_AUTO }}
       run: |
         if [ -z "$NPM_TOKEN" ]; then
           echo "NPM_GITHUB_ACTION_AUTO not available - skipping semantic release"
