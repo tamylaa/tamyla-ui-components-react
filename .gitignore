@@ -99,6 +99,5 @@ COMPREHENSIVE_REACT_CERTIFICATION_REPORT.md
 test-results/
 *.test.log
 
-# Package lock files (optional - include if you want consistency)
-# package-lock.json
+# Package lock files - allowing package-lock.json for reproducible builds
 # yarn.lock
