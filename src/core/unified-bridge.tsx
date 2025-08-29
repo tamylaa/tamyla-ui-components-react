@@ -45,7 +45,7 @@ const FACTORY_REGISTRY = {
 export type ComponentType = keyof typeof FACTORY_REGISTRY;
 
 export interface ComponentProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   [key: string]: any;
 }
 
@@ -65,7 +65,7 @@ export function useComponentFactory() {
     // Handle different factory patterns consistently
     if (typeof factory === 'function') {
       // Function factory (ContentCard, FileList, etc.)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      
       const functionFactory = factory as (props: ComponentProps) => any;
       const result = functionFactory(props);
       element = result?.element || result;

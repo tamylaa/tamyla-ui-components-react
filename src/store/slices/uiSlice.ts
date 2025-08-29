@@ -3,7 +3,7 @@
  * Enhanced from Trading Portal with additional component states
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 

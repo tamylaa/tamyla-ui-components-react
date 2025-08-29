@@ -87,7 +87,7 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
   return (
     <ThemeContext.Provider value={themeContextValue}>
       <GlobalStyles />
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      
       <StyledThemeProvider theme={styledTheme as any}>
         {children}
       </StyledThemeProvider>

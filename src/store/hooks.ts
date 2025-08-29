@@ -3,8 +3,6 @@
  * Type-safe state access with performance optimizations
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useEffect, useCallback } from 'react';
 import { store } from './store';

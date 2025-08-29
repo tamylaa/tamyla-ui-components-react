@@ -3,7 +3,7 @@
  * Handles dynamic component behavior and configurations
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 

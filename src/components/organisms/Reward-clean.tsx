@@ -74,7 +74,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   const rewardSystemRef = useRef<any>(null);
 
   // Serialize otherProps for dependency array
@@ -146,7 +146,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
   useEffect(() => {
     if (containerRef.current) {
       // Create RewardSystem instance with proper type handling
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      
       rewardSystemRef.current = new (RewardSystem as any)({
         preset,
         autoInitialize,

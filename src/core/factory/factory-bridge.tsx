@@ -3,9 +3,6 @@
  * Eliminates code duplication by wrapping ALL vanilla components automatically
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
-
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 
 // Import what's actually exported from ui-components
