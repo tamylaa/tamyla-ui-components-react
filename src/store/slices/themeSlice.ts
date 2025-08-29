@@ -28,7 +28,7 @@ const initialState: ThemeState = {
   animations: true,
   reducedMotion: false,
   highContrast: false,
-  customColors: {},
+  customColors: {}
 };
 
 // Theme slice
@@ -39,45 +39,45 @@ export const themeSlice = createSlice({
     setThemeMode: (state, action: PayloadAction<'light' | 'dark' | 'auto'>) => {
       state.mode = action.payload;
     },
-    
+
     setPrimaryColor: (state, action: PayloadAction<string>) => {
       state.primaryColor = action.payload;
     },
-    
+
     setFontSize: (state, action: PayloadAction<'sm' | 'md' | 'lg'>) => {
       state.fontSize = action.payload;
     },
-    
+
     toggleAnimations: (state) => {
       state.animations = !state.animations;
     },
-    
+
     setAnimations: (state, action: PayloadAction<boolean>) => {
       state.animations = action.payload;
     },
-    
+
     setReducedMotion: (state, action: PayloadAction<boolean>) => {
       state.reducedMotion = action.payload;
     },
-    
+
     setHighContrast: (state, action: PayloadAction<boolean>) => {
       state.highContrast = action.payload;
     },
-    
+
     setCustomColor: (state, action: PayloadAction<{ key: string; value: string }>) => {
       state.customColors[action.payload.key] = action.payload.value;
     },
-    
+
     removeCustomColor: (state, action: PayloadAction<string>) => {
       delete state.customColors[action.payload];
     },
-    
+
     resetCustomColors: (state) => {
       state.customColors = {};
     },
-    
-    resetTheme: () => initialState,
-  },
+
+    resetTheme: () => initialState
+  }
 });
 
 // Export actions

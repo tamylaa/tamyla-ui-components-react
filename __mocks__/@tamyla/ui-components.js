@@ -91,7 +91,7 @@ export const EnhancedSearchApplicationFactory = () => new MockFactory();
 export const ContentManagerApplicationFactory = () => new MockFactory();
 export const TamylaUISystem = () => new MockFactory();
 
-// Function factory for InputGroup and content components  
+// Function factory for InputGroup and content components
 export const InputGroupFactory = () => new MockFactory();
 export const ContentCardFactory = () => new MockFactory();
 export const FileListFactory = () => new MockFactory();

@@ -21,8 +21,8 @@ class ReactGitHubDeployment {
 
   exec(command) {
     try {
-      return execSync(command, { 
-        cwd: this.projectRoot, 
+      return execSync(command, {
+        cwd: this.projectRoot,
         encoding: 'utf8',
         stdio: 'pipe'
       });
@@ -41,7 +41,7 @@ class ReactGitHubDeployment {
       await this.createGitHubRepo();
       await this.pushToGitHub();
       await this.displaySuccess();
-      
+
     } catch (error) {
       console.log('\n❌ Deployment FAILED!');
       console.log(`Error: ${error.message}`);
@@ -55,7 +55,7 @@ class ReactGitHubDeployment {
 
   async checkExistingRemote() {
     console.log('\n🔍 Checking existing remotes...');
-    
+
     try {
       const remotes = this.exec('git remote -v').toString().trim();
       if (remotes) {
@@ -63,13 +63,13 @@ class ReactGitHubDeployment {
         remotes.split('\n').forEach(remote => {
           console.log(`    ${remote}`);
         });
-        
+
         // Check if origin already points to our target repo
         if (remotes.includes(this.repoName)) {
           console.log('  ✓ Origin already configured for this repository');
           return;
         }
-        
+
         // If origin exists but points elsewhere, we'll need to handle it
         if (remotes.includes('origin')) {
           console.log('  ⚠ Origin remote exists but points to different repository');
@@ -85,7 +85,7 @@ class ReactGitHubDeployment {
 
   async validateLocalRepo() {
     console.log('\n🔍 Validating local repository...');
-    
+
     // Check if we're in a git repo
     try {
       this.exec('git status');
@@ -142,7 +142,7 @@ class ReactGitHubDeployment {
       const createCommand = `gh repo create ${this.repoName} --public --description "${this.repoDescription}"`;
       this.exec(createCommand);
       console.log('  ✓ GitHub repository created using GitHub CLI');
-      
+
       // Now add the remote if it doesn't exist or update it
       try {
         const remotes = this.exec('git remote -v').toString().trim();
@@ -151,7 +151,7 @@ class ReactGitHubDeployment {
           this.exec('git remote remove origin');
           console.log('  ✓ Removed existing origin remote');
         }
-        
+
         if (!remotes.includes(this.repoName)) {
           // Get GitHub username and add remote
           const username = this.exec('gh api user --jq .login').toString().trim();
@@ -169,14 +169,14 @@ class ReactGitHubDeployment {
           console.log(`     git remote add origin https://github.com/YOUR_USERNAME/${this.repoName}.git`);
         }
       }
-      
+
     } catch (error) {
       console.log(`  ⚠ Failed to create repository: ${error.message}`);
-      
+
       // Check if repo already exists
       if (error.message.includes('already exists') || error.message.includes('Name already exists')) {
         console.log('  ℹ Repository already exists on GitHub, configuring remote...');
-        
+
         try {
           // Get GitHub username and add remote
           const username = this.exec('gh api user --jq .login').toString().trim();
@@ -189,7 +189,7 @@ class ReactGitHubDeployment {
           return;
         }
       }
-      
+
       this.showManualSetup();
       throw new Error('Failed to create GitHub repository. See manual setup instructions above.');
     }
@@ -202,7 +202,7 @@ class ReactGitHubDeployment {
       // Push to GitHub
       this.exec('git push -u origin main');
       console.log('  ✓ Code pushed to GitHub');
-      
+
     } catch (error) {
       // Try alternative branch name
       try {
@@ -233,10 +233,10 @@ class ReactGitHubDeployment {
   async displaySuccess() {
     console.log('\n🎉 SUCCESS: React Components deployed to GitHub!');
     console.log('=' .repeat(50));
-    
+
     const packagePath = path.join(this.projectRoot, 'package.json');
     const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-    
+
     console.log(`📦 Package: ${packageData.name}@${packageData.version}`);
     console.log(`🔗 Repository: https://github.com/YOUR_USERNAME/${this.repoName}`);
     console.log('');

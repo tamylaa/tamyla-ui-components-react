@@ -38,9 +38,9 @@ for (const d of scanDirs) {
   const files = walk(dir).filter(f => f.endsWith('.js'));
   for (const f of files) {
     // skip the checker itself to avoid false positives
-  const rel = path.relative(root, f);
-  if (rel === path.join('scripts', 'check-cjs.js')) continue;
-  if (rel === path.join('scripts', 'comprehensive-certify-cjs.js')) continue; // ignore legacy/duplicate entry
+    const rel = path.relative(root, f);
+    if (rel === path.join('scripts', 'check-cjs.js')) continue;
+    if (rel === path.join('scripts', 'comprehensive-certify-cjs.js')) continue; // ignore legacy/duplicate entry
     // ignore explicit .cjs/.mjs (these won't match .js)
     const content = fs.readFileSync(f, 'utf8');
     for (const pat of cjsPatterns) {

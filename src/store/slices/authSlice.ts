@@ -42,7 +42,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   loading: false,
   error: null,
-  sessionExpiry: null,
+  sessionExpiry: null
 };
 
 // Auth slice
@@ -54,7 +54,7 @@ export const authSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    
+
     loginSuccess: (state, action: PayloadAction<{ user: User; token: string; expiresAt?: string }>) => {
       state.loading = false;
       state.user = action.payload.user;
@@ -63,7 +63,7 @@ export const authSlice = createSlice({
       state.sessionExpiry = action.payload.expiresAt || null;
       state.error = null;
     },
-    
+
     loginFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
@@ -72,7 +72,7 @@ export const authSlice = createSlice({
       state.token = null;
       state.sessionExpiry = null;
     },
-    
+
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -81,38 +81,38 @@ export const authSlice = createSlice({
       state.sessionExpiry = null;
       state.loading = false;
     },
-    
+
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
       }
     },
-    
+
     updateUserProfile: (state, action: PayloadAction<Partial<User['profile']>>) => {
       if (state.user) {
         state.user.profile = { ...state.user.profile, ...action.payload };
       }
     },
-    
+
     updateUserPreferences: (state, action: PayloadAction<Partial<User['preferences']>>) => {
       if (state.user) {
         state.user.preferences = { ...state.user.preferences, ...action.payload };
       }
     },
-    
+
     clearError: (state) => {
       state.error = null;
     },
-    
+
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
-    
+
     refreshToken: (state, action: PayloadAction<{ token: string; expiresAt?: string }>) => {
       state.token = action.payload.token;
       state.sessionExpiry = action.payload.expiresAt || null;
-    },
-  },
+    }
+  }
 });
 
 // Export actions

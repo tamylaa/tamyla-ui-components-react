@@ -20,7 +20,7 @@ import('./dist/index.esm.js')
     console.log('  ✅ useApplicationFactory:', typeof module.useApplicationFactory);
     console.log('  ✅ useFactoryBridge:', typeof module.useFactoryBridge);
 
-    // Test component exports  
+    // Test component exports
     console.log('\n🧩 Testing Component Exports:');
     console.log('  ✅ Button (Atom):', typeof module.Button);
     console.log('  ✅ ActionCard (Molecule):', typeof module.ActionCard);
@@ -54,13 +54,13 @@ import('./dist/index.esm.js')
 
     console.log('\n📊 Component Export Verification:');
     console.log('=================================');
-    
+
     let totalExported = 0;
     Object.entries(componentTypes).forEach(([layer, components]) => {
       const exportedCount = components.filter(comp => module[comp]).length;
       totalExported += exportedCount;
       console.log(`  ${layer.toUpperCase()}: ${exportedCount}/${components.length} exported`);
-      
+
       components.forEach(comp => {
         const status = module[comp] ? '✅' : '❌';
         console.log(`    ${status} ${comp}: ${typeof module[comp]}`);
@@ -73,7 +73,7 @@ import('./dist/index.esm.js')
     console.log('✅ ESM module format working');
     console.log('✅ Factory bridge structure organized');
     console.log('✅ No CommonJS files present');
-    
+
     console.log('\n🎉 Organized Factory Bridge Structure: VALIDATED!');
   })
   .catch(error => {

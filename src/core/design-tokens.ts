@@ -8,7 +8,7 @@ export const designTokens = {
   colors: {
     primary: {
       50: '#eff6ff',
-      100: '#dbeafe', 
+      100: '#dbeafe',
       200: '#bfdbfe',
       300: '#93c5fd',
       400: '#60a5fa',
@@ -279,17 +279,17 @@ export const designTokens = {
 // Type definitions for TypeScript safety
 // Type definitions (not exported due to Rollup build issues)
 // TODO: Fix Rollup TypeScript configuration to enable type exports
-type DesignTokens = typeof designTokens;
-type ColorScale = keyof typeof designTokens.colors.primary;
+type _DesignTokens = typeof designTokens;
+type _ColorScale = keyof typeof designTokens.colors.primary;
 type SpacingScale = keyof typeof designTokens.spacing;
 type FontSize = keyof typeof designTokens.typography.fontSize;
 type BorderRadius = keyof typeof designTokens.radii;
 type Shadow = keyof typeof designTokens.shadows;
-type Breakpoint = keyof typeof designTokens.breakpoints;
+type _Breakpoint = keyof typeof designTokens.breakpoints;
 
 // Helper functions for design token usage
 export const getColor = (path: string) => {
-  return path.split('.').reduce((obj: any, key) => obj?.[key], designTokens.colors);
+  return path.split('.').reduce((obj: unknown, key) => (obj as Record<string, unknown>)?.[key], designTokens.colors);
 };
 
 export const getSpacing = (scale: SpacingScale) => {

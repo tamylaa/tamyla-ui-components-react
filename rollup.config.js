@@ -11,13 +11,13 @@ export default {
   output: {
     file: packageJson.module,
     format: 'esm',
-    sourcemap: true,
+    sourcemap: true
   },
   plugins: [
     peerDepsExternal(),
     resolve({
       browser: true,
-      preferBuiltins: false,
+      preferBuiltins: false
     }),
     commonjs(),
     esbuild({
@@ -26,8 +26,8 @@ export default {
       target: 'es2020',
       jsx: 'automatic',
       tsconfig: 'tsconfig.json',
-      minify: false,
-    }),
+      minify: false
+    })
   ],
-  external: ['react', 'react-dom', '@tamyla/ui-components'],
+  external: ['react', 'react-dom', '@tamyla/ui-components']
 };

@@ -63,7 +63,7 @@ export interface StyledTheme {
 // Main theme provider component
 export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ children }) => {
   const themeState = useAppSelector(state => state.theme);
-  
+
   // Create enhanced theme object for styled-components
   const styledTheme: StyledTheme = React.useMemo(() => ({
     mode: themeState.mode,
@@ -71,7 +71,7 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
     fontSize: themeState.fontSize,
     animations: themeState.animations,
     reducedMotion: themeState.reducedMotion,
-    highContrast: themeState.highContrast,
+    highContrast: themeState.highContrast
   }), [themeState]);
 
   const themeContextValue: ThemeContextValue = React.useMemo(() => ({
@@ -81,12 +81,13 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
     fontSize: themeState.fontSize,
     animations: themeState.animations,
     reducedMotion: themeState.reducedMotion,
-    highContrast: themeState.highContrast,
+    highContrast: themeState.highContrast
   }), [themeState]);
 
   return (
     <ThemeContext.Provider value={themeContextValue}>
       <GlobalStyles />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <StyledThemeProvider theme={styledTheme as any}>
         {children}
       </StyledThemeProvider>

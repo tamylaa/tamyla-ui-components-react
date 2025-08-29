@@ -8,7 +8,9 @@ export const RewardSystem = class MockRewardSystem {
   constructor() {}
   initialize() {}
   addReward() {}
-  getRewards() { return []; }
+  getRewards() {
+    return [];
+  }
 };
 
 export const ButtonFactory = {

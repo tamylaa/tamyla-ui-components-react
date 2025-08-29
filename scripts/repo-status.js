@@ -19,9 +19,9 @@ class ReactRepositoryStatus {
 
   exec(command) {
     try {
-      return execSync(command, { 
-        cwd: this.projectRoot, 
-        encoding: 'utf8' 
+      return execSync(command, {
+        cwd: this.projectRoot,
+        encoding: 'utf8'
       });
     } catch (error) {
       throw error;
@@ -41,12 +41,12 @@ class ReactRepositoryStatus {
 
   async checkGitStatus() {
     console.log('\n📁 Git Repository Status:');
-    
+
     try {
       // Current directory
       const currentDir = process.cwd();
       console.log(`  ✓ Location: ${currentDir}`);
-      
+
       // Git status
       const status = this.exec('git status --porcelain').toString().trim();
       if (status) {
@@ -54,15 +54,15 @@ class ReactRepositoryStatus {
       } else {
         console.log('  ✓ All changes committed');
       }
-      
+
       // Branch info
       const branch = this.exec('git branch --show-current').toString().trim();
       console.log(`  ✓ Current branch: ${branch}`);
-      
+
       // Commit count
       const commits = this.exec('git rev-list --count HEAD').toString().trim();
       console.log(`  ✓ Total commits: ${commits}`);
-      
+
       // Remote status
       try {
         const remotes = this.exec('git remote -v').toString().trim();
@@ -78,7 +78,7 @@ class ReactRepositoryStatus {
       } catch (error) {
         console.log('  ❌ No remote repositories');
       }
-      
+
     } catch (error) {
       console.log('  ❌ Not a git repository');
     }
@@ -86,11 +86,11 @@ class ReactRepositoryStatus {
 
   async checkFileStructure() {
     console.log('\n📂 Project Structure:');
-    
+
     const requiredDirs = [
       'src', 'dist', 'scripts', 'bridges'
     ];
-    
+
     for (const dir of requiredDirs) {
       const dirPath = path.join(this.projectRoot, dir);
       if (fs.existsSync(dirPath)) {
@@ -100,13 +100,13 @@ class ReactRepositoryStatus {
         console.log(`  ❌ ${dir}/ - missing`);
       }
     }
-    
+
     // Check important files
     const importantFiles = [
       'package.json', '.gitignore', 'README.md',
       'rollup.config.js', 'tsconfig.json'
     ];
-    
+
     importantFiles.forEach(file => {
       const filePath = path.join(this.projectRoot, file);
       if (fs.existsSync(filePath)) {
@@ -119,12 +119,12 @@ class ReactRepositoryStatus {
 
   async checkBuildOutputs() {
     console.log('\n🏗️ Build Outputs:');
-    
+
     const distPath = path.join(this.projectRoot, 'dist');
     if (fs.existsSync(distPath)) {
       const files = fs.readdirSync(distPath);
       console.log(`  ✓ Distribution files: ${files.length}`);
-      
+
       files.forEach(file => {
         const filePath = path.join(distPath, file);
         const stats = fs.statSync(filePath);
@@ -139,15 +139,15 @@ class ReactRepositoryStatus {
 
   async checkReactComponents() {
     console.log('\n⚛️ React Components:');
-    
+
     const srcPath = path.join(this.projectRoot, 'src');
     const componentTypes = ['atoms', 'molecules', 'organisms', 'applications'];
     let totalComponents = 0;
-    
+
     componentTypes.forEach(type => {
       const typePath = path.join(srcPath, type);
       if (fs.existsSync(typePath)) {
-        const components = fs.readdirSync(typePath).filter(item => 
+        const components = fs.readdirSync(typePath).filter(item =>
           item.endsWith('.tsx') || item.endsWith('.ts')
         );
         console.log(`  ✓ ${type}: ${components.length} components`);
@@ -156,13 +156,13 @@ class ReactRepositoryStatus {
         console.log(`  ❌ ${type}: directory not found`);
       }
     });
-    
+
     console.log(`  📊 Total React components: ${totalComponents}`);
 
     // Check bridge files
     const bridgesPath = path.join(this.projectRoot, 'bridges');
     if (fs.existsSync(bridgesPath)) {
-      const bridges = fs.readdirSync(bridgesPath).filter(item => 
+      const bridges = fs.readdirSync(bridgesPath).filter(item =>
         item.endsWith('.tsx') || item.endsWith('.ts')
       );
       console.log(`  🌉 Bridge files: ${bridges.length}`);
@@ -171,17 +171,17 @@ class ReactRepositoryStatus {
 
   async showDeploymentOptions() {
     console.log('\n🚀 Deployment Options:');
-    
+
     const packagePath = path.join(this.projectRoot, 'package.json');
     const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-    
+
     console.log('  Available scripts:');
     Object.keys(packageData.scripts || {}).forEach(script => {
       if (script.includes('deploy') || script.includes('publish') || script.includes('certify')) {
         console.log(`    npm run ${script}`);
       }
     });
-    
+
     console.log('\n  📦 Package Information:');
     console.log(`    Name: ${packageData.name}`);
     console.log(`    Version: ${packageData.version}`);

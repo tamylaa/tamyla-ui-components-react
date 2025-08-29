@@ -4,7 +4,7 @@
  */
 
 // Import the bridge functions and components from the built package
-import { 
+import {
   useAtomFactory,
   useMoleculeFactory,
   useOrganismFactory,

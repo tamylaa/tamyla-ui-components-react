@@ -4,20 +4,20 @@
  */
 
 // Import all our organized bridge components from the built package
-import { 
+import {
   // Atoms (12 total - ALL button variants included)
-  Button, ButtonPrimary, ButtonSecondary, ButtonGhost, ButtonDanger, ButtonSuccess, 
+  Button, ButtonPrimary, ButtonSecondary, ButtonGhost, ButtonDanger, ButtonSuccess,
   ButtonWithIcon, ButtonIconOnly, Input, Card, StatusIndicator, InputGroup,
-  
+
   // Molecules (6 total)
   ActionCard, SearchBar, SearchBarNew, ContentCard, FileList, Notification,
-  
+
   // Organisms (3 total - now includes Reward!)
   Dashboard, SearchInterface, Reward,
-  
+
   // Applications (3 total)
   EnhancedSearch, ContentManager, CampaignSelector,
-  
+
   // Factory bridges
   useAtomFactory, useMoleculeFactory, useOrganismFactory, useApplicationFactory, useFactoryBridge
 } from './dist/index.esm.js';

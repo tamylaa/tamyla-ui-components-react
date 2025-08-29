@@ -17,7 +17,7 @@ export default {
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
+    '!src/**/*.d.ts'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: [

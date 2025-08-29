@@ -42,20 +42,20 @@ try {
   console.log('Testing TypeScript compilation...');
   execSync('npm run type-check', { cwd: projectRoot, stdio: 'ignore' });
   console.log('✓ TypeScript compilation successful');
-  
+
   console.log('Testing main build system...');
   execSync('npm run build', { cwd: projectRoot, stdio: 'pipe' });
   console.log('✓ Main build successful');
-  
+
   // Check build outputs
   const distPath = path.join(projectRoot, 'dist');
   if (fs.existsSync(distPath)) {
     const files = fs.readdirSync(distPath);
     const jsFiles = files.filter(f => f.endsWith('.js'));
     const dtsFiles = files.filter(f => f.endsWith('.d.ts'));
-    
+
     console.log(`✓ Build outputs: ${jsFiles.length} JS files, ${dtsFiles.length} type definitions`);
-    
+
     // Check file sizes
     jsFiles.forEach(file => {
       const filePath = path.join(distPath, file);
@@ -64,7 +64,7 @@ try {
       console.log(`✓ ${file}: ${sizeKB}KB`);
     });
   }
-  
+
   buildPassed = true;
 } catch (e) {
   console.log('❌ Build system validation failed');
@@ -77,7 +77,7 @@ console.log('========================================');
 
 const componentDirs = {
   'src/atoms': 'atoms',
-  'src/molecules': 'molecules', 
+  'src/molecules': 'molecules',
   'src/organisms': 'organisms',
   'src/applications': 'applications'
 };
@@ -93,10 +93,10 @@ for (const [dir, category] of Object.entries(componentDirs)) {
       return (fs.statSync(itemPath).isFile() && item.endsWith('.tsx')) ||
              (fs.statSync(itemPath).isDirectory() && item !== '__tests__');
     });
-    
+
     componentCounts[category] = items.length;
     totalComponents += items.length;
-    
+
     console.log(`✓ ${category}: ${items.length} components`);
     if (items.length > 0) {
       console.log(`  ${items.slice(0, 10).join(', ')}${items.length > 10 ? '...' : ''}`);
@@ -207,7 +207,7 @@ console.log(`Repository: ${gitExists ? '✅' : '⚠️'}`);
 console.log(`Build System: ${buildPassed ? '✅' : '❌'}`);
 console.log(`Components: ${totalComponents} (${totalComponents >= 3 ? '✅' : '❌'})`);
 console.log(`Redux Store: ${storeValid ? '✅' : '⚠️'}`);
-console.log(`TypeScript: ✅`);
+console.log('TypeScript: ✅');
 
 console.log(`\n📊 STATUS: ${status}`);
 

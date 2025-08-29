@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
   auth: authSlice.reducer,
   ui: uiSlice.reducer,
   theme: themeSlice.reducer,
-  components: componentSlice.reducer,
+  components: componentSlice.reducer
 });
 
 // Persistence configuration
@@ -27,7 +27,7 @@ const persistConfig = {
   version: 1,
   storage,
   whitelist: ['auth', 'theme'], // Only persist auth and theme
-  blacklist: ['ui', 'components'], // Don't persist UI state
+  blacklist: ['ui', 'components'] // Don't persist UI state
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -43,13 +43,13 @@ export const store = configureStore({
           'persist/REHYDRATE',
           'persist/PAUSE',
           'persist/PURGE',
-          'persist/REGISTER',
+          'persist/REGISTER'
         ],
         ignoredActionsPaths: ['payload.timestamp'],
-        ignoredPaths: ['_persist'],
-      },
+        ignoredPaths: ['_persist']
+      }
     }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: process.env.NODE_ENV !== 'production'
 });
 
 export const persistor = persistStore(store);

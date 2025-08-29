@@ -22,7 +22,7 @@ console.log('\n🔍 Checking project structure...');
 
 const expectedDirs = {
   'src/atoms': 'Atomic components',
-  'src/molecules': 'Molecule components', 
+  'src/molecules': 'Molecule components',
   'src/organisms': 'Organism components',
   'src/applications': 'Application components',
   'src/core': 'Core utilities',
@@ -39,12 +39,12 @@ for (const [dir, description] of Object.entries(expectedDirs)) {
     const items = fs.readdirSync(fullPath);
     const componentCount = items.filter(item => {
       const itemPath = path.join(fullPath, item);
-      return fs.statSync(itemPath).isFile() && 
+      return fs.statSync(itemPath).isFile() &&
              (item.endsWith('.tsx') || item.endsWith('.ts')) &&
              !item.includes('.test.') &&
              !item.includes('.spec.');
     }).length;
-    
+
     componentCounts[dir] = componentCount;
     console.log(`  ✓ ${dir}/ (${componentCount} components)`);
     foundDirs++;
@@ -58,21 +58,21 @@ console.log('\n📋 Checking package configuration...');
 const packageJsonPath = path.join(projectRoot, 'package.json');
 if (fs.existsSync(packageJsonPath)) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  
+
   console.log(`  ✓ package.json - ${packageJson.name}@${packageJson.version}`);
   console.log(`  ✓ Type: ${packageJson.type || 'CommonJS (default)'}`);
-  
+
   const scripts = Object.keys(packageJson.scripts || {});
   console.log(`  ✓ Scripts: ${scripts.join(', ')}`);
-  
+
   // Check for required dependencies
   const requiredDeps = ['react', 'react-dom', '@reduxjs/toolkit', 'styled-components'];
-  const missingDeps = requiredDeps.filter(dep => 
+  const missingDeps = requiredDeps.filter(dep =>
     !packageJson.dependencies?.[dep] && !packageJson.devDependencies?.[dep]
   );
-  
+
   if (missingDeps.length === 0) {
-    console.log(`  ✓ Required dependencies present`);
+    console.log('  ✓ Required dependencies present');
   } else {
     console.log(`  ⚠ Missing dependencies: ${missingDeps.join(', ')}`);
   }
@@ -83,17 +83,17 @@ if (fs.existsSync(packageJsonPath)) {
 // Check TypeScript configuration
 const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
 if (fs.existsSync(tsconfigPath)) {
-  console.log(`  ✓ TypeScript configuration found`);
+  console.log('  ✓ TypeScript configuration found');
 } else {
-  console.log(`  ⚠ tsconfig.json - Missing`);
+  console.log('  ⚠ tsconfig.json - Missing');
 }
 
 // Check build configuration
 const rollupConfigPath = path.join(projectRoot, 'rollup.config.js');
 if (fs.existsSync(rollupConfigPath)) {
-  console.log(`  ✓ Rollup build configuration found`);
+  console.log('  ✓ Rollup build configuration found');
 } else {
-  console.log(`  ⚠ rollup.config.js - Missing`);
+  console.log('  ⚠ rollup.config.js - Missing');
 }
 
 console.log('\n📊 Summary');

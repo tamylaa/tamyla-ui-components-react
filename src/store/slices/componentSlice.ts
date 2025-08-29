@@ -3,6 +3,8 @@
  * Handles dynamic component behavior and configurations
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Component configuration interface
@@ -44,13 +46,13 @@ const initialState: ComponentState = {
         variant: 'primary',
         size: 'md',
         disabled: false,
-        loading: false,
+        loading: false
       },
       stateSchema: {
         isHovered: false,
         isFocused: false,
-        isPressed: false,
-      },
+        isPressed: false
+      }
     },
     'Input': {
       type: 'atom',
@@ -58,26 +60,26 @@ const initialState: ComponentState = {
         type: 'text',
         size: 'md',
         disabled: false,
-        required: false,
+        required: false
       },
       stateSchema: {
         value: '',
         isFocused: false,
         hasError: false,
-        errorMessage: '',
-      },
+        errorMessage: ''
+      }
     },
     'StatusIndicator': {
       type: 'atom',
       defaultProps: {
         status: 'idle',
         size: 'md',
-        showText: true,
+        showText: true
       },
       stateSchema: {
         isAnimating: false,
-        lastStatusChange: null,
-      },
+        lastStatusChange: null
+      }
     },
     // Molecules
     'ActionCard': {
@@ -86,28 +88,28 @@ const initialState: ComponentState = {
         title: '',
         description: '',
         variant: 'default',
-        showProgress: false,
+        showProgress: false
       },
       stateSchema: {
         progress: 0,
         isExpanded: false,
         isCompleted: false,
-        xpEarned: 0,
-      },
+        xpEarned: 0
+      }
     },
     'SearchBar': {
       type: 'molecule',
       defaultProps: {
         placeholder: 'Search...',
         showSuggestions: true,
-        clearable: true,
+        clearable: true
       },
       stateSchema: {
         query: '',
         suggestions: [],
         isSearching: false,
-        showDropdown: false,
-      },
+        showDropdown: false
+      }
     },
     // Organisms
     'NavigationSidebar': {
@@ -115,30 +117,30 @@ const initialState: ComponentState = {
       defaultProps: {
         items: [],
         collapsible: true,
-        pinnable: true,
+        pinnable: true
       },
       stateSchema: {
         isCollapsed: false,
         pinnedItems: [],
         activeItem: null,
-        expandedSections: [],
-      },
+        expandedSections: []
+      }
     },
     'DashboardWidget': {
       type: 'organism',
       defaultProps: {
         title: '',
         type: 'default',
-        refreshable: true,
+        refreshable: true
       },
       stateSchema: {
         data: null,
         isLoading: false,
         lastRefresh: null,
-        error: null,
-      },
-    },
-  },
+        error: null
+      }
+    }
+  }
 };
 
 // Component slice
@@ -155,7 +157,7 @@ export const componentSlice = createSlice({
     }>) => {
       const { id, name, props = {}, initialState: compState = {} } = action.payload;
       const registryEntry = state.componentRegistry[name];
-      
+
       if (registryEntry) {
         state.components[id] = {
           id,
@@ -165,18 +167,18 @@ export const componentSlice = createSlice({
           state: { ...registryEntry.stateSchema, ...compState },
           isVisible: true,
           isDisabled: false,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
         };
       }
     },
-    
+
     unregisterComponent: (state, action: PayloadAction<string>) => {
       delete state.components[action.payload];
       if (state.activeComponent === action.payload) {
         state.activeComponent = null;
       }
     },
-    
+
     // Component props management
     updateComponentProps: (state, action: PayloadAction<{
       componentId: string;
@@ -186,12 +188,12 @@ export const componentSlice = createSlice({
       if (state.components[componentId]) {
         state.components[componentId].props = {
           ...state.components[componentId].props,
-          ...props,
+          ...props
         };
         state.components[componentId].lastUpdated = new Date().toISOString();
       }
     },
-    
+
     // Component state management
     updateComponentState: (state, action: PayloadAction<{
       componentId: string;
@@ -201,12 +203,12 @@ export const componentSlice = createSlice({
       if (state.components[componentId]) {
         state.components[componentId].state = {
           ...state.components[componentId].state,
-          ...stateUpdates,
+          ...stateUpdates
         };
         state.components[componentId].lastUpdated = new Date().toISOString();
       }
     },
-    
+
     // Component visibility and interaction
     setComponentVisibility: (state, action: PayloadAction<{
       componentId: string;
@@ -218,7 +220,7 @@ export const componentSlice = createSlice({
         state.components[componentId].lastUpdated = new Date().toISOString();
       }
     },
-    
+
     setComponentDisabled: (state, action: PayloadAction<{
       componentId: string;
       isDisabled: boolean;
@@ -229,11 +231,11 @@ export const componentSlice = createSlice({
         state.components[componentId].lastUpdated = new Date().toISOString();
       }
     },
-    
+
     setActiveComponent: (state, action: PayloadAction<string | null>) => {
       state.activeComponent = action.payload;
     },
-    
+
     // Component registry management
     registerComponentType: (state, action: PayloadAction<{
       name: string;
@@ -246,11 +248,11 @@ export const componentSlice = createSlice({
       const { name, config } = action.payload;
       state.componentRegistry[name] = config;
     },
-    
+
     unregisterComponentType: (state, action: PayloadAction<string>) => {
       delete state.componentRegistry[action.payload];
     },
-    
+
     // Batch operations
     batchUpdateComponents: (state, action: PayloadAction<{
       updates: Array<{
@@ -262,7 +264,7 @@ export const componentSlice = createSlice({
       }>;
     }>) => {
       const timestamp = new Date().toISOString();
-      
+
       action.payload.updates.forEach(update => {
         const component = state.components[update.componentId];
         if (component) {
@@ -282,11 +284,11 @@ export const componentSlice = createSlice({
         }
       });
     },
-    
+
     resetComponent: (state, action: PayloadAction<string>) => {
       const componentId = action.payload;
       const component = state.components[componentId];
-      
+
       if (component) {
         const registryEntry = state.componentRegistry[component.name];
         if (registryEntry) {
@@ -298,10 +300,10 @@ export const componentSlice = createSlice({
         }
       }
     },
-    
+
     resetAllComponents: (state) => {
       const timestamp = new Date().toISOString();
-      
+
       Object.values(state.components).forEach(component => {
         const registryEntry = state.componentRegistry[component.name];
         if (registryEntry) {
@@ -312,10 +314,10 @@ export const componentSlice = createSlice({
           component.lastUpdated = timestamp;
         }
       });
-      
+
       state.activeComponent = null;
-    },
-  },
+    }
+  }
 });
 
 // Export actions

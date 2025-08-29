@@ -17,7 +17,7 @@ async function validateStructure() {
       'dist/index.esm.js',
       'dist/index.d.ts'
     ];
-    
+
     for (const file of distFiles) {
       try {
         await fs.access(file);
@@ -31,13 +31,13 @@ async function validateStructure() {
     console.log('\n🏗️ Testing Source Structure:');
     const sourceStructure = [
       'src/core/atom-bridge.tsx',
-      'src/core/molecule-bridge.tsx', 
+      'src/core/molecule-bridge.tsx',
       'src/core/organism-bridge.tsx',
       'src/core/application-bridge.tsx',
       'src/core/factory-bridge.tsx',
       'src/organisms/Reward.tsx'
     ];
-    
+
     for (const file of sourceStructure) {
       try {
         await fs.access(file);
@@ -64,7 +64,7 @@ async function validateStructure() {
     try {
       const distStat = await fs.stat('dist/index.esm.js');
       console.log(`  ✅ ESM build size: ${Math.round(distStat.size / 1024)}KB`);
-      
+
       const typesStat = await fs.stat('dist/index.d.ts');
       console.log(`  ✅ TypeScript definitions size: ${Math.round(typesStat.size / 1024)}KB`);
     } catch (error) {
@@ -77,7 +77,7 @@ async function validateStructure() {
     console.log('✅ Organized bridge architecture');
     console.log('✅ Build artifacts present');
     console.log('✅ All file issues resolved');
-    
+
   } catch (error) {
     console.error('❌ Validation failed:', error.message);
     process.exit(1);
