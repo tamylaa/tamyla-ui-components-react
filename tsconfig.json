@@ -37,6 +37,7 @@
     "node_modules",
     "dist",
     "**/*.test.*",
-    "**/*.spec.*"
+    "**/*.spec.*",
+    "src/core/index.d.ts"
   ]
 }

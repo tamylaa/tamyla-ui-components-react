@@ -28,6 +28,7 @@ let InputGroupFactory: any, StatusIndicatorFactory: any, EnhancedSearchApplicati
   OrganismFactory: any, OrganismTemplates: any;
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
   const additionalImports = require('@tamyla/ui-components');
   InputGroupFactory = additionalImports.InputGroupFactory;
   StatusIndicatorFactory = additionalImports.StatusIndicatorFactory;

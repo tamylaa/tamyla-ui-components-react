@@ -28,6 +28,7 @@ export const useAuth = () => {
     dispatch(authActions.loginStart());
     try {
       // Simulate API call - replace with actual auth service
+      // eslint-disable-next-line no-undef
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

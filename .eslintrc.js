@@ -6,40 +6,60 @@ export default {
     jest: true
   },
   extends: [
-    'eslint:recommended'
+    'eslint:recommended',
+    '@typescript-eslint/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 'latest',
+    ecmaVersion: 2022,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
-    }
+    },
+    project: null
   },
+  overrides: [
+    {
+      files: ['**/*.js', '**/*.jsx'],
+      parser: 'espree',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/ban-types': 'off'
+      }
+    },
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true
+        },
+        project: null
+      }
+    }
+  ],
   plugins: [
     '@typescript-eslint',
     'react',
     'react-hooks'
   ],
-  ignorePatterns: [
-    'dist/',
-    'node_modules/',
-    '**/*.d.ts'
-  ],
-  globals: {
-    fetch: 'readonly',
-    require: 'readonly'
-  },
   rules: {
-    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    'no-undef': 'off',
-    'no-trailing-spaces': 'off',
-    'no-console': 'off',
     'no-console': 'warn',
     'semi': ['error', 'always'],
     'quotes': ['error', 'single'],
@@ -55,9 +75,9 @@ export default {
     'brace-style': ['error', '1tbs'],
     'no-var': 'error',
     'prefer-const': 'warn',
-    'no-undef': 'error',
+    'no-undef': 'off',
     'no-case-declarations': 'error',
-    // React specific rules
+    // React specific rules  
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error',
     'react-hooks/rules-of-hooks': 'error',
@@ -65,6 +85,8 @@ export default {
   },
   globals: {
     React: 'readonly',
+    fetch: 'readonly',
+    require: 'readonly',
     describe: 'readonly',
     test: 'readonly',
     it: 'readonly',
@@ -82,6 +104,7 @@ export default {
     'coverage/**',
     '.git/**',
     'examples/**',
-    '__mocks__/**'
+    '__mocks__/**',
+    '**/*.d.ts'
   ]
 };

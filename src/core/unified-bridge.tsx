@@ -45,7 +45,6 @@ const FACTORY_REGISTRY = {
 export type ComponentType = keyof typeof FACTORY_REGISTRY;
 
 export interface ComponentProps {
-  
   [key: string]: any;
 }
 
@@ -65,7 +64,6 @@ export function useComponentFactory() {
     // Handle different factory patterns consistently
     if (typeof factory === 'function') {
       // Function factory (ContentCard, FileList, etc.)
-      
       const functionFactory = factory as (props: ComponentProps) => any;
       const result = functionFactory(props);
       element = result?.element || result;
