@@ -1,6 +1,7 @@
 /**
- * Main Entry Point - UI Components React v1.0.0
+ * Main Entry Point - UI Components React v1.1.1
  * Professional React-based component library with Trading Portal state management
+ * Enhanced with ESLint 9.x flat config support and improved npm publishing
  */
 
 // Core exports
