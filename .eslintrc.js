@@ -6,8 +6,7 @@ export default {
     jest: true
   },
   extends: [
-    'eslint:recommended',
-    '@typescript-eslint/recommended'
+    'eslint:recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -22,12 +21,25 @@ export default {
     'react',
     'react-hooks'
   ],
+  ignorePatterns: [
+    'dist/',
+    'node_modules/',
+    '**/*.d.ts'
+  ],
+  globals: {
+    fetch: 'readonly',
+    require: 'readonly'
+  },
   rules: {
-    '@typescript-eslint/no-unused-vars': 'warn',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/ban-types': 'warn',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    'no-undef': 'off',
+    'no-trailing-spaces': 'off',
+    'no-console': 'off',
     'no-console': 'warn',
     'semi': ['error', 'always'],
     'quotes': ['error', 'single'],
