@@ -1,63 +1,6 @@
 // Mock for @tamyla/ui-components
-export const RewardSystem = class {
-  constructor(config = {}) {
-    this.config = config;
-    this.initialized = false;
-  }
 
-  initialize() {
-    this.initialized = true;
-    return Promise.resolve();
-  }
-
-  destroy() {
-    this.initialized = false;
-  }
-
-  trackAction(action, metadata = {}) {
-    return { action, metadata, timestamp: Date.now() };
-  }
-
-  awardXP(points, source = 'test') {
-    return points;
-  }
-
-  showNotification(config = {}) {
-    return { id: 'mock-notification', config };
-  }
-
-  createProgress(containerId, config = {}) {
-    return { id: 'mock-progress', containerId, config };
-  }
-
-  updateProgress(progressId, current, total) {
-    return true;
-  }
-
-  createAchievementBadge(containerId, achievementId) {
-    return { id: 'mock-badge', containerId, achievementId };
-  }
-
-  getUserStats() {
-    return {
-      level: 1,
-      xp: 0,
-      achievements: [],
-      progress: {}
-    };
-  }
-
-  reset() {
-    this.initialized = false;
-  }
-
-  on(event, callback) {
-    // Mock event listener
-    return this;
-  }
-};
-
-// Mock factory classes with setSharedFoundation method
+// Base factory class with create method
 class MockFactory {
   constructor() {
     this.tokens = {};
@@ -70,34 +13,142 @@ class MockFactory {
     return this;
   }
 
-  create() {
-    return document.createElement('div');
+  create(config = {}) {
+    const element = document.createElement('div');
+    element.className = 'mock-component';
+    element.setAttribute('data-mock', 'true');
+    element.setAttribute('data-config', JSON.stringify(config));
+
+    // Handle children if provided in config
+    if (config.children) {
+      if (typeof config.children === 'string') {
+        element.textContent = config.children;
+      } else if (config.children instanceof HTMLElement) {
+        element.appendChild(config.children);
+      } else if (Array.isArray(config.children)) {
+        config.children.forEach(child => {
+          if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+          } else if (child instanceof HTMLElement) {
+            element.appendChild(child);
+          } else if (child && typeof child === 'object' && child.props && child.props.children) {
+            // Handle React elements
+            const childText = typeof child.props.children === 'string' ? child.props.children : String(child.props.children || '');
+            element.appendChild(document.createTextNode(childText));
+          }
+        });
+      } else if (config.children && typeof config.children === 'object' && config.children.props && config.children.props.children) {
+        // Handle single React element
+        const childText = typeof config.children.props.children === 'string' ? config.children.props.children : String(config.children.props.children || '');
+        element.appendChild(document.createTextNode(childText));
+      }
+    }
+
+    return element;
+  }
+
+  // Button-specific create methods
+  createPrimary(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-primary';
+    return element;
+  }
+
+  createSecondary(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-secondary';
+    return element;
+  }
+
+  createGhost(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-ghost';
+    return element;
+  }
+
+  createDanger(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-danger';
+    return element;
+  }
+
+  createSuccess(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-success';
+    return element;
+  }
+
+  createWithIcon(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-with-icon';
+    return element;
+  }
+
+  createIconOnly(config = {}) {
+    const element = this.create(config);
+    element.className += ' button-icon-only';
+    return element;
   }
 }
 
-// Factory exports
-export const ButtonFactory = MockFactory;
-export const InputFactory = MockFactory;
-export const CardFactory = MockFactory;
-export const StatusIndicatorFactory = MockFactory;
+// Function factory for components that return functions
+const createFunctionFactory = (type) => (config = {}) => {
+  const element = document.createElement('div');
+  element.className = `mock-${type}`;
+  element.setAttribute('data-mock', 'true');
+  element.setAttribute('data-type', type);
+  element.setAttribute('data-config', JSON.stringify(config));
+  return { element };
+};
 
-// Molecule factories
-export const ActionCardFactory = MockFactory;
-export const SearchBarFactory = MockFactory;
+// Factory instances - CORRECTED to match factory bridge expectations
+const factoryInstances = {
+  buttonFactory: new MockFactory(),
+  inputFactory: new MockFactory(),
+  inputGroupFactory: createFunctionFactory('input-group'),
+  cardFactory: new MockFactory(),
+  statusIndicatorFactory: new MockFactory(),
+  actionCardFactory: new MockFactory(),
+  searchBarFactory: new MockFactory(),
+  contentCardFactory: createFunctionFactory('content-card'),
+  fileListFactory: createFunctionFactory('file-list'),
+  notificationFactory: createFunctionFactory('notification'),
+  searchInterfaceFactory: createFunctionFactory('search-interface'),
+  rewardSystemFactory: new MockFactory(),
+  organismFactory: createFunctionFactory('organism'),
+  organismTemplates: {
+    searchPage: createFunctionFactory('search-page'),
+    contentDashboard: createFunctionFactory('content-dashboard'),
+    knowledgeBase: createFunctionFactory('knowledge-base'),
+    mediaLibrary: createFunctionFactory('media-library')
+  },
+  enhancedSearchFactory: createFunctionFactory('enhanced-search'),
+  campaignSelectorFactory: createFunctionFactory('campaign-selector'),
+  contentManagerFactory: createFunctionFactory('content-manager'),
+  tamylaUIFactory: createFunctionFactory('tamyla-ui')
+};
 
-// Application-level systems and factories
-export const CampaignSelectorSystem = MockFactory;
-export const EnhancedSearchApplicationFactory = () => new MockFactory();
-export const ContentManagerApplicationFactory = () => new MockFactory();
-export const TamylaUISystem = () => new MockFactory();
+// Export factory instances (what the factory bridge imports)
+export const ButtonFactory = factoryInstances.buttonFactory;
+export const InputFactory = factoryInstances.inputFactory;
+export const InputGroupFactory = factoryInstances.inputGroupFactory;
+export const CardFactory = factoryInstances.cardFactory;
+export const StatusIndicatorFactory = factoryInstances.statusIndicatorFactory;
+export const ActionCardFactory = factoryInstances.actionCardFactory;
+export const SearchBarFactory = factoryInstances.searchBarFactory;
+export const ContentCardFactory = factoryInstances.contentCardFactory;
+export const FileListFactory = factoryInstances.fileListFactory;
+export const NotificationFactory = factoryInstances.notificationFactory;
+export const SearchInterfaceFactory = factoryInstances.searchInterfaceFactory;
+export const RewardSystem = factoryInstances.rewardSystemFactory;
+export const OrganismFactory = factoryInstances.organismFactory;
+export const OrganismTemplates = factoryInstances.organismTemplates;
+export const EnhancedSearchApplicationFactory = factoryInstances.enhancedSearchFactory;
+export const CampaignSelectorSystem = factoryInstances.campaignSelectorFactory;
+export const ContentManagerApplicationFactory = factoryInstances.contentManagerFactory;
+export const TamylaUISystem = factoryInstances.tamylaUIFactory;
 
-// Function factory for InputGroup and content components
-export const InputGroupFactory = () => new MockFactory();
-export const ContentCardFactory = () => new MockFactory();
-export const FileListFactory = () => new MockFactory();
-export const AchievementListFactory = () => new MockFactory();
-
-// Legacy function exports
+// Legacy function exports for compatibility
 export const createActionCard = () => new MockFactory();
 export const createStatusIndicator = () => new MockFactory();
 export const createRewardSystem = () => new MockFactory();

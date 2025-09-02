@@ -1,10 +1,8 @@
 /**
- * Input Component - export const Input = createFactoryComponent<InputProps>(
-  'Input',
-  'Input'
-);rapper for ui-components InputFactory
+ * Input Component - React wrapper for ui-components InputFactory
  */
 
+import React from 'react';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
 interface InputProps {
@@ -21,15 +19,40 @@ interface InputProps {
   errorMessage?: string;
   helpText?: string;
   // Event handlers
-  onChange?: (event: Event) => void;
-  onFocus?: (event: FocusEvent) => void;
-  onBlur?: (event: FocusEvent) => void;
-  onInput?: (event: Event) => void;
+  onChange?: (_event: Event) => void;
+  onFocus?: (_event: FocusEvent) => void;
+  onBlur?: (_event: FocusEvent) => void;
+  onInput?: (_event: Event) => void;
 }
 
-export const Input = createFactoryComponent<InputProps>(
-  'Input',
-  'Input'
-);
+export const Input: React.FC<InputProps> = ({
+  onChange,
+  onFocus,
+  onBlur,
+  onInput,
+  ...props
+}) => {
+  const handleEvent = (eventType: string, detail: any) => {
+    switch (eventType) {
+      case 'change':
+        if (onChange) onChange(detail);
+        break;
+      case 'focus':
+        if (onFocus) onFocus(detail);
+        break;
+      case 'blur':
+        if (onBlur) onBlur(detail);
+        break;
+      case 'input':
+        if (onInput) onInput(detail);
+        break;
+    }
+  };
+
+  return createFactoryComponent<InputProps>('Input', 'Input')({
+    ...props,
+    onEvent: handleEvent
+  });
+};
 
 export default Input;

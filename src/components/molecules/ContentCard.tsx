@@ -2,6 +2,7 @@
  * ContentCard Component - React wrapper for ContentCardFactory
  */
 
+import React from 'react';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
 interface ContentCardProps {
@@ -15,13 +16,40 @@ interface ContentCardProps {
   variant?: 'default' | 'featured' | 'compact';
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
-  onClick?: () => void;
+  // React-specific event handlers
+  onClick?: (_event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter?: (_event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (_event: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
 }
 
-const ContentCard = createFactoryComponent<ContentCardProps>(
-  'ContentCard',
-  'ContentCardFactory'
-);
+export const ContentCard: React.FC<ContentCardProps> = ({
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
+}) => {
+  const handleEvent = (eventType: string, detail: any) => {
+    switch (eventType) {
+      case 'click':
+        if (onClick) onClick(detail);
+        break;
+      case 'mouseenter':
+        if (onMouseEnter) onMouseEnter(detail);
+        break;
+      case 'mouseleave':
+        if (onMouseLeave) onMouseLeave(detail);
+        break;
+    }
+  };
+
+  return createFactoryComponent<ContentCardProps>('ContentCard', 'ContentCardFactory')({
+    ...props,
+    onEvent: handleEvent,
+    onClick,
+    onMouseEnter,
+    onMouseLeave
+  });
+};
 
 export default ContentCard;

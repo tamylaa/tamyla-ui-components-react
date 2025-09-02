@@ -68,79 +68,79 @@ const factoryInstances = {
 // Complete factory mapping - covers EVERY component in ui-components
 const FACTORY_MAP = {
   // Button variants (using type assertion to bypass incomplete TypeScript definitions)
-  Button: () => factoryInstances.buttonFactory.create.bind(factoryInstances.buttonFactory),
+  Button: factoryInstances.buttonFactory.create.bind(factoryInstances.buttonFactory),
 
-  ButtonPrimary: () => (factoryInstances.buttonFactory as any).createPrimary.bind(factoryInstances.buttonFactory),
+  ButtonPrimary: (factoryInstances.buttonFactory as any).createPrimary.bind(factoryInstances.buttonFactory),
 
-  ButtonSecondary: () => (factoryInstances.buttonFactory as any).createSecondary.bind(factoryInstances.buttonFactory),
+  ButtonSecondary: (factoryInstances.buttonFactory as any).createSecondary.bind(factoryInstances.buttonFactory),
 
-  ButtonGhost: () => (factoryInstances.buttonFactory as any).createGhost.bind(factoryInstances.buttonFactory),
+  ButtonGhost: (factoryInstances.buttonFactory as any).createGhost.bind(factoryInstances.buttonFactory),
 
-  ButtonDanger: () => (factoryInstances.buttonFactory as any).createDanger.bind(factoryInstances.buttonFactory),
+  ButtonDanger: (factoryInstances.buttonFactory as any).createDanger.bind(factoryInstances.buttonFactory),
 
-  ButtonSuccess: () => (factoryInstances.buttonFactory as any).createSuccess.bind(factoryInstances.buttonFactory),
+  ButtonSuccess: (factoryInstances.buttonFactory as any).createSuccess.bind(factoryInstances.buttonFactory),
 
-  ButtonWithIcon: () => (factoryInstances.buttonFactory as any).createWithIcon.bind(factoryInstances.buttonFactory),
+  ButtonWithIcon: (factoryInstances.buttonFactory as any).createWithIcon.bind(factoryInstances.buttonFactory),
 
-  ButtonIconOnly: () => (factoryInstances.buttonFactory as any).createIconOnly.bind(factoryInstances.buttonFactory),
+  ButtonIconOnly: (factoryInstances.buttonFactory as any).createIconOnly.bind(factoryInstances.buttonFactory),
 
   // Input atoms
-  Input: () => factoryInstances.inputFactory.create.bind(factoryInstances.inputFactory),
+  Input: factoryInstances.inputFactory.create.bind(factoryInstances.inputFactory),
   ...(factoryInstances.inputGroupFactory && {
-    InputGroup: () => factoryInstances.inputGroupFactory // function factory
+    InputGroup: factoryInstances.inputGroupFactory // function factory
   }),
 
   // Card
-  Card: () => factoryInstances.cardFactory.create.bind(factoryInstances.cardFactory),
+  Card: factoryInstances.cardFactory.create.bind(factoryInstances.cardFactory),
 
   // Status Indicator (optional)
   ...(factoryInstances.statusIndicatorFactory && {
-    StatusIndicator: () => (factoryInstances.statusIndicatorFactory as any).create.bind(factoryInstances.statusIndicatorFactory)
+    StatusIndicator: (factoryInstances.statusIndicatorFactory as any).create.bind(factoryInstances.statusIndicatorFactory)
   }),
 
   // Molecules
-  ActionCard: () => factoryInstances.actionCardFactory.create.bind(factoryInstances.actionCardFactory),
-  SearchBar: () => factoryInstances.searchBarFactory.create.bind(factoryInstances.searchBarFactory),
-  ContentCard: () => factoryInstances.contentCardFactory,
-  FileList: () => factoryInstances.fileListFactory,
-  Notification: () => factoryInstances.notificationFactory,
+  ActionCard: factoryInstances.actionCardFactory.create.bind(factoryInstances.actionCardFactory),
+  SearchBar: factoryInstances.searchBarFactory.create.bind(factoryInstances.searchBarFactory),
+  ContentCard: factoryInstances.contentCardFactory,
+  FileList: factoryInstances.fileListFactory,
+  Notification: factoryInstances.notificationFactory,
 
   // Organisms
-  SearchInterface: () => factoryInstances.searchInterfaceFactory,
+  SearchInterface: factoryInstances.searchInterfaceFactory,
 
   // Reward System - class factory (RewardSystem)
   ...(factoryInstances.rewardSystemFactory && {
-    Reward: () => factoryInstances.rewardSystemFactory
+    Reward: factoryInstances.rewardSystemFactory
   }),
 
   // Dashboard organisms via OrganismFactory and OrganismTemplates
   ...(factoryInstances.organismFactory && {
     // Direct organism factory for search-interface (already covered by SearchInterface above)
-    OrganismSearchInterface: () => (props: any) => factoryInstances.organismFactory('search-interface', props)
+    OrganismSearchInterface: (props: any) => factoryInstances.organismFactory('search-interface', props)
   }),
 
   // Dashboard templates from OrganismTemplates
   ...(factoryInstances.organismTemplates && {
-    DashboardSearch: () => factoryInstances.organismTemplates.searchPage,
-    DashboardContent: () => factoryInstances.organismTemplates.contentDashboard,
-    DashboardKnowledge: () => factoryInstances.organismTemplates.knowledgeBase,
-    DashboardMedia: () => factoryInstances.organismTemplates.mediaLibrary
+    DashboardSearch: factoryInstances.organismTemplates.searchPage,
+    DashboardContent: factoryInstances.organismTemplates.contentDashboard,
+    DashboardKnowledge: factoryInstances.organismTemplates.knowledgeBase,
+    DashboardMedia: factoryInstances.organismTemplates.mediaLibrary
   }),
 
   // Applications - optional, these are factory functions
   ...(factoryInstances.enhancedSearchFactory && {
-    EnhancedSearch: () => factoryInstances.enhancedSearchFactory
+    EnhancedSearch: factoryInstances.enhancedSearchFactory
   }),
   ...(factoryInstances.campaignSelectorFactory && {
-    CampaignSelector: () => factoryInstances.campaignSelectorFactory
+    CampaignSelector: factoryInstances.campaignSelectorFactory
   }),
   ...(factoryInstances.contentManagerFactory && {
-    ContentManager: () => factoryInstances.contentManagerFactory
+    ContentManager: factoryInstances.contentManagerFactory
   }),
 
   // System - optional
   ...(factoryInstances.tamylaUIFactory && {
-    TamylaUI: () => factoryInstances.tamylaUIFactory
+    TamylaUI: factoryInstances.tamylaUIFactory
   })
 } as const;
 
@@ -188,15 +188,15 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
       // Handle different factory types with proper type safety
       if (typeof factoryInstance === 'function') {
         // Function factory - call with config, handle result properly
-        const result = (factoryInstance as any)(config || {});
+        const result = (factoryInstance as any)({ ...config, children });
         element = (result as any)?.element || result;
       } else if ((factoryInstance as any)?.create) {
         // Class instance with create method
-        const result = (factoryInstance as any).create(config || {});
+        const result = (factoryInstance as any).create({ ...config, children });
         element = (result as any)?.element || result;
       } else if ((factoryInstance as any)?.render) {
         // Instance with render method
-        const result = (factoryInstance as any).render(config || {});
+        const result = (factoryInstance as any).render({ ...config, children });
         element = (result as any)?.element || result;
       } else {
         throw new Error(`Factory ${String(factory)} doesn't have a recognized creation method`);
@@ -251,7 +251,7 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
       }
       componentRef.current = null;
     };
-  }, [factory, config, onEvent, factoryInstance]);
+  }, [factory, config, onEvent, factoryInstance, children]);
 
   return (
     <div
@@ -259,6 +259,7 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
       className={className}
       style={style}
       data-factory={factory}
+      data-testid={`factory-container-${String(factory)}`}
     >
       {children}
     </div>

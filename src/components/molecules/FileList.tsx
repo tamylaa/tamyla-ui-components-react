@@ -2,6 +2,7 @@
  * FileList Component - React wrapper for FileListFactory
  */
 
+import React from 'react';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
 interface FileItem {
@@ -20,15 +21,49 @@ interface FileListProps {
   allowDownload?: boolean;
   maxFiles?: number;
   acceptedTypes?: string[];
-  onFileAdd?: (files: FileList) => void;
-  onFileRemove?: (fileId: string) => void;
-  onFileDownload?: (fileId: string) => void;
+  // React-specific event handlers
+  onFileAdd?: (_files: FileList) => void;
+  onFileRemove?: (_fileId: string) => void;
+  onFileDownload?: (_fileId: string) => void;
+  onDragOver?: (_event: React.DragEvent<HTMLDivElement>) => void;
+  onDragLeave?: (_event: React.DragEvent<HTMLDivElement>) => void;
+  onDrop?: (_event: React.DragEvent<HTMLDivElement>) => void;
   className?: string;
 }
 
-const FileList = createFactoryComponent<FileListProps>(
-  'FileList',
-  'FileListFactory'
-);
+export const FileList: React.FC<FileListProps> = ({
+  onFileAdd,
+  onFileRemove,
+  onFileDownload,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  ...props
+}) => {
+  const handleEvent = (eventType: string, detail: any) => {
+    switch (eventType) {
+      case 'file-add':
+        if (onFileAdd) onFileAdd(detail);
+        break;
+      case 'file-remove':
+        if (onFileRemove) onFileRemove(detail);
+        break;
+      case 'file-download':
+        if (onFileDownload) onFileDownload(detail);
+        break;
+    }
+  };
+
+  return createFactoryComponent<FileListProps>('FileList', 'FileListFactory')({
+    ...props,
+    onEvent: handleEvent,
+    onFileAdd,
+    onFileRemove,
+    onFileDownload,
+    onDragOver,
+    onDragLeave,
+    onDrop
+  });
+};
 
 export default FileList;

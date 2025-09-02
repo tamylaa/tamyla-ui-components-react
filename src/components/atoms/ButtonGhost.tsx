@@ -3,7 +3,7 @@ import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
 export interface ButtonGhostProps {
   children?: React.ReactNode;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (_event: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   loading?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -13,9 +13,29 @@ export interface ButtonGhostProps {
   className?: string;
 }
 
-export const ButtonGhost = createFactoryComponent<ButtonGhostProps>(
-  'ButtonGhost',
-  'ButtonGhost'
-);
+export const ButtonGhost: React.FC<ButtonGhostProps> = ({
+  onClick,
+  children,
+  ...props
+}) => {
+  const handleEvent = (eventType: string, detail: any) => {
+    if (eventType === 'click' && onClick) {
+      const syntheticEvent = {
+        ...detail,
+        preventDefault: () => detail.preventDefault(),
+        stopPropagation: () => detail.stopPropagation(),
+        target: detail.target,
+        currentTarget: detail.currentTarget
+      } as React.MouseEvent<HTMLButtonElement>;
+      onClick(syntheticEvent);
+    }
+  };
+
+  return createFactoryComponent<ButtonGhostProps>('ButtonGhost', 'ButtonGhost')({
+    ...props,
+    children,
+    onEvent: handleEvent
+  });
+};
 
 export default ButtonGhost;

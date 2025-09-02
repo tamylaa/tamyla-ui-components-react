@@ -8,7 +8,9 @@ export default {
     '**/?(*.)+(spec|test).tsx'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: 'tsconfig.jest.json'
+    }],
     '^.+\\.(js|jsx)$': 'babel-jest'
   },
   moduleNameMapper: {

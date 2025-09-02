@@ -24,9 +24,9 @@ interface ButtonProps {
   hapticFeedback?: boolean;
   analyticsTracking?: boolean;
   // Event handlers
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onFocus?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
+  onClick?: (_event: React.MouseEvent<HTMLButtonElement>) => void;
+  onFocus?: (_event: React.FocusEvent<HTMLButtonElement>) => void;
+  onBlur?: (_event: React.FocusEvent<HTMLButtonElement>) => void;
 }
 
 // Simple Button component for now - will be enhanced with factory bridge later
@@ -38,6 +38,8 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   text,
   onClick,
+  onFocus,
+  onBlur,
   ...props
 }) => {
   return (
@@ -45,6 +47,8 @@ export const Button: React.FC<ButtonProps> = ({
       type="button"
       disabled={disabled || loading}
       onClick={onClick}
+      onFocus={onFocus}
+      onBlur={onBlur}
       className={`tamyla-button tamyla-button--${variant} tamyla-button--${size}`}
       data-loading={loading}
       {...props}
