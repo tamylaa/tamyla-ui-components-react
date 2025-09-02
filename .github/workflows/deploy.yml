@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/**'
       - 'package.json'
+      - 'package-lock.json'
       - 'rollup.config.js'
       - 'tsconfig.json'
       - '.github/workflows/**'
