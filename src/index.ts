@@ -10,12 +10,13 @@ export { designTokens } from './core/design-tokens';
 // export { TamylaThemeProvider, useTamylaTheme, GlobalStyles } from './core/theme-provider';
 
 // Factory Bridge - SINGLE UNIFIED ARCHITECTURE
-export {
-  FactoryBridge,
-  useFactoryBridge,
-  AVAILABLE_FACTORIES,
-  createFactoryComponent
-} from './core/factory/factory-bridge';
+// Direct export to test inclusion
+export const DIRECT_TEST_EXPORT = 'Direct export from index.ts';
+
+// Import and re-export
+import { TEST_EXPORT, FactoryBridge } from './core/factory/factory-bridge';
+export { TEST_EXPORT, FactoryBridge };
+
 // Export all React component exports
 export * from './core/factory/factory-bridge';
 

@@ -1,0 +1,1 @@
+export const FACTORY_BRIDGE_TEST = 'Factory Bridge is loaded';
