@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
-    "@tamyla/ui-components": "^1.1.0",
+    "@tamyla/ui-components": "^1.1.3",
     "framer-motion": "^10.16.16",
     "react-redux": "^9.0.4",
     "redux-persist": "^6.0.0",
