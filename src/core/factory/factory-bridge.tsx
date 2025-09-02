@@ -8,8 +8,8 @@ import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 // Import what's actually exported from ui-components
 import {
   ButtonFactory,
-  InputFactory,
-  CardFactory,
+  InputFactory as InputFactoryClass,
+  CardFactory as CardFactoryClass,
   ActionCardFactory,
   SearchBarFactory,
   ContentCardFactory,
@@ -41,19 +41,19 @@ try {
   OrganismTemplates = additionalImports.OrganismTemplates;
 } catch {
   // Optional imports not available
-}// Factory instances - CORRECTED: They're already objects with .create() methods!
+}// Factory instances - CORRECTED: Handle both classes and instances properly
 const factoryInstances = {
-  buttonFactory: ButtonFactory,
-  inputFactory: InputFactory,
+  buttonFactory: ButtonFactory, // Already an instance with create method
+  inputFactory: InputFactoryClass,
   inputGroupFactory: InputGroupFactory || null, // function
-  cardFactory: CardFactory,
+  cardFactory: CardFactoryClass,
   statusIndicatorFactory: StatusIndicatorFactory || null,
-  actionCardFactory: ActionCardFactory,
-  searchBarFactory: SearchBarFactory,
-  contentCardFactory: ContentCardFactory,
-  fileListFactory: FileListFactory,
-  notificationFactory: NotificationFactory,
-  searchInterfaceFactory: SearchInterfaceFactory,
+  actionCardFactory: ActionCardFactory, // already an instance
+  searchBarFactory: SearchBarFactory, // already an instance
+  contentCardFactory: ContentCardFactory, // function
+  fileListFactory: FileListFactory, // function
+  notificationFactory: NotificationFactory, // function
+  searchInterfaceFactory: SearchInterfaceFactory, // function
   rewardSystemFactory: RewardSystem || null, // class factory
   // Organism-level factories
   organismFactory: OrganismFactory || null, // function factory
