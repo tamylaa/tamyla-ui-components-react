@@ -78,13 +78,15 @@ describe('Factory Bridge', () => {
   test('renders with children', async () => {
     render(
       <FactoryBridge factory="Button" config={{ text: 'Button' }}>
-        <span>Child content</span>
+        <span data-testid="original-child">Child content</span>
       </FactoryBridge>
     );
 
-    // Wait for children to be rendered
+    // Wait for the original children to be rendered
     await waitFor(() => {
-      expect(screen.getByText('Child content')).toBeInTheDocument();
+      const originalChild = screen.getByTestId('original-child');
+      expect(originalChild).toBeInTheDocument();
+      expect(originalChild).toHaveTextContent('Child content');
     });
 
     // Also verify the factory container was created
@@ -92,11 +94,17 @@ describe('Factory Bridge', () => {
       const container = screen.getByTestId('factory-container-Button');
       expect(container).toBeInTheDocument();
     });
+
+    // Verify the factory element was also created (the mock button)
+    await waitFor(() => {
+      const mockComponent = document.querySelector('[data-mock="true"]');
+      expect(mockComponent).toBeInTheDocument();
+    });
   });
 
   test('handles missing factory gracefully', () => {
-    // Mock console.error to avoid noise in test output
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Mock console.warn to catch the expected warning (our system uses warn, not error)
+    const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(
       <FactoryBridge
@@ -105,13 +113,12 @@ describe('Factory Bridge', () => {
       />
     );
 
-    // Should not crash and should log error
-    expect(consoleError).toHaveBeenCalledWith(
-      expect.stringContaining('Factory NonExistentFactory not found'),
-      expect.any(Array)
+    // Should not crash and should log warning
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining('Factory NonExistentFactory not found')
     );
 
-    consoleError.mockRestore();
+    consoleWarn.mockRestore();
   });
 
   test('passes config to factory correctly', async () => {

@@ -45,12 +45,14 @@ export class FactoryImporter {
       // Import the main UI components module
       const uiComponents = await import('@tamyla/ui-components');
       
-      // Clear mock factories and load real ones
-      this.factories.clear();
+      // Don't clear mock factories - instead, replace them selectively
+      // this.factories.clear(); // REMOVED - keep mock factories as fallbacks
       this.loadFromModule(uiComponents);
       
       // Success - factories loaded from @tamyla/ui-components
+      console.log('✅ Real factories loaded from @tamyla/ui-components');
     } catch (error) {
+      console.warn('FactoryImporter: Failed to load real factories, using mocks:', error);
       // Fallback to mock factories if import fails
       if (this.factories.size === 0) {
         this.createMockFactories();
@@ -60,6 +62,8 @@ export class FactoryImporter {
 
   private createMockFactories(): void {
     // Create functional mock factories that return proper DOM elements
+    // ALL factories follow the same pattern: { create: (props) => HTMLElement }
+    
     const createInputFactory = () => ({
       create: (props: any = {}) => {
         const container = document.createElement('div');
@@ -113,6 +117,19 @@ export class FactoryImporter {
       },
       createSecondary: (props: any = {}) => {
         return createButtonFactory().create({ ...props, variant: 'secondary' });
+      },
+      createGhost: (props: any = {}) => {
+        const btn = createButtonFactory().create({ ...props, variant: 'ghost' });
+        btn.style.background = 'transparent';
+        btn.style.border = '1px solid #007acc';
+        btn.style.color = '#007acc';
+        return btn;
+      },
+      createDanger: (props: any = {}) => {
+        return createButtonFactory().create({ ...props, variant: 'danger' });
+      },
+      createSuccess: (props: any = {}) => {
+        return createButtonFactory().create({ ...props, variant: 'success' });
       }
     });
 
@@ -260,63 +277,66 @@ export class FactoryImporter {
       }
     });
 
-    const createBasicFactory = (elementType: string, className: string) => ({
+    // Standardized factory creator for simple components
+    const createStandardFactory = (elementType: string, className: string, defaultContent?: string) => ({
       create: (props: any = {}) => {
         const element = document.createElement(elementType);
         element.className = className;
-        element.style.cssText = 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #f8f9fa;';
+        element.style.cssText = 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #f8f9fa; font-family: inherit;';
         
         if (props.content) {
           element.textContent = props.content;
         } else if (props.children) {
           element.textContent = props.children;
         } else {
-          element.textContent = `Mock ${className}`;
+          element.textContent = defaultContent || `Mock ${className}`;
         }
         
         return element;
       }
     });
 
-    // Set up all factory instances
+    // Set up ALL factory instances with consistent structure
+    // Every factory is an object with a 'create' method
     this.factories.set('ButtonFactory', createButtonFactory());
     this.factories.set('InputFactory', createInputFactory());
     this.factories.set('CardFactory', createCardFactory());
     this.factories.set('SearchBarFactory', createSearchBarFactory());
     this.factories.set('ActionCardFactory', createActionCardFactory());
-    this.factories.set('ContentCardFactory', createCardFactory());
     this.factories.set('SearchInterfaceFactory', createSearchInterfaceFactory());
-    this.factories.set('FileListFactory', createBasicFactory('div', 'tamyla-file-list'));
-    this.factories.set('NotificationFactory', createBasicFactory('div', 'tamyla-notification'));
-    this.factories.set('StatusIndicatorFactory', createBasicFactory('span', 'tamyla-status-indicator'));
+    this.factories.set('StatusIndicatorFactory', createStandardFactory('span', 'tamyla-status-indicator', 'Status'));
     
-    // Handle class-based factories that need instantiation
-    this.factories.set('CampaignSelectorSystem', {
-      create: (props: any = {}) => createBasicFactory('div', 'tamyla-campaign-selector').create(props)
-    });
+    // All the following factories use the same consistent pattern
+    this.factories.set('ContentCardFactory', createCardFactory()); // Reuse card factory
+    this.factories.set('FileListFactory', createStandardFactory('div', 'tamyla-file-list', 'File List'));
+    this.factories.set('NotificationFactory', createStandardFactory('div', 'tamyla-notification', 'Notification'));
+    this.factories.set('CampaignSelectorSystem', createStandardFactory('div', 'tamyla-campaign-selector', 'Campaign Selector'));
+    this.factories.set('ContentManagerApplicationFactory', createStandardFactory('div', 'tamyla-content-manager', 'Content Manager'));
+    this.factories.set('EnhancedSearchApplicationFactory', createSearchInterfaceFactory()); // Reuse search interface
+    this.factories.set('TamylaUISystem', createStandardFactory('div', 'tamyla-ui-system', 'Tamyla UI System'));
+    this.factories.set('RewardSystem', createStandardFactory('div', 'tamyla-reward-system', 'Reward System'));
+    this.factories.set('InputGroupFactory', createStandardFactory('div', 'tamyla-input-group', 'Input Group'));
+    this.factories.set('OrganismTemplates', createStandardFactory('div', 'tamyla-organism-templates', 'Organism Templates'));
     
-    this.factories.set('ContentManagerApplicationFactory', {
-      create: (props: any = {}) => createBasicFactory('div', 'tamyla-content-manager').create(props)
-    });
-    
-    // Additional organisms and applications
-    this.factories.set('EnhancedSearchApplicationFactory', createSearchInterfaceFactory());
-    this.factories.set('TamylaUISystem', createBasicFactory('div', 'tamyla-ui-system'));
+    // Special OrganismFactory with multiple methods
     this.factories.set('OrganismFactory', {
       create: (type: string, props: any = {}) => {
         const factory = this.factories.get(`${type}Factory`);
         if (factory && typeof factory.create === 'function') {
           return factory.create(props);
         }
-        return createBasicFactory('div', `tamyla-${type}`).create(props);
+        return createStandardFactory('div', `tamyla-${type}`, `${type} Organism`).create(props);
       },
       createSearchInterface: (props: any = {}) => createSearchInterfaceFactory().create(props)
     });
     
-    console.log('✅ Mock factories created with proper DOM elements');
+    console.log('✅ ALL mock factories created with consistent structure');
+    console.log('Available factories:', Array.from(this.factories.keys()));
   }
 
   private loadFromModule(module: any): void {
+    console.log('🔄 Loading factories from module...');
+    
     // Core factories - import with error handling
     const coreImports = this.safeRequireFromModule(module, [
       'ButtonFactory',
@@ -331,9 +351,15 @@ export class FactoryImporter {
       'RewardSystem'
     ]);
 
-    // Store core factories
+    // Store core factories (only if they're valid, and normalize them)
     Object.entries(coreImports).forEach(([key, value]) => {
-      this.factories.set(key, value);
+      const normalizedFactory = this.normalizeFactory(value);
+      if (this.isValidFactory(normalizedFactory)) {
+        this.factories.set(key, normalizedFactory);
+        console.log(`✅ Loaded and normalized real factory: ${key}`);
+      } else {
+        console.warn(`⚠️ Invalid factory ${key}, keeping mock`);
+      }
     });
 
     // Optional factories - try to load but don't fail if missing
@@ -348,10 +374,110 @@ export class FactoryImporter {
       'OrganismTemplates'
     ], false);
 
-    // Store optional factories
+    // Store optional factories (only if they're valid, and normalize them)
     Object.entries(optionalImports).forEach(([key, value]) => {
-      this.factories.set(key, value);
+      const normalizedFactory = this.normalizeFactory(value);
+      if (this.isValidFactory(normalizedFactory)) {
+        this.factories.set(key, normalizedFactory);
+        console.log(`✅ Loaded and normalized optional factory: ${key}`);
+      } else if (value !== undefined) {
+        console.warn(`⚠️ Invalid optional factory ${key}, keeping mock`);
+      }
     });
+  }
+
+  /**
+   * Normalize any factory structure to use the consistent create method pattern
+   */
+  private normalizeFactory(factory: any): any {
+    if (!factory) return null;
+
+    // If it's already an object with a create method, return as-is
+    if (typeof factory === 'object' && typeof factory.create === 'function') {
+      return factory;
+    }
+
+    // If it's a direct function, wrap it in an object with create method
+    if (typeof factory === 'function') {
+      return {
+        create: factory
+      };
+    }
+
+    // If it's a class constructor, wrap it properly
+    if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
+      return {
+        create: (props: any = {}) => {
+          try {
+            const instance = new factory(props);
+            // If the instance has a render method, call it to get DOM
+            if (instance.render && typeof instance.render === 'function') {
+              return instance.render();
+            }
+            // If the instance has an element property, return it
+            if (instance.element instanceof HTMLElement) {
+              return instance.element;
+            }
+            // Otherwise create a basic element
+            const element = document.createElement('div');
+            element.className = `tamyla-${factory.name.toLowerCase()}`;
+            element.textContent = `${factory.name} Instance`;
+            return element;
+          } catch (error) {
+            console.warn(`Failed to instantiate ${factory.name}:`, error);
+            // Return fallback element
+            const element = document.createElement('div');
+            element.className = `tamyla-${factory.name.toLowerCase()}-fallback`;
+            element.textContent = `${factory.name} (Fallback)`;
+            return element;
+          }
+        }
+      };
+    }
+
+    // Handle objects that might have other factory patterns
+    if (typeof factory === 'object') {
+      // Check for common factory patterns and try to normalize them
+      const possibleMethods = ['render', 'createElement', 'build', 'generate'];
+      
+      for (const method of possibleMethods) {
+        if (typeof factory[method] === 'function') {
+          return {
+            create: factory[method].bind(factory)
+          };
+        }
+      }
+      
+      // If it's an object with properties but no obvious factory method,
+      // treat it as a factory config and create a simple factory
+      if (Object.keys(factory).length > 0) {
+        return {
+          create: (props: any = {}) => {
+            const element = document.createElement('div');
+            element.className = 'tamyla-normalized-factory';
+            element.textContent = `Normalized Factory (${Object.keys(factory).join(', ')})`;
+            
+            // Apply any style or config from the factory object
+            if (factory.style) {
+              Object.assign(element.style, factory.style);
+            }
+            
+            return element;
+          }
+        };
+      }
+    }
+
+    // If we can't normalize it, return null (will be caught by validation)
+    console.warn('Unable to normalize factory:', factory);
+    return null;
+  }
+
+  private isValidFactory(factory: any): boolean {
+    if (!factory) return false;
+    
+    // After normalization, all factories should be objects with create methods
+    return typeof factory === 'object' && typeof factory.create === 'function';
   }
 
   private async safeRequire(moduleName: string, properties: string[], required = true): Promise<Record<string, any>> {
