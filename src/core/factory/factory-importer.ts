@@ -398,6 +398,36 @@ export class FactoryImporter {
     if (typeof factory === 'object' && typeof factory.create === 'function') {
       normalizedFactory = factory;
     }
+    // If it's a class constructor, wrap it properly (check this first - more specific condition)
+    else if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
+      normalizedFactory = {
+        create: (props: any = {}) => {
+          try {
+            const instance = new factory(props);
+            // If the instance has a render method, call it to get DOM
+            if (instance.render && typeof instance.render === 'function') {
+              return instance.render();
+            }
+            // If the instance has an element property, return it
+            if (instance.element instanceof HTMLElement) {
+              return instance.element;
+            }
+            // Otherwise create a basic element
+            const element = document.createElement('div');
+            element.className = `tamyla-${factory.name.toLowerCase()}`;
+            element.textContent = `${factory.name} Instance`;
+            return element;
+          } catch (error) {
+            console.warn(`Failed to instantiate ${factory.name}:`, error);
+            // Return fallback element
+            const element = document.createElement('div');
+            element.className = `tamyla-${factory.name.toLowerCase()}-fallback`;
+            element.textContent = `${factory.name} (Fallback)`;
+            return element;
+          }
+        }
+      };
+    }
     // If it's a direct function, wrap it in an object with create method
     else if (typeof factory === 'function') {
       normalizedFactory = {
@@ -453,36 +483,6 @@ export class FactoryImporter {
         }
       };
     }
-    // If it's a class constructor, wrap it properly
-    else if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
-      normalizedFactory = {
-        create: (props: any = {}) => {
-          try {
-            const instance = new factory(props);
-            // If the instance has a render method, call it to get DOM
-            if (instance.render && typeof instance.render === 'function') {
-              return instance.render();
-            }
-            // If the instance has an element property, return it
-            if (instance.element instanceof HTMLElement) {
-              return instance.element;
-            }
-            // Otherwise create a basic element
-            const element = document.createElement('div');
-            element.className = `tamyla-${factory.name.toLowerCase()}`;
-            element.textContent = `${factory.name} Instance`;
-            return element;
-          } catch (error) {
-            console.warn(`Failed to instantiate ${factory.name}:`, error);
-            // Return fallback element
-            const element = document.createElement('div');
-            element.className = `tamyla-${factory.name.toLowerCase()}-fallback`;
-            element.textContent = `${factory.name} (Fallback)`;
-            return element;
-          }
-        }
-      };
-    }
     // Handle objects that might have other factory patterns
     else if (typeof factory === 'object') {
       // Check for common factory patterns and try to normalize them
@@ -501,7 +501,7 @@ export class FactoryImporter {
       // treat it as a factory config and create a simple factory
       if (!normalizedFactory && Object.keys(factory).length > 0) {
         normalizedFactory = {
-          create: (props: any = {}) => {
+          create: (_props: any = {}) => {
             const element = document.createElement('div');
             element.className = 'tamyla-normalized-factory';
             element.textContent = `Normalized Factory (${Object.keys(factory).join(', ')})`;
@@ -595,7 +595,7 @@ export class FactoryImporter {
     if (factoryName.includes('Organism')) {
       // OrganismFactory missing methods
       if (!normalizedFactory.createSearchInterface) {
-        normalizedFactory.createSearchInterface = (props: any = {}) => {
+        normalizedFactory.createSearchInterface = (_props: any = {}) => {
           const element = document.createElement('div');
           element.className = 'tamyla-search-interface';
           element.textContent = 'Search Interface (Mock)';
