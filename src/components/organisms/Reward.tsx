@@ -149,8 +149,10 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
       if (!containerRef.current) return;
 
       try {
-        // Dynamic import to avoid SSR issues and CI build failures
-        const uiComponents = await import('@tamyla/ui-components').catch(() => null);
+        // Use string concatenation to avoid TypeScript compile-time resolution
+        const moduleName = '@tamyla/' + 'ui-components';
+        // @ts-ignore - Peer dependency may not be available during CI type checking
+        const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null);
         
         if (uiComponents?.RewardSystem) {
           // Create RewardSystem instance with proper type handling

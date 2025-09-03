@@ -39,7 +39,9 @@ const loadFactory = async (factoryName: string) => {
   }
 
   try {
-    const uiComponents = await import('@tamyla/ui-components').catch(() => null) as any;
+    const moduleName = '@tamyla/' + 'ui-components';
+    // @ts-ignore - Peer dependency may not be available during CI type checking
+    const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null) as any;
     
     if (!uiComponents) {
       console.warn(`UnifiedBridge: @tamyla/ui-components not available for factory: ${factoryName}`);

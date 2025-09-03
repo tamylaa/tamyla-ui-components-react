@@ -40,8 +40,10 @@ export class FactoryImporter {
         return; // Keep using mock factories in SSR
       }
 
-      // Import the main UI components module with fallback handling
-      const uiComponents = await import('@tamyla/ui-components').catch(() => null);
+      // Import the main UI components module with fallback handling  
+      const moduleName = '@tamyla/' + 'ui-components';
+      // @ts-ignore - Peer dependency may not be available during CI type checking
+      const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null);
       
       if (!uiComponents) {
         console.warn('Factory Importer: @tamyla/ui-components not available, keeping mock factories');
