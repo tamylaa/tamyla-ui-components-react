@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/ui-components-react",
-  "version": "2.2.0",
+  "version": "4.0.1",
   "description": "React-based UI component library with Factory Bridge pattern - integrates seamlessly with @tamyla/ui-components",
   "type": "module",
   "main": "dist/index.esm.js",
