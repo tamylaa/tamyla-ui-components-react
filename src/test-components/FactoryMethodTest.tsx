@@ -3,7 +3,7 @@
  * Tests one component at a time to verify our enhanced factory methods work
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Test just the Button component with our enhanced factory methods
 import { ReactButton } from '../core/factory/factory-components';
@@ -17,7 +17,7 @@ const FactoryMethodTest: React.FC = () => {
     setTestResults(prev => [...prev, result]);
   };
 
-  const testEnhancedFactoryMethods = async () => {
+  const testEnhancedFactoryMethods = useCallback(async () => {
     try {
       setCurrentTest('Testing enhanced factory methods...');
 
@@ -102,16 +102,16 @@ const FactoryMethodTest: React.FC = () => {
       addResult(`❌ Test failed with error: ${error instanceof Error ? error.message : String(error)}`);
       setCurrentTest('Tests failed!');
     }
-  };
+  }, [addResult]);
 
   useEffect(() => {
     // Run tests after component mounts
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       testEnhancedFactoryMethods();
     }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => window.clearTimeout(timer);
+  }, [testEnhancedFactoryMethods]);
 
   return (
     <div style={{ padding: '20px', fontFamily: 'monospace' }}>
@@ -135,7 +135,7 @@ const FactoryMethodTest: React.FC = () => {
       <div style={{ marginTop: '20px' }}>
         <h3>Test Button Component:</h3>
         <ReactButton 
-          config={{ variant: "primary" }}
+          config={{ variant: 'primary' }}
           onEvent={() => addResult('✅ ReactButton click works')}
         >
           Test Button Click
