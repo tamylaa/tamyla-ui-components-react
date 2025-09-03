@@ -1,13 +1,18 @@
 /**
- * Main Entry Point - UI Components React v1.1.1
- * Professional React-based component library with Trading Portal state management
- * Enhanced with ESLint 9.x flat config support and improved npm publishing
+ * Tamyla UI React Components v1.1.1
+ * 
+ * Native React components that use the same design tokens
+ * and styles as the vanilla JavaScript components.
+ * 
+ * ARCHITECTURE CHANGE: Moving from complex factory bridge to native React components
+ * for better performance, simpler architecture, and Redux integration.
  */
 
-// Core exports
+// Native React Components (NEW - recommended approach)
+export * from './components';
+
+// Core design tokens
 export { designTokens } from './core/design-tokens';
-// Temporarily disabled due to Rollup JSX parsing issues
-// export { TamylaThemeProvider, useTamylaTheme, GlobalStyles } from './core/theme-provider';
 
 // Factory Bridge - SINGLE UNIFIED ARCHITECTURE
 // Direct export to test inclusion

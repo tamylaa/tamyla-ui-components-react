@@ -74,6 +74,27 @@ export class FactoryRegistry {
         return null;
       }
 
+      // If factory is a class, instantiate it first
+      if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
+        const instance = new factory();
+        
+        if (method) {
+          if (typeof instance[method] === 'function') {
+            return instance[method].bind(instance);
+          } else {
+            console.warn(`FactoryRegistry: Method ${method} not found on factory instance`);
+            return null;
+          }
+        }
+        
+        // If no method specified but instance has create method, return that
+        if (typeof instance.create === 'function') {
+          return instance.create.bind(instance);
+        }
+        
+        return instance;
+      }
+
       if (method) {
         if (typeof factory[method] === 'function') {
           return factory[method].bind(factory);

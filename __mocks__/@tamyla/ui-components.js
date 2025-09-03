@@ -17,7 +17,22 @@ class MockFactory {
     const element = document.createElement('div');
     element.className = 'mock-component';
     element.setAttribute('data-mock', 'true');
-    element.setAttribute('data-config', JSON.stringify(config));
+    
+    // Safely stringify config without circular references
+    try {
+      const safeConfig = { ...config };
+      // Remove React elements and other non-serializable properties
+      if (safeConfig.children) {
+        delete safeConfig.children;
+      }
+      if (safeConfig.container) {
+        delete safeConfig.container;
+      }
+      element.setAttribute('data-config', JSON.stringify(safeConfig));
+    } catch (error) {
+      // Fallback if JSON.stringify fails
+      element.setAttribute('data-config', 'config-present');
+    }
 
     // Handle children if provided in config
     if (config.children) {

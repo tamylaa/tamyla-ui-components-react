@@ -400,7 +400,56 @@ export class FactoryImporter {
     // If it's a direct function, wrap it in an object with create method
     if (typeof factory === 'function') {
       return {
-        create: factory
+        create: (props: any = {}) => {
+          try {
+            // Call the function with props including container
+            const result = factory(props);
+            
+            // If result is already a DOM element, return it
+            if (result instanceof HTMLElement) {
+              return result;
+            }
+            
+            // If result has an element property, return it
+            if (result && typeof result === 'object' && result.element instanceof HTMLElement) {
+              return result.element;
+            }
+            
+            // If result has render method, call it with container
+            if (result && typeof result === 'object' && typeof result.render === 'function') {
+              const rendered = result.render(props.container);
+              if (rendered instanceof HTMLElement) {
+                return rendered;
+              }
+              // If render returns string, convert to element
+              if (typeof rendered === 'string') {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = rendered;
+                return wrapper;
+              }
+            }
+            
+            // If function returned a string, convert to element
+            if (typeof result === 'string') {
+              const element = document.createElement('div');
+              element.innerHTML = result;
+              return element;
+            }
+            
+            // Create fallback element
+            const element = document.createElement('div');
+            element.className = 'tamyla-function-factory';
+            element.textContent = `Function factory: ${factory.name || 'unnamed'}`;
+            return element;
+            
+          } catch (error) {
+            console.warn(`Function factory error for ${factory.name || 'unnamed'}:`, error);
+            const element = document.createElement('div');
+            element.className = 'tamyla-function-factory-error';
+            element.textContent = `Function factory error: ${error instanceof Error ? error.message : 'Unknown error'}`;
+            return element;
+          }
+        }
       };
     }
 
@@ -517,14 +566,43 @@ export class FactoryImporter {
               create: (props: any = {}) => {
                 try {
                   const instance = new module[prop](props);
-                  // If the instance has a render method, call it to get DOM
+                  
+                  // If the instance has a render method, call it with container
                   if (instance.render && typeof instance.render === 'function') {
-                    return instance.render();
+                    const renderResult = instance.render(props?.container);
+                    // Ensure we return a DOM element
+                    if (renderResult instanceof HTMLElement) {
+                      return renderResult;
+                    }
+                    // If render doesn't return a DOM element, create one
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `tamyla-${prop.toLowerCase()}-wrapper`;
+                    if (typeof renderResult === 'string') {
+                      wrapper.innerHTML = renderResult;
+                    } else {
+                      wrapper.textContent = `${prop} Rendered`;
+                    }
+                    return wrapper;
                   }
+                  
                   // If the instance has an element property, return it
                   if (instance.element instanceof HTMLElement) {
                     return instance.element;
                   }
+                  
+                  // If instance has initialize method, call it
+                  if (instance.initialize && typeof instance.initialize === 'function') {
+                    try {
+                      instance.initialize(props?.container);
+                    } catch (initError) {
+                      console.warn(`Failed to initialize ${prop}:`, initError);
+                    }
+                    // Check again for element after initialization
+                    if (instance.element instanceof HTMLElement) {
+                      return instance.element;
+                    }
+                  }
+                  
                   // Otherwise create a basic element
                   const element = document.createElement('div');
                   element.className = `tamyla-${prop.toLowerCase()}`;
