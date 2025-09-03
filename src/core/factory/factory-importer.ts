@@ -40,8 +40,13 @@ export class FactoryImporter {
         return; // Keep using mock factories in SSR
       }
 
-      // Import the main UI components module
-      const uiComponents = await import('@tamyla/ui-components');
+      // Import the main UI components module with fallback handling
+      const uiComponents = await import('@tamyla/ui-components').catch(() => null);
+      
+      if (!uiComponents) {
+        console.warn('Factory Importer: @tamyla/ui-components not available, keeping mock factories');
+        return;
+      }
       
       // Don't clear mock factories - instead, replace them selectively
       // this.factories.clear(); // REMOVED - keep mock factories as fallbacks

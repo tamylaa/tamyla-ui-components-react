@@ -39,7 +39,12 @@ const loadFactory = async (factoryName: string) => {
   }
 
   try {
-    const uiComponents = await import('@tamyla/ui-components') as any;
+    const uiComponents = await import('@tamyla/ui-components').catch(() => null) as any;
+    
+    if (!uiComponents) {
+      console.warn(`UnifiedBridge: @tamyla/ui-components not available for factory: ${factoryName}`);
+      return null;
+    }
     
     // Map factory names to their imports
     const factoryMap: { [key: string]: string } = {
