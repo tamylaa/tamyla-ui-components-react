@@ -31,7 +31,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
   useEffect(() => {
     const container = containerRef.current;
     if (!factoryInstance || !container) {
-      console.warn(`FactoryBridge: No factory instance for ${factory}`);
       return;
     }
 
@@ -64,7 +63,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
             element = fallback;
           }
         } catch (error) {
-          console.warn(`FactoryBridge: Error calling factory function for ${factory}:`, error);
           const fallback = document.createElement('div');
           fallback.className = `factory-bridge-error tamyla-${factory.toLowerCase()}`;
           fallback.textContent = `${factory} component error`;
@@ -79,8 +77,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
 
       // Validate that we got a proper DOM element
       if (!element || !(element instanceof HTMLElement)) {
-        console.warn(`FactoryBridge: Factory ${factory} did not return a valid HTMLElement:`, element);
-        
         // Create a safe fallback element
         const fallback = document.createElement('div');
         fallback.className = `factory-bridge-fallback tamyla-${factory.toLowerCase()}`;
@@ -108,7 +104,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
               element = fallback;
             }
           } catch (conversionError) {
-            console.warn(`Failed to convert result to DOM element:`, conversionError);
             element = fallback;
           }
         } else {
@@ -130,10 +125,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         container.appendChild(element);
         componentRef.current = element;
       } catch (appendError) {
-        console.error(`FactoryBridge: Failed to append element for ${factory}:`, appendError);
-        console.error('Element type:', element.constructor.name);
-        console.error('Element:', element);
-        
         // Create final fallback if even appendChild fails
         const errorFallback = document.createElement('div');
         errorFallback.className = `factory-bridge-error tamyla-${factory.toLowerCase()}`;
@@ -164,7 +155,6 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
       }
 
     } catch (error) {
-      console.error(`FactoryBridge: Error creating component ${factory}:`, error);
       if (container) {
         container.innerHTML = `
           <div style="color: red; padding: 10px; border: 1px solid red; border-radius: 4px; background: #fee;">

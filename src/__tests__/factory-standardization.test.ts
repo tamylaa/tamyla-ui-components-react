@@ -15,12 +15,10 @@ describe('Standardized Factory System', () => {
   describe('Factory Consistency Tests', () => {
     test('factoryImporter is available', () => {
       expect(factoryImporter).toBeDefined();
-      console.log('✅ Factory importer is available');
     });
 
     test('factoryRegistry is available', () => {
       expect(factoryRegistry).toBeDefined();
-      console.log('✅ Factory registry is available');
     });
 
     test('All mock factories use .create() method', () => {
@@ -32,10 +30,7 @@ describe('Standardized Factory System', () => {
       Object.entries(factories).forEach(([name, factory]) => {
         expect(factory).toBeDefined();
         expect(typeof factory.create).toBe('function');
-        console.log(`✅ ${name} has .create() method`);
       });
-
-      console.log(`✅ Validated ${Object.keys(factories).length} factories`);
     });
 
     test('Factory registry provides consistent interface', () => {
@@ -48,10 +43,7 @@ describe('Standardized Factory System', () => {
         const factory = factoryRegistry.getFactory(factoryName);
         expect(factory).toBeDefined();
         expect(typeof factory).toBe('function');
-        console.log(`✅ ${factoryName} accessible via registry`);
       });
-
-      console.log(`✅ Validated ${availableFactories.length} registry factories`);
     });
 
     test('Key factories can create DOM elements', () => {
@@ -70,8 +62,6 @@ describe('Standardized Factory System', () => {
         const element = factory.create({ test: 'data' });
         expect(element).toBeDefined();
         expect(element instanceof HTMLElement).toBe(true);
-        
-        console.log(`✅ ${factoryName}.create() produces HTMLElement`);
       });
     });
 
@@ -92,7 +82,6 @@ describe('Standardized Factory System', () => {
         const validTags = ['button', 'div', 'span'];
         expect(validTags).toContain(element.tagName.toLowerCase());
         
-        console.log(`✅ ButtonFactory.${method}() works correctly (${element.tagName.toLowerCase()})`);
       });
     });
   });
@@ -101,7 +90,6 @@ describe('Standardized Factory System', () => {
     test('Factory registry handles missing factories gracefully', () => {
       const nonExistentFactory = factoryRegistry.getFactory('NonExistentFactory');
       expect(nonExistentFactory).toBeNull();
-      console.log('✅ Missing factory handled gracefully');
     });
 
     test('Factory importer provides fallback for unknown factories', () => {
@@ -112,8 +100,6 @@ describe('Standardized Factory System', () => {
       const element = fallbackFactory.create();
       expect(element instanceof HTMLElement).toBe(true);
       expect(element.textContent).toContain('Fallback');
-      
-      console.log('✅ Fallback factory works correctly');
     });
   });
 
@@ -123,7 +109,7 @@ describe('Standardized Factory System', () => {
       let standardizedCount = 0;
       let totalCount = 0;
 
-      Object.entries(factories).forEach(([name, factory]) => {
+      Object.entries(factories).forEach(([_name, factory]) => {
         totalCount++;
         if (factory && typeof factory.create === 'function') {
           standardizedCount++;
@@ -131,7 +117,6 @@ describe('Standardized Factory System', () => {
       });
 
       expect(standardizedCount).toBe(totalCount);
-      console.log(`✅ ${standardizedCount}/${totalCount} factories follow standardized pattern`);
     });
 
     test('Factory system is ready for production', () => {
@@ -146,12 +131,6 @@ describe('Standardized Factory System', () => {
       // Check that registry has mappings
       const registryFactories = factoryRegistry.getAvailableFactories();
       expect(registryFactories.length).toBeGreaterThan(0);
-
-      console.log('✅ Factory system is production ready');
-      console.log(`   - ${Object.keys(factories).length} factories available`);
-      console.log(`   - ${registryFactories.length} registry mappings`);
-      console.log('   - All factories use standardized .create() pattern');
-      console.log('   - Robust fallback system in place');
     });
   });
 });

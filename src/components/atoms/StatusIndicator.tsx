@@ -29,7 +29,6 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 }) => {
   const handleEvent = (eventType: string, detail: any) => {
     // Handle ui-components events if needed
-    console.log('StatusIndicator event:', eventType, detail);
   };
 
   return createFactoryComponent<StatusIndicatorProps>('StatusIndicator', 'StatusIndicator')({
