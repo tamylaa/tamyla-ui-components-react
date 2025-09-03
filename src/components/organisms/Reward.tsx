@@ -4,7 +4,8 @@
  */
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import { RewardSystem } from '@tamyla/ui-components';
+// Dynamic import to avoid SSR issues
+// import { RewardSystem } from '@tamyla/ui-components';
 
 export interface RewardProps {
   // Configuration options
@@ -144,48 +145,75 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
   }), []);
 
   useEffect(() => {
-    if (containerRef.current) {
-      // Create RewardSystem instance with proper type handling
+    const initializeReward = async () => {
+      if (!containerRef.current) return;
 
-      rewardSystemRef.current = new (RewardSystem as any)({
-        preset,
-        autoInitialize,
-        enableAchievements,
-        enableProgress,
-        enableNotifications,
-        enableXP,
-        enableLeveling,
-        ...otherProps
-      });
+      try {
+        // Dynamic import to avoid SSR issues
+        const { RewardSystem } = await import('@tamyla/ui-components');
+        
+        // Create RewardSystem instance with proper type handling
+        rewardSystemRef.current = new (RewardSystem as any)({
+          preset,
+          autoInitialize,
+          enableAchievements,
+          enableProgress,
+          enableNotifications,
+          enableXP,
+          enableLeveling,
+          ...otherProps
+        });
 
-      // Mount to the container
-      rewardSystemRef.current.mount(containerRef.current);
+        // Mount to the container
+        rewardSystemRef.current.mount(containerRef.current);
 
-      // Set up event listeners
-      if (onInitialized) {
-        rewardSystemRef.current.on('initialized', onInitialized);
-      }
-      if (onXPAwarded) {
-        rewardSystemRef.current.on('xpAwarded', onXPAwarded);
-      }
-      if (onLevelUp) {
-        rewardSystemRef.current.on('levelUp', onLevelUp);
-      }
-      if (onAchievementEarned) {
-        rewardSystemRef.current.on('achievementEarned', onAchievementEarned);
-      }
-      if (onProgressUpdated) {
-        rewardSystemRef.current.on('progressUpdated', onProgressUpdated);
-      }
-      if (onActionTracked) {
-        rewardSystemRef.current.on('actionTracked', onActionTracked);
-      }
+        // Set up event listeners
+        if (onInitialized) {
+          rewardSystemRef.current.on('initialized', onInitialized);
+        }
+        if (onXPAwarded) {
+          rewardSystemRef.current.on('xpAwarded', onXPAwarded);
+        }
+        if (onLevelUp) {
+          rewardSystemRef.current.on('levelUp', onLevelUp);
+        }
+        if (onAchievementEarned) {
+          rewardSystemRef.current.on('achievementEarned', onAchievementEarned);
+        }
+        if (onProgressUpdated) {
+          rewardSystemRef.current.on('progressUpdated', onProgressUpdated);
+        }
+        if (onActionTracked) {
+          rewardSystemRef.current.on('actionTracked', onActionTracked);
+        }
 
-      // Auto-initialize if enabled
-      if (autoInitialize) {
-        rewardSystemRef.current.initialize();
+        // Auto-initialize if enabled
+        if (autoInitialize) {
+          rewardSystemRef.current.initialize();
+        }
+      } catch (error) {
+        console.warn('RewardSystem could not be loaded, using fallback:', error);
+        
+        // Create fallback display
+        if (containerRef.current) {
+          containerRef.current.innerHTML = `
+            <div class="tamyla-reward-fallback" style="
+              padding: 1rem;
+              border: 1px solid #e0e0e0;
+              border-radius: 8px;
+              background: #f8f9fa;
+              text-align: center;
+              color: #666;
+            ">
+              <h3>Reward System</h3>
+              <p>Loading rewards and achievements...</p>
+            </div>
+          `;
+        }
       }
-    }
+    };
+
+    initializeReward();
 
     // Cleanup function
     return () => {

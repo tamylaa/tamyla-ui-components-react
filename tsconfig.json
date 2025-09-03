@@ -24,9 +24,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@tamyla/ui-components": [
-        "./scripts/mock-ui-components.js"
       ]
     }
   },

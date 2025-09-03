@@ -3,9 +3,14 @@
  *
  * Mirrors the root platform's proven factory pattern with React-specific implementation.
  * Eliminates all duplication and inconsistency.
+ * Uses dynamic imports to prevent SSR issues.
  */
 
 import React, { useEffect, useRef } from 'react';
+
+// Dynamic imports to prevent SSR DOM access issues
+// Factories will be loaded async when needed
+/*
 import {
   // Atoms - object factories with .create() method
   ButtonFactory,
@@ -22,27 +27,49 @@ import {
   // Organisms
   SearchInterfaceFactory  // function factory
 } from '@tamyla/ui-components';
+*/
 
-// Unified factory registry - matches root platform pattern
-const FACTORY_REGISTRY = {
-  // Atoms (all object factories with .create())
-  button: ButtonFactory,
-  input: InputFactory,
-  card: CardFactory,
+// Unified factory registry - will be populated dynamically to prevent SSR issues
+const FACTORY_REGISTRY: { [key: string]: any } = {};
 
-  // Molecules (mixed: objects with .create() vs functions)
-  actionCard: ActionCardFactory,
-  searchBar: SearchBarFactory,
-  contentCard: ContentCardFactory,
-  fileList: FileListFactory,
-  notification: NotificationFactory,
+// Dynamic factory loader to prevent SSR issues
+const loadFactory = async (factoryName: string) => {
+  if (FACTORY_REGISTRY[factoryName]) {
+    return FACTORY_REGISTRY[factoryName];
+  }
 
-  // Organisms (function factories)
-  searchInterface: SearchInterfaceFactory
-} as const;
+  try {
+    const uiComponents = await import('@tamyla/ui-components') as any;
+    
+    // Map factory names to their imports
+    const factoryMap: { [key: string]: string } = {
+      button: 'ButtonFactory',
+      input: 'InputFactory', 
+      card: 'CardFactory',
+      actionCard: 'ActionCardFactory',
+      searchBar: 'SearchBarFactory',
+      contentCard: 'ContentCardFactory',
+      fileList: 'FileListFactory',
+      notification: 'NotificationFactory',
+      searchInterface: 'SearchInterfaceFactory'
+    };
+
+    const importName = factoryMap[factoryName];
+    if (importName && uiComponents[importName]) {
+      FACTORY_REGISTRY[factoryName] = uiComponents[importName];
+      return FACTORY_REGISTRY[factoryName];
+    }
+    
+    console.warn(`Factory ${factoryName} not found in @tamyla/ui-components`);
+    return null;
+  } catch (error) {
+    console.warn(`Failed to load factory ${factoryName}:`, error);
+    return null;
+  }
+};
 
 // Component type definitions
-export type ComponentType = keyof typeof FACTORY_REGISTRY;
+export type ComponentType = 'button' | 'input' | 'card' | 'actionCard' | 'searchBar' | 'contentCard' | 'fileList' | 'notification' | 'searchInterface';
 
 export interface ComponentProps {
   [key: string]: any;
@@ -52,8 +79,8 @@ export interface ComponentProps {
  * Unified factory hook - handles all component types consistently
  */
 export function useComponentFactory() {
-  const createElement = (type: ComponentType, props: ComponentProps = {}): HTMLElement => {
-    const factory = FACTORY_REGISTRY[type];
+  const createElement = async (type: ComponentType, props: ComponentProps = {}): Promise<HTMLElement> => {
+    const factory = await loadFactory(type);
 
     if (!factory) {
       throw new Error(`Component type "${type}" not found in factory registry`);
@@ -107,40 +134,46 @@ export const FactoryBridge: React.FC<FactoryBridgeProps> = ({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    try {
-      // Create the vanilla component
-      const element = createElement(type, config);
+    const createAndMountComponent = async () => {
+      try {
+        // Create the vanilla component
+        const element = await createElement(type, config);
 
-      // Add any additional classes
-      if (className) {
-        element.classList.add(...className.split(' ').filter(Boolean));
+        // Add any additional classes
+        if (className) {
+          element.classList.add(...className.split(' ').filter(Boolean));
+        }
+
+        // Clear and append
+        if (containerRef.current) {
+          containerRef.current.innerHTML = '';
+          containerRef.current.appendChild(element);
+        }
+
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to create ${type} component:`, error);
+
+        // Show error placeholder
+        if (containerRef.current) {
+          containerRef.current.innerHTML = `
+            <div style="
+              padding: 1rem; 
+              border: 2px dashed #ff6b6b; 
+              border-radius: 0.375rem; 
+              background: #ffe0e0; 
+              color: #c92a2a;
+              font-family: monospace;
+              text-align: center;
+            ">
+              Error: Failed to create ${type} component
+            </div>
+          `;
+        }
       }
+    };
 
-      // Clear and append
-      containerRef.current.innerHTML = '';
-      containerRef.current.appendChild(element);
-
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`Failed to create ${type} component:`, error);
-
-      // Show error placeholder
-      if (containerRef.current) {
-        containerRef.current.innerHTML = `
-          <div style="
-            padding: 1rem; 
-            border: 2px dashed #ff6b6b; 
-            border-radius: 0.375rem; 
-            background: #ffe0e0; 
-            color: #c92a2a;
-            font-family: monospace;
-            text-align: center;
-          ">
-            Error: Failed to create ${type} component
-          </div>
-        `;
-      }
-    }
+    createAndMountComponent();
   }, [type, config, className, createElement]);
 
   return (

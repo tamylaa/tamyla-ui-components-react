@@ -11,6 +11,9 @@
 // Native React Components (NEW - recommended approach)
 export * from './components';
 
+// Test components for development
+export * from './test-components';
+
 // Core design tokens
 export { designTokens } from './core/design-tokens';
 

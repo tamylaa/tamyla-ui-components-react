@@ -10,10 +10,8 @@ export class FactoryImporter {
   private initializationPromise: Promise<void> | null = null;
 
   private constructor() {
-    // Ensure mock factories are available immediately for SSR/development
-    this.createMockFactories();
-    // Start async initialization for real factories
-    this.initializationPromise = this.initializeFactories();
+    // Don't create mock factories during construction to prevent SSR issues
+    // Mock factories will be created on first access when needed
   }
 
   static getInstance(): FactoryImporter {
@@ -60,7 +58,67 @@ export class FactoryImporter {
     }
   }
 
+  private createSSRSafeFactories(): void {
+    // Create factories that don't access DOM during SSR
+    const createSSRFactory = (name: string) => ({
+      create: (props: any = {}) => {
+        // Return a factory that will create actual DOM elements when called in browser
+        if (typeof document !== 'undefined') {
+          const element = document.createElement('div');
+          element.className = `tamyla-${name.toLowerCase()}-ssr`;
+          element.textContent = `${name} (SSR)`;
+          return element;
+        }
+        // In SSR, return a placeholder object
+        return {
+          tagName: 'DIV',
+          className: `tamyla-${name.toLowerCase()}-ssr`,
+          textContent: `${name} (SSR)`,
+          appendChild: () => {},
+          style: {},
+          // Simulate basic DOM element interface
+          outerHTML: `<div class="tamyla-${name.toLowerCase()}-ssr">${name} (SSR)</div>`
+        } as any;
+      }
+    });
+
+    // Create SSR-safe versions of all factory types
+    const factoryNames = [
+      'ButtonFactory',
+      'InputFactory', 
+      'CardFactory',
+      'SearchBarFactory',
+      'ActionCardFactory',
+      'SearchInterfaceFactory',
+      'StatusIndicatorFactory',
+      'ContentCardFactory',
+      'FileListFactory',
+      'NotificationFactory',
+      'CampaignSelectorSystem',
+      'ContentManagerApplicationFactory',
+      'EnhancedSearchApplicationFactory',
+      'TamylaUISystem',
+      'RewardSystem',
+      'InputGroupFactory',
+      'OrganismTemplates',
+      'OrganismFactory'
+    ];
+
+    factoryNames.forEach(name => {
+      this.factories.set(name, createSSRFactory(name));
+    });
+
+    console.log('✅ SSR-safe factories created');
+  }
+
   private createMockFactories(): void {
+    // Only create mock factories in browser environment
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // In SSR environment, create basic fallback factories that don't access DOM
+      this.createSSRSafeFactories();
+      return;
+    }
+
     // Create functional mock factories that return proper DOM elements
     // ALL factories follow the same pattern: { create: (props) => HTMLElement }
     
@@ -353,7 +411,7 @@ export class FactoryImporter {
 
     // Store core factories (only if they're valid, and normalize them)
     Object.entries(coreImports).forEach(([key, value]) => {
-      const normalizedFactory = this.normalizeFactory(value);
+      const normalizedFactory = this.normalizeFactory(value, key);
       if (this.isValidFactory(normalizedFactory)) {
         this.factories.set(key, normalizedFactory);
         console.log(`✅ Loaded and normalized real factory: ${key}`);
@@ -376,7 +434,7 @@ export class FactoryImporter {
 
     // Store optional factories (only if they're valid, and normalize them)
     Object.entries(optionalImports).forEach(([key, value]) => {
-      const normalizedFactory = this.normalizeFactory(value);
+      const normalizedFactory = this.normalizeFactory(value, key);
       if (this.isValidFactory(normalizedFactory)) {
         this.factories.set(key, normalizedFactory);
         console.log(`✅ Loaded and normalized optional factory: ${key}`);
@@ -389,7 +447,7 @@ export class FactoryImporter {
   /**
    * Normalize any factory structure to use the consistent create method pattern
    */
-  private normalizeFactory(factory: any): any {
+  private normalizeFactory(factory: any, factoryName?: string): any {
     if (!factory) return null;
 
     let normalizedFactory: any = null;
@@ -524,17 +582,17 @@ export class FactoryImporter {
     }
 
     // Enhance normalized factory with missing methods based on factory type
-    return this.enhanceFactoryWithMissingMethods(normalizedFactory, factory);
+    return this.enhanceFactoryWithMissingMethods(normalizedFactory, factory, factoryName);
   }
 
   /**
    * Add missing methods that React components expect
    */
-  private enhanceFactoryWithMissingMethods(normalizedFactory: any, originalFactory: any): any {
-    const factoryName = originalFactory?.name || originalFactory?.constructor?.name || 'Unknown';
+  private enhanceFactoryWithMissingMethods(normalizedFactory: any, originalFactory: any, factoryName?: string): any {
+    const name = factoryName || originalFactory?.name || originalFactory?.constructor?.name || 'Unknown';
     
     // Add missing methods based on factory type
-    if (factoryName.includes('Button')) {
+    if (name.includes('Button')) {
       // ButtonFactory missing methods
       if (!normalizedFactory.enableTradingPortalPatterns) {
         normalizedFactory.enableTradingPortalPatterns = () => {
@@ -547,7 +605,7 @@ export class FactoryImporter {
       }
     }
     
-    if (factoryName.includes('CampaignSelector')) {
+    if (name.includes('CampaignSelector')) {
       // CampaignSelectorSystem missing methods
       const mockSelectionManager = {
         on: (event: string, callback: Function) => {
@@ -582,7 +640,7 @@ export class FactoryImporter {
       };
     }
     
-    if (factoryName.includes('SearchInterface')) {
+    if (name.includes('SearchInterface')) {
       // SearchInterface missing methods
       if (!normalizedFactory.setResults) {
         normalizedFactory.setResults = (results: any[]) => {
@@ -592,7 +650,7 @@ export class FactoryImporter {
       }
     }
     
-    if (factoryName.includes('Organism')) {
+    if (name.includes('Organism')) {
       // OrganismFactory missing methods
       if (!normalizedFactory.createSearchInterface) {
         normalizedFactory.createSearchInterface = (_props: any = {}) => {
@@ -721,6 +779,16 @@ export class FactoryImporter {
   }
 
   getFactory(name: string): any {
+    // Ensure mock factories are created if this is the first access
+    if (this.factories.size === 0) {
+      this.createMockFactories();
+    }
+    
+    // Lazy initialize real factories on first access (only in browser)
+    if (!this.initialized && typeof window !== 'undefined') {
+      this.initializationPromise = this.initializeFactories();
+    }
+    
     // Factories should always be available (mock or real)
     const factory = this.factories.get(name);
     
