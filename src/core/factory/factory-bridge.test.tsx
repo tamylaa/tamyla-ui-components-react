@@ -29,9 +29,9 @@ describe('Factory Bridge', () => {
 
     // Check that the mock component was created inside
     await waitFor(() => {
-      const mockComponent = document.querySelector('[data-mock="true"]');
-      expect(mockComponent).toBeInTheDocument();
-      expect(mockComponent).toHaveAttribute('data-config', '{"text":"Factory Button"}');
+      const mockButton = container.querySelector('button');
+      expect(mockButton).toBeInTheDocument();
+      expect(mockButton).toHaveTextContent('Factory Button');
     });
   });
 
