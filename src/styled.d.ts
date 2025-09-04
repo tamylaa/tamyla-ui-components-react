@@ -1,5 +1,28 @@
 import 'styled-components';
 
+// Type declarations for peer dependencies
+declare module '@tamyla/ui-components' {
+  export interface ComponentConfig {
+    [key: string]: any;
+  }
+
+  export interface UIComponent {
+    (config?: ComponentConfig): HTMLElement;
+  }
+
+  export interface UIComponentsModule {
+    [componentName: string]: UIComponent;
+    Button?: UIComponent;
+    Card?: UIComponent;
+    Input?: UIComponent;
+    Dialog?: UIComponent;
+    // Add other component types as needed
+  }
+
+  const UIComponents: UIComponentsModule;
+  export default UIComponents;
+}
+
 declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
