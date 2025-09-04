@@ -4,7 +4,7 @@
 
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
-interface ContentItem {
+interface _ContentItem {
   id: string;
   title: string;
   type: 'image' | 'video' | 'document' | 'audio';
@@ -25,10 +25,10 @@ interface ContentManagerProps {
   showPreview?: boolean;
   enableBulkActions?: boolean;
   // Event handlers
-  onContentUploaded?: (content: ContentItem) => void;
-  onContentSelected?: (content: ContentItem) => void;
-  onContentDeleted?: (contentId: string) => void;
-  onContentUpdated?: (content: ContentItem) => void;
+  onContentUploaded?: (_content: Record<string, unknown>) => void;
+  onContentSelected?: (_content: Record<string, unknown>) => void;
+  onContentDeleted?: (_contentId: string) => void;
+  onContentUpdated?: (_content: Record<string, unknown>) => void;
 }
 
 export const ContentManager = createFactoryComponent<ContentManagerProps>(

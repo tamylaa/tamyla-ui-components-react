@@ -42,16 +42,16 @@ const loadFactory = async (factoryName: string) => {
     const moduleName = '@tamyla/' + 'ui-components';
     // @ts-ignore - Peer dependency may not be available during CI type checking
     const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null) as any;
-    
+
     if (!uiComponents) {
       console.warn(`UnifiedBridge: @tamyla/ui-components not available for factory: ${factoryName}`);
       return null;
     }
-    
+
     // Map factory names to their imports
     const factoryMap: { [key: string]: string } = {
       button: 'ButtonFactory',
-      input: 'InputFactory', 
+      input: 'InputFactory',
       card: 'CardFactory',
       actionCard: 'ActionCardFactory',
       searchBar: 'SearchBarFactory',
@@ -66,7 +66,7 @@ const loadFactory = async (factoryName: string) => {
       FACTORY_REGISTRY[factoryName] = uiComponents[importName];
       return FACTORY_REGISTRY[factoryName];
     }
-    
+
     console.warn(`Factory ${factoryName} not found in @tamyla/ui-components`);
     return null;
   } catch (error) {

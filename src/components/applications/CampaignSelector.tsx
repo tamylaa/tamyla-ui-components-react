@@ -4,23 +4,21 @@
 
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
-interface Campaign {
-  id: string;
-  name: string;
-  status: 'active' | 'paused' | 'completed';
-  budget?: number;
-  targetAudience?: string;
-  metrics?: {
-    impressions: number;
-    clicks: number;
-    conversions: number;
-  };
-}
-
 interface CampaignSelectorProps {
-  campaigns?: Campaign[];
+  campaigns?: Array<{
+    id: string;
+    name: string;
+    status: 'active' | 'paused' | 'completed';
+    budget?: number;
+    targetAudience?: string;
+    metrics?: {
+      impressions: number;
+      clicks: number;
+      conversions: number;
+    };
+  }>;
   selectedCampaign?: string;
-  onCampaignSelect?: (campaign: Campaign) => void;
+  onCampaignSelect?: (_campaign: Record<string, unknown>) => void;
   className?: string;
 }
 

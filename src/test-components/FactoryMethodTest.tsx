@@ -134,7 +134,7 @@ const FactoryMethodTest: React.FC = () => {
 
       <div style={{ marginTop: '20px' }}>
         <h3>Test Button Component:</h3>
-        <ReactButton 
+        <ReactButton
           config={{ variant: 'primary' }}
           onEvent={() => addResult('✅ ReactButton click works')}
         >

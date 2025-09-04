@@ -27,28 +27,29 @@ export const ContentCard: React.FC<ContentCardProps> = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
-  ...props
+  ...otherProps
 }) => {
   const handleEvent = (eventType: string, detail: any) => {
+    // Extract the original DOM event from the detail object
+    const event = detail?.event || detail;
+
     switch (eventType) {
       case 'click':
-        if (onClick) onClick(detail);
+        if (onClick) onClick(event);
         break;
       case 'mouseenter':
-        if (onMouseEnter) onMouseEnter(detail);
+        if (onMouseEnter) onMouseEnter(event);
         break;
       case 'mouseleave':
-        if (onMouseLeave) onMouseLeave(detail);
+        if (onMouseLeave) onMouseLeave(event);
         break;
     }
   };
 
   return createFactoryComponent<ContentCardProps>('ContentCard', 'ContentCardFactory')({
-    ...props,
-    onEvent: handleEvent,
-    onClick,
-    onMouseEnter,
-    onMouseLeave
+    ...otherProps,
+    onEvent: handleEvent
+    // Don't pass direct event handlers when using onEvent to avoid double firing
   });
 };
 

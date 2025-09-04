@@ -1,0 +1,224 @@
+{
+  "name": "Pre-Production Validation Workflow Configuration",
+  "version": "1.0.0",
+  "description": "Configuration file for customizing the pre-production validation workflow",
+
+  "releaseTypes": {
+    "patch": {
+      "description": "Bug fixes, security patches, documentation updates",
+      "skipSteps": ["performance", "manual-review"],
+      "requiredTests": ["unit", "integration"],
+      "buildRequired": true,
+      "docsUpdate": false,
+      "timeout": 300000
+    },
+    "minor": {
+      "description": "New features, enhancements, non-breaking changes",
+      "skipSteps": ["performance"],
+      "requiredTests": ["unit", "integration", "validation"],
+      "buildRequired": true,
+      "docsUpdate": true,
+      "timeout": 600000
+    },
+    "major": {
+      "description": "Breaking changes, major rewrites, architectural changes",
+      "skipSteps": [],
+      "requiredTests": ["unit", "integration", "validation", "e2e"],
+      "buildRequired": true,
+      "docsUpdate": true,
+      "timeout": 900000
+    },
+    "custom": {
+      "description": "Custom validation workflow with configurable steps",
+      "skipSteps": [],
+      "requiredTests": ["unit", "integration", "validation"],
+      "buildRequired": true,
+      "docsUpdate": false,
+      "timeout": 600000
+    }
+  },
+
+  "workflowSteps": {
+    "setup": {
+      "description": "Environment setup and validation",
+      "timeout": 60000,
+      "required": true,
+      "parallel": false
+    },
+    "code-quality": {
+      "description": "TypeScript, ESLint, and code quality checks",
+      "timeout": 120000,
+      "required": true,
+      "parallel": false,
+      "commands": [
+        "node scripts/fix-typescript-eslint.js --dry-run",
+        "npx eslint src --ext .ts,.tsx",
+        "npx tsc --noEmit"
+      ]
+    },
+    "testing": {
+      "description": "Unit and integration test execution",
+      "timeout": 300000,
+      "required": true,
+      "parallel": true,
+      "testTypes": {
+        "unit": "npx jest --testPathPattern=unit",
+        "integration": "npx jest --testPathPattern=integration",
+        "validation": "node scripts/react-component-validation.js --json",
+        "e2e": "npx jest --testPathPattern=e2e"
+      }
+    },
+    "validation": {
+      "description": "Component and export validation",
+      "timeout": 180000,
+      "required": true,
+      "parallel": false,
+      "commands": [
+        "node scripts/react-component-validation.js --report"
+      ]
+    },
+    "build": {
+      "description": "Production build generation",
+      "timeout": 240000,
+      "required": true,
+      "parallel": false,
+      "commands": [
+        "npm run build"
+      ],
+      "artifacts": [
+        "dist/index.esm.js",
+        "dist/index.d.ts",
+        "dist/index.cjs.js"
+      ]
+    },
+    "integration": {
+      "description": "Package integration and compatibility testing",
+      "timeout": 120000,
+      "required": true,
+      "parallel": false
+    },
+    "documentation": {
+      "description": "Documentation validation and generation",
+      "timeout": 60000,
+      "required": false,
+      "parallel": false,
+      "requiredFiles": [
+        "README.md",
+        "docs/README.md"
+      ]
+    },
+    "security": {
+      "description": "Security scanning and vulnerability assessment",
+      "timeout": 180000,
+      "required": true,
+      "parallel": true,
+      "commands": [
+        "npm audit --audit-level moderate",
+        "npx lockfile-lint --path package-lock.json"
+      ]
+    },
+    "performance": {
+      "description": "Performance testing and bundle analysis",
+      "timeout": 120000,
+      "required": false,
+      "parallel": false,
+      "thresholds": {
+        "maxBundleSize": 1048576,
+        "maxImportTime": 5000
+      }
+    },
+    "manual-review": {
+      "description": "Manual review and approval process",
+      "timeout": 3600000,
+      "required": false,
+      "parallel": false,
+      "checklist": [
+        "Code changes reviewed and approved",
+        "Breaking changes documented",
+        "Migration guide prepared (if needed)",
+        "Performance impact assessed",
+        "Security implications reviewed",
+        "Documentation updated",
+        "Tests added/updated"
+      ]
+    },
+    "final-check": {
+      "description": "Final production readiness verification",
+      "timeout": 30000,
+      "required": true,
+      "parallel": false
+    }
+  },
+
+  "globalSettings": {
+    "continueOnError": false,
+    "verbose": false,
+    "dryRun": false,
+    "skipManual": false,
+    "reportFormat": "json",
+    "outputDirectory": "temp",
+    "cleanupOnFailure": true,
+    "maxRetries": 3,
+    "retryDelay": 5000
+  },
+
+  "notifications": {
+    "enabled": true,
+    "onFailure": true,
+    "onSuccess": false,
+    "webhook": null,
+    "email": null
+  },
+
+  "integrations": {
+    "github": {
+      "enabled": false,
+      "token": null,
+      "repository": null,
+      "createPr": false,
+      "addLabels": ["preprod-validated", "ready-for-review"]
+    },
+    "slack": {
+      "enabled": false,
+      "webhook": null,
+      "channel": "#builds",
+      "notifyOn": ["failure", "success"]
+    },
+    "ci": {
+      "enabled": false,
+      "provider": "github-actions",
+      "uploadArtifacts": true,
+      "failOnWarnings": false
+    }
+  },
+
+  "customSteps": {
+    "enabled": false,
+    "directory": "scripts/custom-workflow-steps",
+    "autoDiscover": true
+  },
+
+  "reporting": {
+    "enabled": true,
+    "formats": ["json", "markdown", "html"],
+    "includeTimestamps": true,
+    "includeCommandOutput": false,
+    "compressReports": false,
+    "retentionDays": 30
+  },
+
+  "environment": {
+    "nodeVersion": ">=18.0.0",
+    "npmVersion": ">=8.0.0",
+    "requiredTools": [
+      "git",
+      "npm",
+      "node"
+    ],
+    "optionalTools": [
+      "yarn",
+      "pnpm",
+      "docker"
+    ]
+  }
+}

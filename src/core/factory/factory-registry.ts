@@ -22,7 +22,7 @@ export class FactoryRegistry {
 
   private initializeFactories(): void {
     // ALL factories now use the consistent .create() method pattern
-    
+
     // Button factories
     this.registerFactory('Button', () => this.safeCall(factoryImporter.getFactory('ButtonFactory'), 'create'));
     this.registerFactory('ButtonPrimary', () => this.safeCall(factoryImporter.getFactory('ButtonFactory'), 'createPrimary'));
@@ -77,7 +77,7 @@ export class FactoryRegistry {
       // If factory is a class, instantiate it first
       if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
         const instance = new factory();
-        
+
         if (method) {
           if (typeof instance[method] === 'function') {
             return instance[method].bind(instance);
@@ -86,12 +86,12 @@ export class FactoryRegistry {
             return null;
           }
         }
-        
+
         // If no method specified but instance has create method, return that
         if (typeof instance.create === 'function') {
           return instance.create.bind(instance);
         }
-        
+
         return instance;
       }
 

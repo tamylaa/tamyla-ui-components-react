@@ -1,0 +1,166 @@
+{
+  "timestamp": "2025-09-04T15:58:18.529Z",
+  "layers": {
+    "atoms": [
+      {
+        "name": "Button",
+        "valid": true,
+        "type": "object"
+      },
+      {
+        "name": "ButtonPrimary",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonSecondary",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonGhost",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonDanger",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonSuccess",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonWithIcon",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ButtonIconOnly",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "Input",
+        "valid": true,
+        "type": "object"
+      },
+      {
+        "name": "Card",
+        "valid": true,
+        "type": "object"
+      },
+      {
+        "name": "StatusIndicator",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "InputGroup",
+        "valid": true,
+        "type": "function"
+      }
+    ],
+    "molecules": [
+      {
+        "name": "ActionCard",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "SearchBar",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "SearchBarNew",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ContentCard",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "FileList",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "Notification",
+        "valid": true,
+        "type": "function"
+      }
+    ],
+    "organisms": [
+      {
+        "name": "Dashboard",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "SearchInterface",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "Reward",
+        "valid": true,
+        "type": "object"
+      }
+    ],
+    "applications": [
+      {
+        "name": "EnhancedSearch",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "ContentManager",
+        "valid": true,
+        "type": "function"
+      },
+      {
+        "name": "CampaignSelector",
+        "valid": true,
+        "type": "function"
+      }
+    ],
+    "factories": [
+      {
+        "name": "useAtomFactory",
+        "valid": true,
+        "type": "not implemented"
+      },
+      {
+        "name": "useMoleculeFactory",
+        "valid": true,
+        "type": "not implemented"
+      },
+      {
+        "name": "useOrganismFactory",
+        "valid": true,
+        "type": "not implemented"
+      },
+      {
+        "name": "useApplicationFactory",
+        "valid": true,
+        "type": "not implemented"
+      },
+      {
+        "name": "useFactoryBridge",
+        "valid": true,
+        "type": "not implemented"
+      }
+    ]
+  },
+  "factories": {},
+  "summary": {
+    "total": 24,
+    "valid": 24,
+    "invalid": 0
+  }
+}

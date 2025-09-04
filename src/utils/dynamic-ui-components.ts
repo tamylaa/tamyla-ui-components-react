@@ -24,11 +24,11 @@ export interface UIComponentsModule {
   InputGroupFactory?: any;
   OrganismTemplates?: any;
   OrganismFactory?: any;
-  
+
   // Utility functions
   createFactory?: any;
   FactoryRegistry?: any;
-  
+
   // Other exports
   [key: string]: any;
 }
@@ -42,7 +42,7 @@ export async function dynamicImportUIComponents(): Promise<UIComponentsModule | 
     // Use dynamic import to avoid static analysis
     const moduleSpecifier = '@tamyla/ui-components';
     const uiComponentsModule = await import(moduleSpecifier);
-    
+
     console.log('✅ Successfully loaded @tamyla/ui-components');
     return uiComponentsModule as UIComponentsModule;
   } catch (error) {
@@ -57,18 +57,18 @@ export async function dynamicImportUIComponents(): Promise<UIComponentsModule | 
 export async function getUIComponentFactory(factoryName: string): Promise<any | null> {
   try {
     const uiComponents = await dynamicImportUIComponents();
-    
+
     if (!uiComponents) {
       console.warn(`⚠️ Cannot get ${factoryName}: @tamyla/ui-components not available`);
       return null;
     }
-    
+
     const factory = uiComponents[factoryName];
     if (!factory) {
       console.warn(`⚠️ Factory ${factoryName} not found in @tamyla/ui-components`);
       return null;
     }
-    
+
     console.log(`✅ Successfully loaded factory: ${factoryName}`);
     return factory;
   } catch (error) {
@@ -94,15 +94,15 @@ export async function isUIComponentsAvailable(): Promise<boolean> {
  */
 export async function getUIComponentFactories(factoryNames: string[]): Promise<Record<string, any>> {
   const factories: Record<string, any> = {};
-  
+
   try {
     const uiComponents = await dynamicImportUIComponents();
-    
+
     if (!uiComponents) {
       console.warn('⚠️ Cannot get factories: @tamyla/ui-components not available');
       return factories;
     }
-    
+
     for (const factoryName of factoryNames) {
       const factory = uiComponents[factoryName];
       if (factory) {
@@ -112,7 +112,7 @@ export async function getUIComponentFactories(factoryNames: string[]): Promise<R
         console.warn(`⚠️ Factory ${factoryName} not found`);
       }
     }
-    
+
     return factories;
   } catch (error) {
     console.error('❌ Error loading factories:', error);
@@ -133,24 +133,24 @@ export function createMockFactory(factoryName: string): any {
         update: (newConfig: any) => console.log(`🔧 Mock ${factoryName} updated:`, newConfig)
       };
     },
-    
+
     // Enhanced methods
     enableTradingPortalPatterns: () => {
       console.log(`🔧 Mock ${factoryName} enableTradingPortalPatterns called`);
       return { success: true, patterns: ['mock-pattern'] };
     },
-    
+
     selectionManager: {
       on: (event: string, callback: Function) => {
         console.log(`🔧 Mock ${factoryName} selectionManager.on(${event}) called`);
         return callback;
       }
     },
-    
+
     setResults: (results: any[]) => {
       console.log(`🔧 Mock ${factoryName} setResults called with:`, results);
     },
-    
+
     createSearchInterface: (config: any = {}) => {
       console.log(`🔧 Mock ${factoryName} createSearchInterface called with:`, config);
       return { element: document.createElement('div'), config };

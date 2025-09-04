@@ -23,8 +23,8 @@ interface ActionCardProps {
   progress?: number;
   badge?: string;
   // Event handlers
-  onClick?: (event: MouseEvent) => void;
-  onHover?: (event: MouseEvent) => void;
+  onClick?: (_: MouseEvent) => void;
+  onHover?: (_: MouseEvent) => void;
 }
 
 export const ActionCard = createFactoryComponent<ActionCardProps>(

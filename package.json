@@ -1,11 +1,17 @@
 {
   "name": "@tamyla/ui-components-react",
-  "version": "4.0.1",
+  "version": "4.7.0",
   "description": "React-based UI component library with Factory Bridge pattern - integrates seamlessly with @tamyla/ui-components",
   "type": "module",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -41,8 +47,13 @@
     "certify-zero-issues": "node scripts/comprehensive-certify.js",
     "quick-certify": "node scripts/esm/working-certify.js",
     "deploy": "node scripts/esm/deploy-to-github.js",
-    "build:clean": "rimraf dist",
-    "prepack": "npm run build"
+    "preprod:patch": "node scripts/preprod-workflow.js patch",
+    "preprod:minor": "node scripts/preprod-workflow.js minor",
+    "preprod:major": "node scripts/preprod-workflow.js major",
+    "preprod:custom": "node scripts/preprod-workflow.js custom",
+    "preprod:validate": "node scripts/preprod-workflow.js custom --dry-run --verbose",
+    "workflow:report": "node scripts/generate-workflow-report.js",
+    "workflow:dashboard": "node scripts/workflow-dashboard.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
@@ -79,6 +90,7 @@
     "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-react-hooks": "^6.0.0-rc.1",
     "fs-extra": "^11.2.0",
+    "globals": "^16.3.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.0.0",

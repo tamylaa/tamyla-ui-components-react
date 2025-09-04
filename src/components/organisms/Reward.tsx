@@ -153,7 +153,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
         const moduleName = '@tamyla/' + 'ui-components';
         // @ts-ignore - Peer dependency may not be available during CI type checking
         const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null);
-        
+
         if (uiComponents?.RewardSystem) {
           // Create RewardSystem instance with proper type handling
           rewardSystemRef.current = new (uiComponents.RewardSystem as any)({
@@ -207,7 +207,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
         }
       } catch (error) {
         console.warn('RewardSystem could not be loaded, using fallback:', error);
-        
+
         // Create fallback display
         if (containerRef.current) {
           containerRef.current.innerHTML = `

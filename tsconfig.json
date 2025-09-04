@@ -35,6 +35,8 @@
     "dist",
     "**/*.test.*",
     "**/*.spec.*",
-    "src/core/index.d.ts"
+    "src/core/index.d.ts",
+    "src/demos",
+    "src/demos-backup"
   ]
 }

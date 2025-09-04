@@ -4,7 +4,7 @@
 
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 
-interface SearchResult {
+interface _SearchResult {
   id: string;
   title: string;
   description?: string;
@@ -14,7 +14,7 @@ interface SearchResult {
   metadata?: Record<string, unknown>;
 }
 
-interface SearchFilters {
+interface _SearchFilters {
   [key: string]: string | number | boolean | string[];
 }
 
@@ -32,9 +32,9 @@ interface EnhancedSearchProps {
   enableSorting?: boolean;
   enableExport?: boolean;
   // Event handlers
-  onSearch?: (query: string, filters: SearchFilters) => void;
-  onResultSelect?: (result: SearchResult) => void;
-  onFilterChange?: (filters: SearchFilters) => void;
+  onSearch?: (_query: string, _filters: Record<string, unknown>) => void;
+  onResultSelect?: (_result: Record<string, unknown>) => void;
+  onFilterChange?: (_filters: Record<string, unknown>) => void;
 }
 
 export const EnhancedSearch = createFactoryComponent<EnhancedSearchProps>(

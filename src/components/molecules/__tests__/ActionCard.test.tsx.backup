@@ -1,0 +1,246 @@
+/**
+ * ActionCard Molecule Tests
+ * Testing the enhanced ActionCard component with Redux integration
+ */
+
+import React from 'react';
+import { screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { render } from '../../../test-utils/test-setup';
+import { ActionCard } from '../ActionCard';
+
+// Mock the dynamic import function used by FactoryImporter
+const mockImport = jest.fn();
+jest.mock('../../../core/factory/factory-importer', () => ({
+  FactoryImporter: {
+    getInstance: jest.fn(() => ({
+      getFactory: jest.fn(() => ({
+        create: jest.fn((config = {}) => {
+          console.log('🎭 Mock FactoryImporter.getFactory().create called with config:', config);
+          const element = document.createElement('div');
+          element.className = 'mock-component';
+          element.setAttribute('data-mock', 'true');
+          
+          // Always render a button for ActionCard
+          const button = document.createElement('button');
+          button.setAttribute('role', 'button');
+          button.className = 'action-card-button';
+          
+          // Handle disabled state
+          if (config.disabled) {
+            button.setAttribute('disabled', 'true');
+          }
+          
+          // Handle event handlers
+          if (config.onClick) {
+            button.addEventListener('click', config.onClick);
+          }
+          if (config.onHover) {
+            button.addEventListener('mouseenter', config.onHover);
+          }
+          
+          if (config.title || config.description) {
+            if (config.title) {
+              const titleDiv = document.createElement('div');
+              titleDiv.className = 'action-card-title';
+              titleDiv.textContent = config.title;
+              button.appendChild(titleDiv);
+            }
+            
+            if (config.description) {
+              const descDiv = document.createElement('div');
+              descDiv.className = 'action-card-description';
+              descDiv.textContent = config.description;
+              button.appendChild(descDiv);
+            }
+          } else {
+            // Default content for ActionCard
+            button.textContent = 'Action';
+          }
+          
+          element.appendChild(button);
+          
+          // Safely stringify config
+          try {
+            const safeConfig = { ...config };
+            if (safeConfig.children) delete safeConfig.children;
+            if (safeConfig.container) delete safeConfig.container;
+            Object.keys(safeConfig).forEach(key => {
+              if (safeConfig[key] && typeof safeConfig[key] === 'object' && safeConfig[key].$$typeof) {
+                delete safeConfig[key];
+              }
+            });
+            element.setAttribute('data-config', JSON.stringify(safeConfig));
+          } catch (error) {
+            element.setAttribute('data-config', 'config-present');
+          }
+          
+          console.log('🎭 Mock returning element:', element.outerHTML);
+          return element;
+        })
+      }))
+    }))
+  }
+}));
+
+// Mock the @tamyla/ui-components module
+jest.mock('@tamyla/ui-components', () => ({
+  ActionCardFactory: {
+    create: jest.fn((config = {}) => {
+      console.log('🎭 Mock ActionCardFactory.create called with config:', config);
+      const element = document.createElement('div');
+      element.className = 'mock-component';
+      element.setAttribute('data-mock', 'true');
+      
+      // Always render a button for ActionCard
+      const button = document.createElement('button');
+      button.setAttribute('role', 'button');
+      button.className = 'action-card-button';
+      
+      // Handle disabled state
+      if (config.disabled) {
+        button.setAttribute('disabled', 'true');
+      }
+      
+      // Handle event handlers
+      if (config.onClick) {
+        button.addEventListener('click', config.onClick);
+      }
+      if (config.onHover) {
+        button.addEventListener('mouseenter', config.onHover);
+      }
+      
+      if (config.title || config.description) {
+        if (config.title) {
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'action-card-title';
+          titleDiv.textContent = config.title;
+          button.appendChild(titleDiv);
+        }
+        
+        if (config.description) {
+          const descDiv = document.createElement('div');
+          descDiv.className = 'action-card-description';
+          descDiv.textContent = config.description;
+          button.appendChild(descDiv);
+        }
+      } else {
+        // Default content for ActionCard
+        button.textContent = 'Action';
+      }
+      
+      element.appendChild(button);
+      
+      // Safely stringify config
+      try {
+        const safeConfig = { ...config };
+        if (safeConfig.children) delete safeConfig.children;
+        if (safeConfig.container) delete safeConfig.container;
+        Object.keys(safeConfig).forEach(key => {
+          if (safeConfig[key] && typeof safeConfig[key] === 'object' && safeConfig[key].$$typeof) {
+            delete safeConfig[key];
+          }
+        });
+        element.setAttribute('data-config', JSON.stringify(safeConfig));
+      } catch (error) {
+        element.setAttribute('data-config', 'config-present');
+      }
+      
+      console.log('🎭 Mock returning element:', element.outerHTML);
+      return element;
+    })
+  }
+}));
+
+describe('ActionCard Molecule', () => {
+  test('renders with default props', () => {
+    render(<ActionCard />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('renders with title and description', () => {
+    render(
+      <ActionCard
+        title="Test Action"
+        description="This is a test action card"
+      />
+    );
+    expect(screen.getByText('Test Action')).toBeInTheDocument();
+    expect(screen.getByText('This is a test action card')).toBeInTheDocument();
+  });
+
+  test('renders with different variants', () => {
+    const { rerender } = render(<ActionCard variant="primary" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+
+    rerender(<ActionCard variant="success" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+
+    rerender(<ActionCard variant="warning" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+
+    rerender(<ActionCard variant="danger" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('renders with different sizes', () => {
+    const { rerender } = render(<ActionCard size="sm" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+
+    rerender(<ActionCard size="md" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+
+    rerender(<ActionCard size="lg" />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('handles click events', () => {
+    const handleClick = jest.fn();
+    render(<ActionCard onClick={handleClick} />);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  test('handles hover events', () => {
+    const handleHover = jest.fn();
+    render(<ActionCard onHover={handleHover} />);
+    const button = screen.getByRole('button');
+    fireEvent.mouseEnter(button);
+    expect(handleHover).toHaveBeenCalledTimes(1);
+  });
+
+  test('renders with gamification features', () => {
+    render(
+      <ActionCard
+        title="Achievement Unlocked"
+        points={100}
+        level="Expert"
+        progress={75}
+        badge="🏆"
+      />
+    );
+    expect(screen.getByText('Achievement Unlocked')).toBeInTheDocument();
+  });
+
+  test('renders with loading state', () => {
+    render(<ActionCard loading={true} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('renders with disabled state', () => {
+    render(<ActionCard disabled={true} />);
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  test('renders with elevation', () => {
+    render(<ActionCard elevation={true} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('renders with interactive state', () => {
+    render(<ActionCard interactive={true} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+});

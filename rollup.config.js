@@ -25,7 +25,7 @@ const config = [
       commonjs(),
       esbuild({
         include: /\.[jt]sx?$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /src\/demos/, /src\/demos-backup\//, /src\/test-components\//],
         target: 'es2020',
         jsx: 'automatic',
         tsconfig: 'tsconfig.json',

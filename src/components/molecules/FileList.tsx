@@ -40,16 +40,16 @@ export const FileList: React.FC<FileListProps> = ({
   onDrop,
   ...props
 }) => {
-  const handleEvent = (eventType: string, detail: any) => {
+  const handleEvent = (eventType: string, detail: FileList | string) => {
     switch (eventType) {
       case 'file-add':
-        if (onFileAdd) onFileAdd(detail);
+        if (onFileAdd) onFileAdd(detail as FileList);
         break;
       case 'file-remove':
-        if (onFileRemove) onFileRemove(detail);
+        if (onFileRemove) onFileRemove(detail as string);
         break;
       case 'file-download':
-        if (onFileDownload) onFileDownload(detail);
+        if (onFileDownload) onFileDownload(detail as string);
         break;
     }
   };

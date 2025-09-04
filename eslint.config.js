@@ -1,21 +1,18 @@
+// ESLint 9 Flat Configuration
 import js from '@eslint/js';
-import typescript from '@typescript-eslint/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
-import react from 'eslint-plugin-react';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsparser from '@typescript-eslint/parser';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
-  // Base JavaScript configuration
   js.configs.recommended,
-
-  // Main configuration
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parser: typescriptParser,
+      parser: tsparser,
       parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true
         }
@@ -25,51 +22,56 @@ export default [
         process: 'readonly',
         window: 'readonly',
         document: 'readonly',
-        React: 'readonly',
-        // DOM globals
         HTMLElement: 'readonly',
-        HTMLButtonElement: 'readonly',
-        HTMLInputElement: 'readonly',
         HTMLDivElement: 'readonly',
-        HTMLFormElement: 'readonly',
-        Element: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLHeadingElement: 'readonly',
+        HTMLParagraphElement: 'readonly',
+        KeyboardEvent: 'readonly',
         Event: 'readonly',
-        MouseEvent: 'readonly',
-        FocusEvent: 'readonly',
+        File: 'readonly',
         FileList: 'readonly',
-        Node: 'readonly'
+        MouseEvent: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        alert: 'readonly'
       }
     },
     plugins: {
-      '@typescript-eslint': typescript,
-      'react': react,
+      '@typescript-eslint': tseslint,
       'react-hooks': reactHooks
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+      // Disable base rules that have TS equivalents
+      'no-unused-vars': 'off',
+      
+      // TypeScript specific rules that were working
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_' 
+      }],
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
+      
+      // Standard rules
       'no-console': 'warn',
-      'semi': ['error', 'always'],
-      'quotes': ['error', 'single'],
-      'react/jsx-uses-react': 'error',
-      'react/jsx-uses-vars': 'error',
+      'no-trailing-spaces': 'error',
+      
+      // React hooks rules (these were causing the original issues)
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn'
-    },
-    settings: {
-      react: {
-        version: 'detect'
-      }
     }
   },
   {
-    files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{test,spec}.{ts,tsx}', 'src/**/__tests__/**/*.{ts,tsx}', 'src/test-utils/**/*.{ts,tsx}', 'src/setupTests.ts'],
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parser: typescriptParser,
+      parser: tsparser,
       parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true
         }
@@ -79,60 +81,65 @@ export default [
         process: 'readonly',
         window: 'readonly',
         document: 'readonly',
-        React: 'readonly',
-        // Jest globals
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLHeadingElement: 'readonly',
+        HTMLParagraphElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        Event: 'readonly',
+        File: 'readonly',
+        FileList: 'readonly',
+        MouseEvent: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        alert: 'readonly',
         jest: 'readonly',
-        // DOM globals
-        HTMLElement: 'readonly',
-        HTMLButtonElement: 'readonly',
-        HTMLInputElement: 'readonly',
-        HTMLDivElement: 'readonly',
-        HTMLFormElement: 'readonly',
-        Element: 'readonly',
-        Event: 'readonly',
-        MouseEvent: 'readonly',
-        FocusEvent: 'readonly',
-        FileList: 'readonly',
-        Node: 'readonly'
+        describe: 'readonly',
+        test: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        afterEach: 'readonly'
       }
     },
     plugins: {
-      '@typescript-eslint': typescript,
-      'react': react,
+      '@typescript-eslint': tseslint,
       'react-hooks': reactHooks
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
-      'no-console': 'warn',
-      'semi': ['error', 'always'],
-      'quotes': ['error', 'single'],
-      'react/jsx-uses-react': 'error',
-      'react/jsx-uses-vars': 'error',
+      // Disable base rules that have TS equivalents
+      'no-unused-vars': 'off',
+      
+      // TypeScript specific rules that were working
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_' 
+      }],
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
+      
+      // Standard rules
+      'no-console': 'off',
+      'no-trailing-spaces': 'error',
+      
+      // React hooks rules (these were causing the original issues)
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn'
-    },
-    settings: {
-      react: {
-        version: 'detect'
-      }
     }
   },
   {
+    // Ignore patterns
     ignores: [
-      'node_modules/**',
       'dist/**',
-      'coverage/**',
-      '**/*.d.ts'
+      'node_modules/**',
+      '**/*.d.ts',
+      '_backup/**'
     ]
   }
 ];

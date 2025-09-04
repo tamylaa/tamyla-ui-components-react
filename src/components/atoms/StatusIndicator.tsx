@@ -15,9 +15,9 @@ interface StatusIndicatorProps {
   // Trading Portal specific
   tradingStatus?: 'order-pending' | 'order-filled' | 'order-cancelled' | 'market-open' | 'market-closed';
   // React-specific event handlers
-  onClick?: (_event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseEnter?: (_event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseLeave?: (_event: React.MouseEvent<HTMLDivElement>) => void;
+  onClick?: (_: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter?: (_: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (_: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
 }
 
@@ -27,7 +27,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   onMouseLeave,
   ...props
 }) => {
-  const handleEvent = (eventType: string, detail: any) => {
+  const handleEvent = (_eventType: string, _detail: unknown) => {
     // Handle ui-components events if needed
   };
 

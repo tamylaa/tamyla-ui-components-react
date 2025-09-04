@@ -49,7 +49,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         // First check if it's a bound method that returns DOM elements
         try {
           const result = factoryInstance(enhancedConfig);
-          
+
           // If it's already a DOM element, use it directly
           if (result instanceof HTMLElement) {
             element = result;
@@ -81,7 +81,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         const fallback = document.createElement('div');
         fallback.className = `factory-bridge-fallback tamyla-${factory.toLowerCase()}`;
         fallback.textContent = `${factory} component (fallback)`;
-        
+
         // If we got something that might have useful content, try to extract it
         if (element && typeof element === 'object') {
           try {
@@ -130,7 +130,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         errorFallback.className = `factory-bridge-error tamyla-${factory.toLowerCase()}`;
         errorFallback.textContent = `${factory} component failed to mount`;
         errorFallback.title = `Error: ${appendError instanceof Error ? appendError.message : 'Unknown append error'}`;
-        
+
         container.appendChild(errorFallback);
         componentRef.current = errorFallback;
       }
@@ -142,7 +142,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         };
 
         // Listen for common events
-        ['click', 'change', 'input', 'submit'].forEach(eventType => {
+        ['click', 'change', 'input', 'submit', 'mouseenter', 'mouseleave'].forEach(eventType => {
           element.addEventListener(eventType, handleEvent);
         });
 

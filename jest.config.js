@@ -1,11 +1,12 @@
 export default {
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: [
     '**/__tests__/**/*.ts',
     '**/__tests__/**/*.tsx',
     '**/?(*.)+(spec|test).ts',
-    '**/?(*.)+(spec|test).tsx'
+    '**/?(*.)+(spec|test).tsx',
+    'test/**/*.test.js'
   ],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
@@ -15,8 +16,15 @@ export default {
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^@tamyla/ui-components$': '<rootDir>/__mocks__/@tamyla/ui-components.js'
+    '^@tamyla/ui-components$': '<rootDir>/__mocks__/@tamyla/ui-components.js',
+    '^src/(.*)$': '<rootDir>/src/$1',
+    '^store/(.*)$': '<rootDir>/src/store/$1',
+    '^components/(.*)$': '<rootDir>/src/components/$1',
+    '^utils/(.*)$': '<rootDir>/src/utils/$1'
   },
+  moduleDirectories: ['node_modules', 'src'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts'
@@ -27,8 +35,6 @@ export default {
     'lcov',
     'html'
   ],
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  moduleDirectories: ['node_modules', 'src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  passWithNoTests: true
+  passWithNoTests: true,
+  resolver: undefined
 };
