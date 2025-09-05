@@ -13,6 +13,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 // Parse command line arguments
 const recent = parseInt(process.argv.find(arg => arg.startsWith('--recent='))?.split('=')[1]) || 10;
@@ -163,7 +164,7 @@ function displayDashboard(metrics, reports) {
 
     // Check for uncommitted changes
     try {
-      const gitStatus = require('child_process').execSync('git status --porcelain', { encoding: 'utf8' });
+      const gitStatus = execSync('git status --porcelain', { encoding: 'utf8' });
       if (gitStatus.trim()) {
         console.log('⚠️  Uncommitted changes detected');
       } else {
