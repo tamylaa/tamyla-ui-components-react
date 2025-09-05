@@ -1,6 +1,6 @@
 import 'styled-components';
 
-// Type declarations for peer dependencies
+// Type declarations for peer dependencies - make conditional to avoid compile errors
 declare module '@tamyla/ui-components' {
   export interface ComponentConfig {
     [key: string]: any;
@@ -23,9 +23,9 @@ declare module '@tamyla/ui-components' {
   export default UIComponents;
 }
 
-// Also declare as a global module for dynamic imports
+// Global type for dynamic imports - use 'any' to avoid compilation errors when peer dep is missing
 declare global {
-  const UIComponents: typeof import('@tamyla/ui-components');
+  const UIComponents: any;
 }
 
 declare module 'styled-components' {

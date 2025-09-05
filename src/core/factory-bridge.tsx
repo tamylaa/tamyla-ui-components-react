@@ -33,7 +33,8 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
         // Dynamic import from ui-components - handle missing peer dependency gracefully
         let UIComponents: any = null;
         try {
-          UIComponents = await import('@tamyla/ui-components');
+          const moduleName = '@tamyla/ui-components';
+          UIComponents = await import(moduleName);
         } catch (importError) {
           console.warn('Peer dependency @tamyla/ui-components not available:', importError);
           return;
@@ -103,7 +104,8 @@ export class FactoryBridgeService {
       // Handle missing peer dependency gracefully
       let UIComponents: any = null;
       try {
-        UIComponents = await import('@tamyla/ui-components');
+        const moduleName = '@tamyla/ui-components';
+        UIComponents = await import(moduleName);
       } catch (importError) {
         console.warn('Peer dependency @tamyla/ui-components not available:', importError);
         return null;
@@ -125,7 +127,8 @@ export class FactoryBridgeService {
     try {
       // Handle missing peer dependency gracefully
       try {
-        return await import('@tamyla/ui-components');
+        const moduleName = '@tamyla/ui-components';
+        return await import(moduleName);
       } catch (importError) {
         console.warn('Peer dependency @tamyla/ui-components not available:', importError);
         return null;
