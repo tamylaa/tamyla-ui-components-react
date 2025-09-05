@@ -40,8 +40,13 @@ const loadFactory = async (factoryName: string) => {
 
   try {
     const moduleName = '@tamyla/' + 'ui-components';
-    // @ts-ignore - Peer dependency may not be available during CI type checking
-    const uiComponents = await import(/* @vite-ignore */ moduleName).catch(() => null) as any;
+    // Handle missing peer dependency gracefully
+    let uiComponents: any = null;
+    try {
+      uiComponents = await import(/* @vite-ignore */ moduleName);
+    } catch (importError) {
+      console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+    }
 
     if (!uiComponents) {
       console.warn(`UnifiedBridge: @tamyla/ui-components not available for factory: ${factoryName}`);

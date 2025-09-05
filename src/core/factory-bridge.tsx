@@ -30,8 +30,14 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
   useEffect(() => {
     const loadComponent = async () => {
       try {
-        // Dynamic import from ui-components
-        const UIComponents = await import('@tamyla/ui-components');
+        // Dynamic import from ui-components - handle missing peer dependency gracefully
+        let UIComponents: any = null;
+        try {
+          UIComponents = await import('@tamyla/ui-components');
+        } catch (importError) {
+          console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+          return;
+        }
 
         if (!UIComponents || !(UIComponents as any)[componentType]) {
           console.error(`Component type ${componentType} not found in ui-components`);
@@ -94,7 +100,14 @@ export class FactoryBridgeService {
     config: Record<string, any> = {}
   ): Promise<HTMLElement | null> {
     try {
-      const UIComponents = await import('@tamyla/ui-components');
+      // Handle missing peer dependency gracefully
+      let UIComponents: any = null;
+      try {
+        UIComponents = await import('@tamyla/ui-components');
+      } catch (importError) {
+        console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+        return null;
+      }
 
       if (!UIComponents || !(UIComponents as any)[componentType]) {
         throw new Error(`Component type ${componentType} not found`);
@@ -110,7 +123,13 @@ export class FactoryBridgeService {
 
   static async loadUIComponents() {
     try {
-      return await import('@tamyla/ui-components');
+      // Handle missing peer dependency gracefully
+      try {
+        return await import('@tamyla/ui-components');
+      } catch (importError) {
+        console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+        return null;
+      }
     } catch (error) {
       console.error('Failed to load ui-components:', error);
       return null;

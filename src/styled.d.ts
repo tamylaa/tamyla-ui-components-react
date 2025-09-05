@@ -23,6 +23,11 @@ declare module '@tamyla/ui-components' {
   export default UIComponents;
 }
 
+// Also declare as a global module for dynamic imports
+declare global {
+  const UIComponents: typeof import('@tamyla/ui-components');
+}
+
 declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
