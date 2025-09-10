@@ -1,11 +1,7 @@
 /**
  * Centralized Logger Utility
- * Provides environment-aware logging with file output for production
- * and console output for development
+ * Browser-compatible logging with console output and optional storage
  */
-
-import * as fs from 'fs';
-import * as path from 'path';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -16,11 +12,10 @@ export enum LogLevel {
 
 export interface LogConfig {
   level: LogLevel;
-  enableFileLogging: boolean;
-  logDirectory: string;
-  maxFileSize: number; // in bytes
-  maxFiles: number;
   enableConsole: boolean;
+  enableStorage: boolean;
+  maxStorageEntries: number;
+  prefix: string;
 }
 
 export interface LogEntry {
@@ -34,124 +29,94 @@ export interface LogEntry {
 class Logger {
   private config: LogConfig;
   private logQueue: LogEntry[] = [];
-  private isWriting = false;
+  private storageKey = 'tamyla-ui-components-logs';
 
   constructor(config: Partial<LogConfig> = {}) {
+    const isProduction = typeof window !== 'undefined' && 
+                        (window.location?.hostname !== 'localhost' && 
+                         !window.location?.hostname.includes('127.0.0.1'));
+    
     this.config = {
-      level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO,
-      enableFileLogging: process.env.NODE_ENV === 'production',
-      logDirectory: path.join(process.cwd(), 'logs'),
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      maxFiles: 5,
-      enableConsole: process.env.NODE_ENV === 'development',
+      level: isProduction ? LogLevel.INFO : LogLevel.DEBUG,
+      enableConsole: true,
+      enableStorage: isProduction && typeof localStorage !== 'undefined',
+      maxStorageEntries: 100,
+      prefix: '[Tamyla UI]',
       ...config
     };
-
-    // Ensure log directory exists in production
-    if (this.config.enableFileLogging) {
-      this.ensureLogDirectory();
-    }
   }
 
-  private ensureLogDirectory(): void {
-    try {
-      if (!fs.existsSync(this.config.logDirectory)) {
-        fs.mkdirSync(this.config.logDirectory, { recursive: true, mode: 0o755 });
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to create log directory:', error);
-    }
-  }
-
-  private getLogFilePath(): string {
-    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    return path.join(this.config.logDirectory, `ui-components-${date}.log`);
-  }
-
-  private async writeToFile(entry: LogEntry): Promise<void> {
-    if (!this.config.enableFileLogging) return;
-
-    try {
-      const logFile = this.getLogFilePath();
-      const logLine = JSON.stringify(entry) + '\n';
-
-      // Check file size and rotate if necessary
-      if (fs.existsSync(logFile)) {
-        const stats = fs.statSync(logFile);
-        if (stats.size + logLine.length > this.config.maxFileSize) {
-          await this.rotateLogFiles();
-        }
-      }
-
-      fs.appendFileSync(logFile, logLine, { mode: 0o644 });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to write to log file:', error);
-    }
-  }
-
-  private async rotateLogFiles(): Promise<void> {
-    try {
-      const logFile = this.getLogFilePath();
-
-      // Remove oldest file if we have too many
-      const oldestFile = path.join(this.config.logDirectory, `ui-components-${new Date(Date.now() - this.config.maxFiles * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}.log`);
-      if (fs.existsSync(oldestFile)) {
-        fs.unlinkSync(oldestFile);
-      }
-
-      // Rename current file with timestamp
-      const backupFile = `${logFile}.${Date.now()}`;
-      if (fs.existsSync(logFile)) {
-        fs.renameSync(logFile, backupFile);
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to rotate log files:', error);
-    }
-  }
-
-  private async processQueue(): Promise<void> {
-    if (this.isWriting || this.logQueue.length === 0) return;
-
-    this.isWriting = true;
-
-    while (this.logQueue.length > 0) {
-      const entry = this.logQueue.shift()!;
-      await this.writeToFile(entry);
-    }
-
-    this.isWriting = false;
-  }
-
-  private log(level: LogLevel, message: string, data?: any, source?: string): void {
-    if (level < this.config.level) return;
-
-    const entry: LogEntry = {
+  private createLogEntry(level: LogLevel, message: string, data?: any, source?: string): LogEntry {
+    return {
       timestamp: new Date().toISOString(),
       level: LogLevel[level],
       message,
       data,
       source
     };
+  }
 
-    // Console output for development
-    if (this.config.enableConsole) {
-      const consoleMethod = level === LogLevel.ERROR ? 'error' :
-                           level === LogLevel.WARN ? 'warn' :
-                           level === LogLevel.INFO ? 'info' : 'debug';
+  private shouldLog(level: LogLevel): boolean {
+    return level >= this.config.level;
+  }
 
-      const prefix = source ? `[${source}]` : '';
-      // eslint-disable-next-line no-console
-      console[consoleMethod](`${prefix} ${message}`, data || '');
+  private formatMessage(entry: LogEntry): string {
+    const prefix = this.config.prefix;
+    const timestamp = new Date(entry.timestamp).toLocaleTimeString();
+    return `${prefix} [${timestamp}] [${entry.level}] ${entry.message}`;
+  }
+
+  private writeToConsole(entry: LogEntry): void {
+    if (!this.config.enableConsole || typeof console === 'undefined') return;
+
+    const formattedMessage = this.formatMessage(entry);
+    
+    switch (entry.level) {
+      case 'DEBUG':
+        console.debug(formattedMessage, entry.data || '');
+        break;
+      case 'INFO':
+        console.info(formattedMessage, entry.data || '');
+        break;
+      case 'WARN':
+        console.warn(formattedMessage, entry.data || '');
+        break;
+      case 'ERROR':
+        console.error(formattedMessage, entry.data || '');
+        break;
+      default:
+        console.log(formattedMessage, entry.data || '');
     }
+  }
 
-    // File output for production
-    if (this.config.enableFileLogging) {
-      this.logQueue.push(entry);
-      this.processQueue();
+  private writeToStorage(entry: LogEntry): void {
+    if (!this.config.enableStorage || typeof localStorage === 'undefined') return;
+
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      const logs: LogEntry[] = stored ? JSON.parse(stored) : [];
+      
+      logs.push(entry);
+      
+      // Keep only the most recent entries
+      if (logs.length > this.config.maxStorageEntries) {
+        logs.splice(0, logs.length - this.config.maxStorageEntries);
+      }
+      
+      localStorage.setItem(this.storageKey, JSON.stringify(logs));
+    } catch (error) {
+      // Storage might be disabled or full, fail silently
+      console.warn('Failed to write to localStorage:', error);
     }
+  }
+
+  private log(level: LogLevel, message: string, data?: any, source?: string): void {
+    if (!this.shouldLog(level)) return;
+
+    const entry = this.createLogEntry(level, message, data, source);
+    
+    this.writeToConsole(entry);
+    this.writeToStorage(entry);
   }
 
   debug(message: string, data?: any, source?: string): void {
@@ -170,35 +135,90 @@ class Logger {
     this.log(LogLevel.ERROR, message, data, source);
   }
 
-  // Utility method to get current log files
-  getLogFiles(): string[] {
+  // Performance logging helpers
+  startTimer(label: string): void {
+    if (typeof console !== 'undefined' && console.time) {
+      console.time(`${this.config.prefix} ${label}`);
+    }
+  }
+
+  endTimer(label: string): void {
+    if (typeof console !== 'undefined' && console.timeEnd) {
+      console.timeEnd(`${this.config.prefix} ${label}`);
+    }
+  }
+
+  // Browser-compatible log retrieval
+  getLogs(): LogEntry[] {
+    if (!this.config.enableStorage || typeof localStorage === 'undefined') {
+      return [];
+    }
+
     try {
-      return fs.readdirSync(this.config.logDirectory)
-        .filter(file => file.startsWith('ui-components-') && file.endsWith('.log'))
-        .sort()
-        .reverse();
-    } catch {
+      const stored = localStorage.getItem(this.storageKey);
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.warn('Failed to read logs from localStorage:', error);
       return [];
     }
   }
 
-  // Utility method to read recent logs
-  getRecentLogs(lines: number = 100): string[] {
-    try {
-      const logFile = this.getLogFilePath();
-      if (!fs.existsSync(logFile)) return [];
-
-      const content = fs.readFileSync(logFile, 'utf-8');
-      return content.split('\n').filter(line => line.trim()).slice(-lines);
-    } catch {
-      return [];
+  clearLogs(): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(this.storageKey);
     }
+  }
+
+  // Export logs as JSON (browser-compatible)
+  exportLogs(): string {
+    const logs = this.getLogs();
+    return JSON.stringify(logs, null, 2);
+  }
+
+  // Component lifecycle logging
+  componentMount(componentName: string): void {
+    this.debug(`Component mounted: ${componentName}`, undefined, componentName);
+  }
+
+  componentUnmount(componentName: string): void {
+    this.debug(`Component unmounted: ${componentName}`, undefined, componentName);
+  }
+
+  componentError(componentName: string, error: Error): void {
+    this.error(`Component error: ${componentName}`, {
+      message: error.message,
+      stack: error.stack
+    }, componentName);
+  }
+
+  // Performance monitoring
+  logPerformance(operation: string, duration: number, metadata?: any): void {
+    this.info(`Performance: ${operation} took ${duration}ms`, metadata, 'performance');
+  }
+
+  // Theme and styling logging
+  logThemeChange(themeName: string, changes?: any): void {
+    this.info(`Theme changed: ${themeName}`, changes, 'theme');
+  }
+
+  // Factory bridge logging
+  logFactoryOperation(operation: string, componentType: string, success: boolean): void {
+    const level = success ? LogLevel.INFO : LogLevel.WARN;
+    this.log(level, `Factory ${operation}: ${componentType}`, { success }, 'factory');
   }
 }
 
-// Create singleton instance
-const logger = new Logger();
+// Export singleton instance
+export const logger = new Logger();
 
-// Export both the class and instance
+// Export class for custom instances
 export { Logger };
+
+// Export convenience functions
+export const logDebug = (message: string, data?: any, source?: string) => logger.debug(message, data, source);
+export const logInfo = (message: string, data?: any, source?: string) => logger.info(message, data, source);
+export const logWarn = (message: string, data?: any, source?: string) => logger.warn(message, data, source);
+export const logError = (message: string, data?: any, source?: string) => logger.error(message, data, source);
+
+// Export default instance
 export default logger;
