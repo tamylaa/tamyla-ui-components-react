@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { TamylaThemeProvider, Button, Card, useTamylaTheme } from '@tamyla/ui-components-react';
+import { TamylaThemeProvider, Button, Card, useTamylaTheme } from '../index';
 
 // Example 1: Basic Theme Usage
 const BasicThemeExample = () => {

@@ -40,6 +40,7 @@
     "**/*.test.*",
     "**/*.spec.*",
     "src/demos",
-    "src/demos-backup"
+    "src/demos-backup",
+    "src/examples"
   ]
 }

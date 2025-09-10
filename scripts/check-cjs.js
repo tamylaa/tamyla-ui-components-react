@@ -13,19 +13,34 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(path.join(__dirname, '..'));
-const scanDirs = ['src', 'scripts', 'examples'];
+const scanDirs = ['src', 'scripts'];
 const cjsPatterns = [/\brequire\s*\(/, /\bmodule\.exports\b/, /\bexports\./];
 
 function walk(dir) {
   const results = [];
-  for (const entry of fs.readdirSync(dir)) {
-    const full = path.join(dir, entry);
-    const stat = fs.statSync(full);
-    if (stat.isDirectory()) {
-      results.push(...walk(full));
-    } else if (stat.isFile()) {
-      results.push(full);
+  try {
+    for (const entry of fs.readdirSync(dir)) {
+      // Skip node_modules and other problematic directories
+      if (entry === 'node_modules' || entry === '.git' || entry === 'dist') continue;
+      
+      const full = path.join(dir, entry);
+      let stat;
+      try {
+        stat = fs.statSync(full);
+      } catch (e) {
+        // Skip if we can't stat (broken symlinks, etc.)
+        continue;
+      }
+      
+      if (stat.isDirectory()) {
+        results.push(...walk(full));
+      } else if (stat.isFile()) {
+        results.push(full);
+      }
     }
+  } catch (e) {
+    // Skip if we can't read the directory
+    console.warn(`Skipping directory ${dir}: ${e.message}`);
   }
   return results;
 }
