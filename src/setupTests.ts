@@ -1,12 +1,9 @@
-/// <reference types="jest" />
-/// <reference types="@testing-library/jest-dom" />
-
 import '@testing-library/jest-dom';
 
 // Mock Redux hooks globally for all tests
 jest.mock('./store/hooks', () => ({
   useAppDispatch: () => jest.fn(),
-  useAppSelector: jest.fn((selector) => {
+  useAppSelector: jest.fn((selector: any) => {
     // Mock the state structure that components expect
     const mockState = {
       theme: { mode: 'light' },
@@ -25,7 +22,7 @@ jest.mock('./store/hooks', () => ({
 // Mock @tamyla/ui-components globally for all tests
 jest.mock('@tamyla/ui-components', () => ({
   ActionCardFactory: {
-    create: jest.fn((config = {}) => {
+    create: jest.fn((config: any = {}) => {
       console.log('🎭 Global Mock ActionCardFactory.create called with config:', config);
       const element = document.createElement('div');
       element.className = 'mock-component';
@@ -72,10 +69,10 @@ jest.mock('@tamyla/ui-components', () => ({
 
       // Safely stringify config
       try {
-        const safeConfig = { ...config };
+        const safeConfig: any = { ...config };
         if (safeConfig.children) delete safeConfig.children;
         if (safeConfig.container) delete safeConfig.container;
-        Object.keys(safeConfig).forEach(key => {
+        Object.keys(safeConfig).forEach((key: string) => {
           if (safeConfig[key] && typeof safeConfig[key] === 'object' && safeConfig[key].$$typeof) {
             delete safeConfig[key];
           }

@@ -1,22 +1,50 @@
 /**
  * Tamyla UI React Components v1.1.1
  *
- * ARCHITECTURE: Dual-mode component library
- * - Native React: Pure React implementations for simple components
- * - Wrapper React: Factory-based wrappers for complex components
+ * ARCHITECTURE: Dual-mode component library with performance optimizations
+ * - Native React: Pure React implementations with React.memo for simple components
+ * - Wrapper React: Factory-based wrappers with lazy loading for complex components
+ * - Performance: Strategic memoization and code splitting for optimal bundle size
  *
  * This provides the best of both worlds: performance + feature completeness
  */
 
+import React, { memo, lazy, Suspense } from 'react';
+
 // ============================================
-// NATIVE REACT COMPONENTS (Pure React, High Performance)
+// PERFORMANCE OPTIMIZATION IMPORTS
 // ============================================
+
+// Import original components for optimization
+import { Button as OriginalButton } from './components/atoms/Button';
+import { Input as OriginalInput } from './components/atoms/Input';
+import { default as OriginalErrorBoundary } from './components/atoms/ErrorBoundary';
+import {
+  Card as OriginalCard,
+  CardHeader as OriginalCardHeader,
+  CardTitle as OriginalCardTitle,
+  CardContent as OriginalCardContent
+} from './components/atoms/Card';
+
+// ============================================
+// MEMOIZED NATIVE REACT COMPONENTS (High Performance)
+// ============================================
+
+// Export components from the main components index (already optimized)
 export * from './components';
 
-// Enhanced shadcn/ui inspired components with Redux integration
-export { Button } from './components/atoms/Button';
-export { Input } from './components/atoms/Input';
-export { Card } from './components/atoms/Card';
+// Enhanced shadcn/ui inspired components with React.memo optimization
+export const Button = memo(OriginalButton);
+export const Input = memo(OriginalInput);
+export const ErrorBoundary = memo(OriginalErrorBoundary);
+
+// Card compound components with memoization
+export const Card = memo(OriginalCard);
+export const CardHeader = memo(OriginalCardHeader);
+export const CardTitle = memo(OriginalCardTitle);
+export const CardContent = memo(OriginalCardContent);
+
+// Form components (keep as-is - they're already compound components)
 export {
   Dialog,
   DialogTrigger,
@@ -27,6 +55,7 @@ export {
   DialogFooter,
   DialogClose
 } from './components/organisms/Dialog';
+
 export {
   FormItem,
   FormLabel,
@@ -37,6 +66,7 @@ export {
   FormInput,
   FormTextarea
 } from './components/molecules/Form';
+
 export {
   Navigation,
   NavigationMenu,
@@ -80,11 +110,50 @@ export { default as ContentManager } from './components/applications/ContentMana
 export { default as CampaignSelector } from './components/applications/CampaignSelector';
 
 // ============================================
+// PERFORMANCE UTILITIES & LOADING COMPONENTS
+// ============================================
+
+// Export performance optimization utilities for advanced usage
+export {
+  smartMemo,
+  autoMemo,
+  heavyMemo,
+  createLazyComponent,
+  batchLazy
+} from './utils/performance-optimization';
+
+export {
+  MEMOIZATION_CONFIG,
+  LAZY_LOADING_CONFIG,
+  MONITORING_CONFIG
+} from './utils/performance-config';
+
+// Loading fallback components for better UX
+export const LoadingSpinner = () => React.createElement('div', {
+  style: { padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }
+}, 'Loading...');
+
+export const LoadingDashboard = () => React.createElement('div', {
+  style: { padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }
+}, 'Loading Dashboard...');
+
+export const LoadingSearch = () => React.createElement('div', {
+  style: { padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }
+}, 'Loading Search...');
+
+export const LoadingManager = () => React.createElement('div', {
+  style: { padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }
+}, 'Loading Manager...');
+
+// ============================================
 // SHARED INFRASTRUCTURE
 // ============================================
 
 // Core design tokens
 export { designTokens } from './core/design-tokens';
+
+// Theme provider and styling
+export { TamylaThemeProvider, GlobalStyles, useTamylaTheme } from './core/theme-provider-new';
 
 // Store exports
 export { store, persistor } from './store/store';
@@ -103,6 +172,18 @@ export {
   useLoading,
   useNotifications
 } from './store/hooks';
+
+// Redux-optional utilities
+export {
+  useAppDispatchOptional,
+  useAppSelectorOptional,
+  useThemeOptional,
+  useUIOptional,
+  useAnalyticsOptional,
+  ThemeProvider,
+  UIProvider,
+  hasRedux
+} from './utils/redux-optional';
 
 // Package metadata
 export const VERSION = '1.0.0';

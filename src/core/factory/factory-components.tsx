@@ -5,14 +5,7 @@
 import React from 'react';
 import { FactoryBridge } from './factory-bridge-core';
 import { factoryRegistry } from './factory-registry';
-
-export type FactoryComponentProps = {
-  config?: Record<string, any>;
-  children?: React.ReactNode;
-  onEvent?: (eventType: string, data: any) => void;
-  className?: string;
-  style?: React.CSSProperties;
-};
+import type { FactoryComponentProps } from '../../types/factory';
 
 // Utility function to create factory-based components
 export function createFactoryComponent<T extends object>(
@@ -20,7 +13,7 @@ export function createFactoryComponent<T extends object>(
   displayName?: string
 ): React.FC<T & FactoryComponentProps> {
   const Component: React.FC<T & FactoryComponentProps> = (props) => {
-    const { config, onEvent, className, style, children, ...restProps } = props;
+    const { config, onEvent, className, children, ...restProps } = props;
 
     // Check if factory is available
     if (!factoryRegistry.hasFactory(factoryName)) {
@@ -37,7 +30,6 @@ export function createFactoryComponent<T extends object>(
         config={{ ...config, ...restProps }}
         onEvent={onEvent}
         className={className}
-        style={style}
       >
         {children}
       </FactoryBridge>

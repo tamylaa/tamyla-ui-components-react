@@ -178,7 +178,7 @@ describe('Factory Bridge', () => {
 
     render(
       <FactoryBridge
-        factory={'NonExistentFactory' as any}
+        factory={'NonExistentFactory' as string}
         config={{}}
       />
     );

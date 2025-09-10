@@ -7,6 +7,8 @@ import React, { forwardRef, useCallback, useEffect } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 
 // Dialog context for managing state
 interface DialogContextValue {
@@ -143,10 +145,10 @@ const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(({
   const { open, onOpenChange } = useDialog();
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    default: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl'
+    sm: responsiveSizes.dialog.sm,
+    default: responsiveSizes.dialog.default,
+    lg: responsiveSizes.dialog.lg,
+    xl: responsiveSizes.dialog.xl
   };
 
   if (!open) return null;
@@ -155,7 +157,7 @@ const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-[var(--backdrop)] backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
 
@@ -163,7 +165,7 @@ const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(({
       <div
         ref={ref}
         className={cn(
-          'relative z-50 grid w-full gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg',
+          'relative z-50 grid w-full gap-4 border border-[var(--border)] bg-[var(--surface-primary)] text-[var(--text-primary)] p-6 shadow-lg duration-200 sm:rounded-lg',
           sizeClasses[size],
           className
         )}
@@ -270,7 +272,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(({
     <button
       ref={ref}
       onClick={handleClick}
-      className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+      className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-[var(--surface-primary)] transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-[var(--surface-secondary)] data-[state=open]:text-[var(--text-secondary)]"
       {...props}
     >
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -283,7 +285,32 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(({
 
 DialogClose.displayName = 'DialogClose';
 
-// Export all components and interfaces
+// ============================================
+// COMPOUND COMPONENT SETUP (Phase 2: Core Standardization)
+// ============================================
+
+// Extended Dialog interface for compound components
+export interface DialogComponent extends React.FC<DialogProps> {
+  Trigger: typeof DialogTrigger;
+  Content: typeof DialogContent;
+  Header: typeof DialogHeader;
+  Title: typeof DialogTitle;
+  Description: typeof DialogDescription;
+  Footer: typeof DialogFooter;
+  Close: typeof DialogClose;
+}
+
+// Create compound component with proper typing
+const DialogWithCompound = Dialog as DialogComponent;
+DialogWithCompound.Trigger = DialogTrigger;
+DialogWithCompound.Content = DialogContent;
+DialogWithCompound.Header = DialogHeader;
+DialogWithCompound.Title = DialogTitle;
+DialogWithCompound.Description = DialogDescription;
+DialogWithCompound.Footer = DialogFooter;
+DialogWithCompound.Close = DialogClose;
+
+// Export named components for backward compatibility
 export {
   Dialog,
   DialogTrigger,
@@ -305,3 +332,6 @@ export type {
   DialogFooterProps,
   DialogCloseProps
 };
+
+// Export compound component as default
+export default DialogWithCompound;

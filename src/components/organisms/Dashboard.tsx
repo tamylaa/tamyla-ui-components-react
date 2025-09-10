@@ -9,7 +9,7 @@ import { createFactoryComponent } from '../../core/factory/factory-bridge';
 interface DashboardWidget {
   id: string;
   component: string;
-  props?: Record<string, unknown>;
+  props?: Record<string, string | number | boolean | object>;
 }
 
 interface SearchFilters {
@@ -23,20 +23,20 @@ interface SearchResult {
   url?: string;
   score: number;
   type: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 interface DashboardItem {
   id: string;
   title: string;
   type: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 interface DashboardActionData {
   action: string;
   widgetId: string;
-  payload?: Record<string, unknown>;
+  payload?: Record<string, string | number | boolean | object>;
 }
 
 interface DashboardProps {
@@ -95,15 +95,15 @@ export const DashboardMedia = createFactoryComponent<DashboardProps>(
 const Dashboard: React.FC<DashboardProps> = ({ type = 'content', ...props }) => {
   switch (type) {
   case 'search':
-    return <DashboardSearch {...props} />;
+    return <DashboardSearch {...props} componentType="CardFactory" />;
   case 'content':
-    return <DashboardContent {...props} />;
+    return <DashboardContent {...props} componentType="CardFactory" />;
   case 'knowledge':
-    return <DashboardKnowledge {...props} />;
+    return <DashboardKnowledge {...props} componentType="CardFactory" />;
   case 'media':
-    return <DashboardMedia {...props} />;
+    return <DashboardMedia {...props} componentType="CardFactory" />;
   default:
-    return <DashboardContent {...props} />;
+    return <DashboardContent {...props} componentType="CardFactory" />;
   }
 };
 

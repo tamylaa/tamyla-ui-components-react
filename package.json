@@ -17,6 +17,7 @@
   },
   "files": [
     "dist",
+    "src/core/design-tokens.css",
     "README.md",
     "scripts"
   ],
@@ -53,14 +54,17 @@
     "preprod:custom": "node scripts/preprod-workflow.js custom",
     "preprod:validate": "node scripts/preprod-workflow.js custom --dry-run --verbose",
     "workflow:report": "node scripts/generate-workflow-report.js",
-    "workflow:dashboard": "node scripts/workflow-dashboard.js"
+    "workflow:dashboard": "node scripts/workflow-dashboard.js",
+    "fix-any-types": "node scripts/fix-any-types.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.2.6",
     "framer-motion": "^10.16.16",
     "react-redux": "^9.0.4",
     "redux-persist": "^6.0.0",
-    "styled-components": "^6.1.8"
+    "styled-components": ">=6.0.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.27.1",
@@ -71,19 +75,16 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@storybook/addon-essentials": "^7.6.10",
-    "@storybook/addon-interactions": "^7.6.10",
-    "@storybook/addon-links": "^7.6.10",
-    "@storybook/addon-onboarding": "^1.0.10",
-    "@storybook/blocks": "^7.6.10",
-    "@storybook/react": "^7.6.10",
-    "@storybook/react-vite": "^7.6.10",
-    "@storybook/test": "^7.6.10",
+    "@storybook/addon-docs": "^7.6.20",
+    "@storybook/addon-links": "^7.6.20",
+    "@storybook/react": "^7.6.20",
+    "@storybook/react-webpack5": "^7.6.20",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
+    "@types/testing-library__jest-dom": "^5.14.9",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "babel-jest": "^29.0.0",
@@ -105,13 +106,15 @@
     "rollup-plugin-filesize": "^10.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "semantic-release": "^22.0.12",
+    "storybook": "^7.6.20",
     "ts-jest": "^29.4.1",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
     "@tamyla/ui-components": ">=1.0.0",
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "styled-components": ">=6.0.0"
   },
   "keywords": [
     "react",

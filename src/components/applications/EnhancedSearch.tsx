@@ -11,7 +11,7 @@ interface _SearchResult {
   url?: string;
   score: number;
   type: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 interface _SearchFilters {
@@ -32,9 +32,9 @@ interface EnhancedSearchProps {
   enableSorting?: boolean;
   enableExport?: boolean;
   // Event handlers
-  onSearch?: (_query: string, _filters: Record<string, unknown>) => void;
-  onResultSelect?: (_result: Record<string, unknown>) => void;
-  onFilterChange?: (_filters: Record<string, unknown>) => void;
+  onSearch?: (_query: string, _filters: _SearchFilters) => void;
+  onResultSelect?: (_result: _SearchResult) => void;
+  onFilterChange?: (_filters: _SearchFilters) => void;
 }
 
 export const EnhancedSearch = createFactoryComponent<EnhancedSearchProps>(

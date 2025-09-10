@@ -7,6 +7,7 @@ import React, { forwardRef } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { responsiveSizes } from '../../utils/responsive-utils';
 
 // Explicit DOM type imports for ESLint
 type HTMLTableElement = globalThis.HTMLTableElement;
@@ -46,7 +47,7 @@ const Table = forwardRef<HTMLTableElement, TableProps>(({
     <div className="relative w-full overflow-auto">
       <table
         ref={ref}
-        className={cn('w-full caption-bottom text-sm', className)}
+        className={cn('w-full caption-bottom text-sm sm:text-base', className)}
         {...props}
       />
     </div>
@@ -234,7 +235,7 @@ const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
   return (
     <div
       ref={ref}
-      className={cn('p-3 bg-background border rounded-md', className)}
+      className={cn('p-3 bg-[var(--surface-primary)] border-[var(--border)] rounded-md', className)}
       {...props}
     >
       {/* Header */}
@@ -297,7 +298,7 @@ const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
               disabled={isDisabled(date)}
               className={cn(
                 'text-center text-xs p-2 rounded-md transition-colors',
-                isSelected(date) && 'bg-primary text-primary-foreground',
+                isSelected(date) && 'bg-[var(--primary)] text-[var(--primary-foreground)]',
                 isToday && !isSelected(date) && 'bg-accent text-accent-foreground',
                 !isSelected(date) && !isToday && 'hover:bg-accent',
                 isDisabled(date) && 'text-muted-foreground cursor-not-allowed'

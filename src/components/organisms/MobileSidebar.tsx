@@ -4,6 +4,9 @@
  */
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import styled from 'styled-components';
+import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
 
 // TODO: Import when properly exported from ui-components
 // import { MobileSidebar as MobileSidebarFactory } from '@tamyla/ui-components';
@@ -75,6 +78,137 @@ export interface MobileSidebarHandle {
   getSidebar: () => HTMLElement | null;
 }
 
+const SidebarContainer = styled.div<{ $isOpen: boolean; $position: string; $width: string; $height: string }>`
+  position: fixed;
+  top: 0;
+  background: var(--surface-primary, #fff);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+
+  ${({ $position, $width, $height, $isOpen }) => {
+    const translateX = $isOpen ? '0' : ($position === 'left' ? '-100%' : '100%');
+    const translateY = $isOpen ? '0' : ($position === 'top' ? '-100%' : '100%');
+
+    switch ($position) {
+      case 'left':
+        return `
+          left: 0;
+          width: ${$width};
+          height: ${$height};
+          transform: translateX(${translateX});
+        `;
+      case 'right':
+        return `
+          right: 0;
+          width: ${$width};
+          height: ${$height};
+          transform: translateX(${translateX});
+        `;
+      case 'top':
+        return `
+          top: 0;
+          width: 100%;
+          height: ${$height};
+          transform: translateY(${translateY});
+        `;
+      case 'bottom':
+        return `
+          bottom: 0;
+          width: 100%;
+          height: ${$height};
+          transform: translateY(${translateY});
+        `;
+      default:
+        return `
+          left: 0;
+          width: ${$width};
+          height: ${$height};
+          transform: translateX(${translateX});
+        `;
+    }
+  }}
+`;
+
+const SidebarHeader = styled.div<{ theme: string }>`
+  padding: ${responsiveSizes.card.sm};
+  border-bottom: 1px solid var(--border, #eee);
+  background: var(--surface-secondary, #f8f9fa);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const SidebarTitle = styled.h3<{ theme: string }>`
+  margin: 0;
+  color: var(--text-primary, #333);
+  font-size: 18px;
+  font-weight: 600;
+`;
+
+const CloseButton = styled.button<{ theme: string }>`
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-primary, #333);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: var(--surface-hover, #f0f0f0);
+  }
+`;
+
+const SidebarNav = styled.nav`
+  flex: 1;
+  padding: 8px 0;
+  overflow-y: auto;
+`;
+
+const NavItem = styled.a<{ theme: string; $active?: boolean }>`
+  display: block;
+  padding: ${responsiveSizes.card.sm};
+  color: var(--text-primary, #333);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+  transition: background-color 150ms ease;
+  cursor: pointer;
+  background: ${({ $active }) => $active ? 'var(--surface-hover, #f0f0f0)' : 'transparent'};
+
+  &:hover {
+    background: var(--surface-hover, #f8f9fa);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const NavIcon = styled.span`
+  margin-right: 12px;
+`;
+
+const Backdrop = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: ${({ $isOpen }) => $isOpen ? 1 : 0};
+  visibility: ${({ $isOpen }) => $isOpen ? 'visible' : 'hidden'};
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+`;
+
 export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>(({
   position = 'left',
   width = '280px',
@@ -128,7 +262,7 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
           transition: opacity ${animationDuration}ms ease, visibility ${animationDuration}ms ease;
         "></div>
       ` : ''}
-      
+
       <!-- Sidebar -->
       <div class="tmyl-sidebar-panel" style="
         position: fixed;
@@ -171,7 +305,7 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
             ">&times;</button>
           </div>
         ` : ''}
-        
+
         <!-- Navigation -->
         <nav class="tmyl-sidebar-nav" style="flex: 1; padding: 8px 0;">
           ${navigation.map((item, index) => `

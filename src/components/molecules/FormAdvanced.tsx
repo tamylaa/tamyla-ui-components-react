@@ -7,6 +7,7 @@ import React, { forwardRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { responsiveSizes, responsiveSpacing } from '../../utils/responsive-utils';
 
 // Explicit DOM type imports for ESLint
 type HTMLSelectElement = globalThis.HTMLSelectElement;
@@ -52,8 +53,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
     <select
       ref={ref}
       className={cn(
-        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        error && 'border-destructive focus:ring-destructive',
+        'flex h-10 w-full items-center justify-between rounded-md border border-[var(--border)] bg-[var(--surface-primary)] px-3 py-2 text-sm ring-offset-background placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        error && 'border-[var(--destructive)] focus:ring-[var(--destructive)]',
         className
       )}
       onChange={handleChange}
@@ -124,8 +125,8 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
         id={checkboxId}
         type="checkbox"
         className={cn(
-          'h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-          error && 'border-destructive focus:ring-destructive',
+          'h-4 w-4 rounded border border-[var(--border)] text-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          error && 'border-[var(--destructive)] focus:ring-[var(--destructive)]',
           className
         )}
         onChange={handleChange}
@@ -135,7 +136,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({
       {label && (
         <label
           htmlFor={checkboxId}
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[var(--text-primary)]"
         >
           {label}
         </label>
@@ -185,17 +186,17 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
   return (
     <div
-      className={cn('grid gap-2', className)}
+      className={cn(responsiveSpacing.gap.sm, className)}
       role="radiogroup"
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.props) {
-          const childProps = child.props as any;
-          return React.cloneElement(child as React.ReactElement<any>, {
+          const childProps = child.props as { value?: string; disabled?: boolean };
+          return React.cloneElement(child, {
             checked: childProps.value === value,
-            onChange: () => handleValueChange(childProps.value),
+            onChange: () => handleValueChange(childProps.value || ''),
             disabled: disabled || childProps.disabled
-          } as any);
+          } as React.InputHTMLAttributes<HTMLInputElement>);
         }
         return child;
       })}
@@ -218,7 +219,7 @@ const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(({
     type="radio"
     value={value}
     className={cn(
-      'h-4 w-4 border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'h-4 w-4 border border-[var(--border)] text-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
       className
     )}
     {...props}
@@ -271,14 +272,14 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(({
       <div
         className={cn(
           'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-          props.checked ? 'bg-primary' : 'bg-input',
+          props.checked ? 'bg-[var(--primary)]' : 'bg-[var(--surface-secondary)]',
           props.disabled && 'opacity-50 cursor-not-allowed',
           className
         )}
       >
         <span
           className={cn(
-            'inline-block h-4 w-4 transform rounded-full bg-background transition-transform',
+            'inline-block h-4 w-4 transform rounded-full bg-[var(--surface-primary)] transition-transform',
             props.checked ? 'translate-x-6' : 'translate-x-1'
           )}
         />
@@ -340,7 +341,7 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(({
       step={step}
       value={value}
       className={cn(
-        'w-full h-2 bg-input rounded-lg appearance-none cursor-pointer slider',
+        'w-full h-2 bg-[var(--surface-secondary)] rounded-lg appearance-none cursor-pointer slider',
         className
       )}
       onChange={handleChange}

@@ -7,6 +7,7 @@ import React, { forwardRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { responsiveSizes, responsiveSpacing } from '../../utils/responsive-utils';
 
 // Explicit DOM type imports for ESLint
 type HTMLLabelElement = globalThis.HTMLLabelElement;
@@ -37,7 +38,7 @@ export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(({
   className,
   ...props
 }, ref) => (
-  <div ref={ref} className={cn('space-y-2', className)} {...props} />
+  <div ref={ref} className={cn(responsiveSpacing.gap.sm, className)} {...props} />
 ));
 
 FormItem.displayName = 'FormItem';
@@ -56,7 +57,7 @@ export const FormLabel = forwardRef<HTMLLabelElement, FormLabelProps>(({
       ref={ref}
       htmlFor={name}
       className={cn(
-        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 sm:text-base',
         error && 'text-destructive',
         className
       )}
@@ -203,7 +204,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
 
   // shadcn/ui inspired variant system
   const getInputClasses = () => {
-    const baseClasses = 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
+    const baseClasses = 'flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--surface-primary)] px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
     const variantClasses = {
       default: '',
@@ -319,7 +320,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>((
             id={name}
             name={name}
             className={cn(
-              'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+              'flex min-h-[80px] w-full rounded-md border border-[var(--border)] bg-[var(--surface-primary)] px-3 py-2 text-sm ring-offset-background placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
               error && 'border-destructive focus-visible:ring-destructive',
               className
             )}
@@ -338,3 +339,31 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>((
 });
 
 FormTextarea.displayName = 'FormTextarea';
+
+// ============================================
+// COMPOUND COMPONENT SETUP (Phase 2: Core Standardization)
+// ============================================
+
+// Extended Form interface for compound components
+export interface FormComponent extends React.FC<FormFieldProps> {
+  Item: typeof FormItem;
+  Label: typeof FormLabel;
+  Control: typeof FormControl;
+  Description: typeof FormDescription;
+  Message: typeof FormMessage;
+  Input: typeof FormInput;
+  Textarea: typeof FormTextarea;
+}
+
+// Create compound component with proper typing
+const FormWithCompound = FormField as FormComponent;
+FormWithCompound.Item = FormItem;
+FormWithCompound.Label = FormLabel;
+FormWithCompound.Control = FormControl;
+FormWithCompound.Description = FormDescription;
+FormWithCompound.Message = FormMessage;
+FormWithCompound.Input = FormInput;
+FormWithCompound.Textarea = FormTextarea;
+
+// Export compound component as default
+export default FormWithCompound;

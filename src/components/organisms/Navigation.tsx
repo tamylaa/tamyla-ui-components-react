@@ -7,6 +7,9 @@ import React, { forwardRef, useCallback } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
+import logger from '../../utils/logger';
 
 // Navigation Item
 interface NavigationItem {
@@ -137,37 +140,37 @@ const NavigationItemComponent: React.FC<NavigationItemComponentProps> = ({
     if (item.href) {
       e.preventDefault();
       // Handle navigation (you can integrate with your router here)
-      console.log('Navigate to:', item.href);
+      logger.info('Navigate to:', item.href, 'Navigation');
     }
   }, [item, hasChildren, isExpanded, onItemClick]);
 
   // Variant styles
   const variantClasses = {
     default: cn(
-      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
       isActive
-        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-        : 'hover:bg-accent hover:text-accent-foreground'
+        ? 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-600)]'
+        : 'hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]'
     ),
     pills: cn(
       'inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
       isActive
-        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-        : 'hover:bg-accent hover:text-accent-foreground'
+        ? 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-600)]'
+        : 'hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]'
     ),
     underline: cn(
-      'inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border-b-2',
+      'inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border-b-2',
       isActive
-        ? 'border-primary text-primary'
-        : 'border-transparent hover:border-accent-foreground/20'
+        ? 'border-[var(--primary)] text-[var(--primary)]'
+        : 'border-transparent hover:border-[var(--text-secondary)]/20'
     )
   };
 
   // Size styles
   const sizeClasses = {
-    sm: 'h-8 px-3 text-xs',
-    default: 'h-10 px-4',
-    lg: 'h-12 px-6 text-base'
+    sm: responsiveSizes.navigation.sm,
+    default: responsiveSizes.navigation.default,
+    lg: responsiveSizes.navigation.lg
   };
 
   return (
@@ -189,7 +192,7 @@ const NavigationItemComponent: React.FC<NavigationItemComponentProps> = ({
         )}
         <span>{item.label}</span>
         {item.badge && (
-          <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-foreground bg-primary rounded-full">
+          <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-[var(--primary-foreground)] bg-[var(--primary)] rounded-full">
             {item.badge}
           </span>
         )}
@@ -267,7 +270,7 @@ const NavigationMenuTrigger = forwardRef<HTMLButtonElement, NavigationMenuTrigge
   <button
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2',
+      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)] h-10 px-4 py-2',
       className
     )}
     {...props}
@@ -287,7 +290,7 @@ const NavigationMenuContent: React.FC<NavigationMenuContentProps> = ({
 }) => (
   <div
     className={cn(
-      'absolute top-full left-0 z-50 min-w-[200px] overflow-hidden rounded-md border bg-popover p-4 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95',
+      'absolute top-full left-0 z-50 min-w-[200px] overflow-hidden rounded-md border border-[var(--border)] bg-[var(--surface-primary)] p-4 text-[var(--text-primary)] shadow-md animate-in fade-in-0 zoom-in-95',
       className
     )}
     {...props}

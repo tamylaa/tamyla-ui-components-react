@@ -41,18 +41,18 @@ describe('Card Component', () => {
     expect(screen.getByText('Content').parentElement).toHaveClass('shadow-lg');
 
     rerender(<Card variant="filled">Content</Card>);
-    expect(screen.getByText('Content').parentElement).toHaveClass('bg-muted');
+    expect(screen.getByText('Content').parentElement).toHaveClass('bg-[var(--surface-secondary)]');
   });
 
   test('applies different padding correctly', () => {
     const { rerender } = render(<Card padding="default">Content</Card>);
-    expect(screen.getByText('Content').parentElement).toHaveClass('p-6');
+    expect(screen.getByText('Content').parentElement).toHaveClass('p-4', 'sm:p-6');
 
     rerender(<Card padding="sm">Content</Card>);
-    expect(screen.getByText('Content').parentElement).toHaveClass('p-4');
+    expect(screen.getByText('Content').parentElement).toHaveClass('p-3', 'sm:p-4');
 
     rerender(<Card padding="lg">Content</Card>);
-    expect(screen.getByText('Content').parentElement).toHaveClass('p-8');
+    expect(screen.getByText('Content').parentElement).toHaveClass('p-6', 'sm:p-8');
 
     rerender(<Card padding="none">Content</Card>);
     expect(screen.getByText('Content').parentElement).toHaveClass('p-0');

@@ -25,11 +25,15 @@ const config = [
       commonjs(),
       esbuild({
         include: /\.[jt]sx?$/,
-        exclude: [/node_modules/, /src\/demos/, /src\/demos-backup\//, /src\/test-components\//],
+        exclude: [/node_modules/, /src\/demos-backup\//],
         target: 'es2020',
         jsx: 'automatic',
         tsconfig: 'tsconfig.json',
-        minify: false
+        minify: true,
+        treeShaking: true,
+        define: {
+          'process.env.NODE_ENV': '"production"'
+        }
       })
     ],
     external: ['react', 'react-dom', '@tamyla/ui-components']

@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils/test-setup';
 import { StatusIndicator } from '../StatusIndicator';

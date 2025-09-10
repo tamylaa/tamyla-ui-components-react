@@ -18,7 +18,7 @@ interface CampaignSelectorProps {
     };
   }>;
   selectedCampaign?: string;
-  onCampaignSelect?: (_campaign: Record<string, unknown>) => void;
+  onCampaignSelect?: (_campaign: { id: string; name: string; status: string; metrics?: { impressions: number; clicks: number; conversions: number; } }) => void;
   className?: string;
 }
 

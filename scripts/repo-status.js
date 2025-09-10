@@ -145,7 +145,7 @@ class ReactRepositoryStatus {
     let totalComponents = 0;
 
     componentTypes.forEach(type => {
-      const typePath = path.join(srcPath, type);
+      const typePath = path.join(srcPath, 'components', type);
       if (fs.existsSync(typePath)) {
         const components = fs.readdirSync(typePath).filter(item =>
           item.endsWith('.tsx') || item.endsWith('.ts')

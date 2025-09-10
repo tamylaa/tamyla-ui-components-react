@@ -4,75 +4,101 @@
  * This prevents TypeScript compilation errors when the peer dependency is not available
  */
 
+import type { ComponentFactory, FactoryConfig } from '../types/common';
+import logger from './logger';
+import { safeDynamicImport } from './async-safety';
+
+// Local interface for AbortSignal to avoid ESLint issues
+interface AbortSignalLike {
+  readonly aborted: boolean;
+  readonly reason?: unknown;
+  addEventListener(type: 'abort', listener: () => void, options?: { once?: boolean }): void;
+  removeEventListener(type: 'abort', listener: () => void): void;
+}
+
 export interface UIComponentsModule {
   // Factory types
-  ButtonFactory?: any;
-  InputFactory?: any;
-  CardFactory?: any;
-  SearchBarFactory?: any;
-  ActionCardFactory?: any;
-  SearchInterfaceFactory?: any;
-  StatusIndicatorFactory?: any;
-  ContentCardFactory?: any;
-  FileListFactory?: any;
-  NotificationFactory?: any;
-  CampaignSelectorSystem?: any;
-  ContentManagerApplicationFactory?: any;
-  EnhancedSearchApplicationFactory?: any;
-  TamylaUISystem?: any;
-  RewardSystem?: any;
-  InputGroupFactory?: any;
-  OrganismTemplates?: any;
-  OrganismFactory?: any;
+  ButtonFactory?: unknown;
+  InputFactory?: unknown;
+  CardFactory?: unknown;
+  SearchBarFactory?: unknown;
+  ActionCardFactory?: unknown;
+  SearchInterfaceFactory?: unknown;
+  StatusIndicatorFactory?: unknown;
+  ContentCardFactory?: unknown;
+  FileListFactory?: unknown;
+  NotificationFactory?: unknown;
+  CampaignSelectorSystem?: unknown;
+  ContentManagerApplicationFactory?: unknown;
+  EnhancedSearchApplicationFactory?: unknown;
+  TamylaUISystem?: unknown;
+  RewardSystem?: unknown;
+  InputGroupFactory?: unknown;
+  OrganismTemplates?: unknown;
+  OrganismFactory?: unknown;
 
   // Utility functions
-  createFactory?: any;
-  FactoryRegistry?: any;
+  createFactory?: unknown;
+  FactoryRegistry?: unknown;
 
   // Other exports
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
  * Dynamically imports @tamyla/ui-components if available
  * Returns null if the module is not available (e.g., in CI environments)
  */
-export async function dynamicImportUIComponents(): Promise<UIComponentsModule | null> {
-  try {
-    // Use dynamic import to avoid static analysis
-    const moduleSpecifier = '@tamyla/ui-components';
-    const uiComponentsModule = await import(moduleSpecifier);
+export async function dynamicImportUIComponents(
+  signal?: AbortSignalLike
+): Promise<UIComponentsModule | null> {
+  const moduleSpecifier = '@tamyla/ui-components';
 
-    console.log('✅ Successfully loaded @tamyla/ui-components');
-    return uiComponentsModule as UIComponentsModule;
-  } catch (error) {
-    console.warn('⚠️ @tamyla/ui-components not available:', error instanceof Error ? error.message : 'Unknown error');
-    return null;
+  const result = await safeDynamicImport<UIComponentsModule>(moduleSpecifier, {
+    timeout: 10000,
+    retries: 2,
+    retryDelay: 1000,
+    signal,
+    onError: (error) => {
+      logger.warn('@tamyla/ui-components import failed', {
+        error: error.message,
+        moduleSpecifier
+      }, 'DynamicUI');
+    },
+    onTimeout: () => {
+      logger.warn('@tamyla/ui-components import timed out', { moduleSpecifier }, 'DynamicUI');
+    }
+  });
+
+  if (result && process.env.NODE_ENV === 'development') {
+    logger.info('Successfully loaded @tamyla/ui-components', null, 'DynamicUI');
   }
+
+  return result;
 }
 
 /**
  * Gets a specific factory from @tamyla/ui-components with fallback
  */
-export async function getUIComponentFactory(factoryName: string): Promise<any | null> {
+export async function getUIComponentFactory(factoryName: string): Promise<unknown | null> {
   try {
     const uiComponents = await dynamicImportUIComponents();
 
     if (!uiComponents) {
-      console.warn(`⚠️ Cannot get ${factoryName}: @tamyla/ui-components not available`);
+      logger.warn(`Cannot get ${factoryName}: @tamyla/ui-components not available`, null, 'DynamicUI');
       return null;
     }
 
     const factory = uiComponents[factoryName];
     if (!factory) {
-      console.warn(`⚠️ Factory ${factoryName} not found in @tamyla/ui-components`);
+      logger.warn(`Factory ${factoryName} not found in @tamyla/ui-components`, null, 'DynamicUI');
       return null;
     }
 
-    console.log(`✅ Successfully loaded factory: ${factoryName}`);
+    logger.info(`Successfully loaded factory: ${factoryName}`, null, 'DynamicUI');
     return factory;
   } catch (error) {
-    console.error(`❌ Error loading factory ${factoryName}:`, error);
+    logger.error(`Error loading factory ${factoryName}`, { error }, 'DynamicUI');
     return null;
   }
 }
@@ -92,30 +118,30 @@ export async function isUIComponentsAvailable(): Promise<boolean> {
 /**
  * Gets multiple factories at once with fallback
  */
-export async function getUIComponentFactories(factoryNames: string[]): Promise<Record<string, any>> {
-  const factories: Record<string, any> = {};
+export async function getUIComponentFactories(factoryNames: string[]): Promise<Record<string, ComponentFactory>> {
+  const factories: Record<string, ComponentFactory> = {};
 
   try {
     const uiComponents = await dynamicImportUIComponents();
 
     if (!uiComponents) {
-      console.warn('⚠️ Cannot get factories: @tamyla/ui-components not available');
+      logger.warn('Cannot get factories: @tamyla/ui-components not available', null, 'DynamicUI');
       return factories;
     }
 
     for (const factoryName of factoryNames) {
       const factory = uiComponents[factoryName];
-      if (factory) {
-        factories[factoryName] = factory;
-        console.log(`✅ Loaded factory: ${factoryName}`);
+      if (factory && typeof factory === 'object' && 'create' in factory) {
+        factories[factoryName] = factory as ComponentFactory;
+        logger.info(`Loaded factory: ${factoryName}`, null, 'DynamicUI');
       } else {
-        console.warn(`⚠️ Factory ${factoryName} not found`);
+        logger.warn(`Factory ${factoryName} not found or invalid`, null, 'DynamicUI');
       }
     }
 
     return factories;
   } catch (error) {
-    console.error('❌ Error loading factories:', error);
+    logger.error('Error loading factories', { error }, 'DynamicUI');
     return factories;
   }
 }
@@ -123,36 +149,40 @@ export async function getUIComponentFactories(factoryNames: string[]): Promise<R
 /**
  * Creates a mock factory for development/testing when real ones aren't available
  */
-export function createMockFactory(factoryName: string): any {
+export function createMockFactory(factoryName: string): ComponentFactory {
   return {
-    create: (config: any = {}) => {
-      console.log(`🔧 Mock ${factoryName} create called with:`, config);
+    create: (config: FactoryConfig = {}) => {
+      logger.debug(`Mock ${factoryName} create called`, { config }, 'MockFactory');
       return {
         element: document.createElement('div'),
-        destroy: () => console.log(`🔧 Mock ${factoryName} destroyed`),
-        update: (newConfig: any) => console.log(`🔧 Mock ${factoryName} updated:`, newConfig)
+        destroy: () => {
+          logger.debug(`Mock ${factoryName} destroyed`, null, 'MockFactory');
+        },
+        update: (newConfig: FactoryConfig) => {
+          logger.debug(`Mock ${factoryName} updated`, { newConfig }, 'MockFactory');
+        }
       };
     },
 
     // Enhanced methods
     enableTradingPortalPatterns: () => {
-      console.log(`🔧 Mock ${factoryName} enableTradingPortalPatterns called`);
+      logger.debug(`Mock ${factoryName} enableTradingPortalPatterns called`, null, 'MockFactory');
       return { success: true, patterns: ['mock-pattern'] };
     },
 
     selectionManager: {
-      on: (event: string, callback: Function) => {
-        console.log(`🔧 Mock ${factoryName} selectionManager.on(${event}) called`);
+      on: (event: string, callback: (...args: any[]) => any) => {
+        logger.debug(`Mock ${factoryName} selectionManager.on(${event}) called`, null, 'MockFactory');
         return callback;
       }
     },
 
-    setResults: (results: any[]) => {
-      console.log(`🔧 Mock ${factoryName} setResults called with:`, results);
+    setResults: (results: unknown[]) => {
+      logger.debug(`Mock ${factoryName} setResults called`, { results }, 'MockFactory');
     },
 
-    createSearchInterface: (config: any = {}) => {
-      console.log(`🔧 Mock ${factoryName} createSearchInterface called with:`, config);
+    createSearchInterface: (config: FactoryConfig = {}) => {
+      logger.debug(`Mock ${factoryName} createSearchInterface called`, { config }, 'MockFactory');
       return { element: document.createElement('div'), config };
     }
   };

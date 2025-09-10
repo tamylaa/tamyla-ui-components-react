@@ -4,8 +4,38 @@
  */
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import logger from '../../utils/logger';
 // Dynamic import to avoid SSR issues
 // import { RewardSystem } from '@tamyla/ui-components';
+
+// Interface for RewardSystem configuration
+interface RewardSystemConfig {
+  preset?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  autoInitialize?: boolean;
+  enableAchievements?: boolean;
+  enableProgress?: boolean;
+  enableNotifications?: boolean;
+  enableXP?: boolean;
+  enableLeveling?: boolean;
+}
+
+// Interface for RewardSystem
+interface RewardSystemInstance {
+  initialize(): void;
+  destroy(): void;
+  mount(container: HTMLElement): void;
+  on(event: string, handler: (data: Record<string, unknown>) => void): void;
+  addXP(amount: number): void;
+  unlockAchievement(id: string): void;
+  updateProgress(metric: string, value: number): void;
+  trackAction(action: string, data?: Record<string, unknown>): void;
+  showNotification(message: string, type?: string): void;
+  resetProgress(): void;
+  getCurrentXP(): number;
+  getCurrentLevel(): number;
+  getAchievements(): Array<{ id: string; name: string; description: string; unlocked: boolean }>;
+  getProgress(): Record<string, number>;
+}
 
 export interface RewardProps {
   // Configuration options
@@ -19,11 +49,11 @@ export interface RewardProps {
 
   // Event handlers
   onInitialized?: () => void;
-  onXPAwarded?: (data: unknown) => void;
-  onLevelUp?: (data: unknown) => void;
-  onAchievementEarned?: (data: unknown) => void;
-  onProgressUpdated?: (data: unknown) => void;
-  onActionTracked?: (data: unknown) => void;
+  onXPAwarded?: (data: { amount: number; total: number; source: string }) => void;
+  onLevelUp?: (data: { newLevel: number; previousLevel: number; xpRequired: number }) => void;
+  onAchievementEarned?: (data: { achievementId: string; name: string; description: string }) => void;
+  onProgressUpdated?: (data: { metric: string; value: number; previousValue: number }) => void;
+  onActionTracked?: (data: { action: string; data?: Record<string, string | number | boolean> }) => void;
 
   // Container options
   className?: string;
@@ -75,8 +105,11 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const rewardSystemRef = useRef<RewardSystemInstance | null>(null);
 
-  const rewardSystemRef = useRef<any>(null);
+  // State for fallback display
+  const [showFallback, setShowFallback] = React.useState(false);
+  const [fallbackMessage, setFallbackMessage] = React.useState('Loading rewards and achievements...');
 
   // Serialize otherProps for dependency array
   const otherPropsKey = JSON.stringify(otherProps);
@@ -124,7 +157,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
 
     trackAction: (action: string, data?: unknown) => {
       if (rewardSystemRef.current) {
-        rewardSystemRef.current.trackAction(action, data);
+        rewardSystemRef.current.trackAction(action, data as Record<string, unknown>);
       }
     },
 
@@ -152,16 +185,16 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
         // Use string concatenation to avoid TypeScript compile-time resolution
         const moduleName = '@tamyla/' + 'ui-components';
         // Handle missing peer dependency gracefully
-        let uiComponents: any = null;
+        let uiComponents: { RewardSystem?: new (config: RewardSystemConfig) => RewardSystemInstance } | null = null;
         try {
           uiComponents = await import(/* @vite-ignore */ moduleName);
         } catch (importError) {
-          console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+          logger.warn('Peer dependency @tamyla/ui-components not available:', importError, 'Reward');
         }
 
         if (uiComponents?.RewardSystem) {
           // Create RewardSystem instance with proper type handling
-          rewardSystemRef.current = new (uiComponents.RewardSystem as any)({
+          rewardSystemRef.current = new uiComponents.RewardSystem({
             preset,
             autoInitialize,
             enableAchievements,
@@ -173,62 +206,45 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
           });
 
           // Mount to the container
-          rewardSystemRef.current.mount(containerRef.current);
+          if (rewardSystemRef.current && containerRef.current) {
+            rewardSystemRef.current.mount(containerRef.current);
 
-          // Set up event listeners
-          if (onInitialized) {
-            rewardSystemRef.current.on('initialized', onInitialized);
-          }
-          if (onXPAwarded) {
-            rewardSystemRef.current.on('xpAwarded', onXPAwarded);
-          }
-          if (onLevelUp) {
-            rewardSystemRef.current.on('levelUp', onLevelUp);
-          }
-          if (onAchievementEarned) {
-            rewardSystemRef.current.on('achievementEarned', onAchievementEarned);
-          }
-          if (onProgressUpdated) {
-            rewardSystemRef.current.on('progressUpdated', onProgressUpdated);
-          }
-          if (onActionTracked) {
-            rewardSystemRef.current.on('actionTracked', onActionTracked);
-          }
+            // Set up event listeners
+            if (onInitialized) {
+              rewardSystemRef.current.on('initialized', onInitialized);
+            }
+            if (onXPAwarded) {
+              rewardSystemRef.current.on('xpAwarded', onXPAwarded as (data: Record<string, unknown>) => void);
+            }
+            if (onLevelUp) {
+              rewardSystemRef.current.on('levelUp', onLevelUp as (data: Record<string, unknown>) => void);
+            }
+            if (onAchievementEarned) {
+              rewardSystemRef.current.on('achievementEarned', onAchievementEarned as (data: Record<string, unknown>) => void);
+            }
+            if (onProgressUpdated) {
+              rewardSystemRef.current.on('progressUpdated', onProgressUpdated as (data: Record<string, unknown>) => void);
+            }
+            if (onActionTracked) {
+              rewardSystemRef.current.on('actionTracked', onActionTracked as (data: Record<string, unknown>) => void);
+            }
 
-          // Auto-initialize if enabled
-          if (autoInitialize) {
-            rewardSystemRef.current.initialize();
+            // Auto-initialize if enabled
+            if (autoInitialize) {
+              rewardSystemRef.current.initialize();
+            }
           }
         } else {
           // RewardSystem not available, create fallback
-          if (containerRef.current) {
-            containerRef.current.innerHTML = `
-              <div style="padding: 20px; text-align: center; border: 1px solid #ddd; border-radius: 8px;">
-                <h3>Reward System</h3>
-                <p>Reward system will be available when @tamyla/ui-components is installed</p>
-              </div>
-            `;
-          }
+          setShowFallback(true);
+          setFallbackMessage('Reward system will be available when @tamyla/ui-components is installed');
         }
       } catch (error) {
-        console.warn('RewardSystem could not be loaded, using fallback:', error);
+        logger.warn('RewardSystem could not be loaded, using fallback:', error, 'Reward');
 
         // Create fallback display
-        if (containerRef.current) {
-          containerRef.current.innerHTML = `
-            <div class="tamyla-reward-fallback" style="
-              padding: 1rem;
-              border: 1px solid #e0e0e0;
-              border-radius: 8px;
-              background: #f8f9fa;
-              text-align: center;
-              color: #666;
-            ">
-              <h3>Reward System</h3>
-              <p>Loading rewards and achievements...</p>
-            </div>
-          `;
-        }
+        setShowFallback(true);
+        setFallbackMessage('Loading rewards and achievements...');
       }
     };
 
@@ -264,7 +280,24 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
       ref={containerRef}
       className={`tmyl-reward-system-container ${className || ''}`}
       style={style}
-    />
+    >
+      {showFallback && (
+        <div
+          className="tamyla-reward-fallback"
+          style={{
+            padding: '1rem',
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+            background: '#f8f9fa',
+            textAlign: 'center',
+            color: '#666',
+          }}
+        >
+          <h3>Reward System</h3>
+          <p>{fallbackMessage}</p>
+        </div>
+      )}
+    </div>
   );
 });
 

@@ -7,6 +7,8 @@ import React, { forwardRef } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, combineResponsive } from '../../utils/responsive-utils';
 
 // Explicit DOM type imports for ESLint
 type HTMLHeadingElement = globalThis.HTMLHeadingElement;
@@ -57,11 +59,11 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(({
   if (!isVisible && autoClose) return null;
 
   const variantClasses = {
-    default: 'bg-background text-foreground',
-    destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
-    success: 'border-green-500/50 text-green-700 dark:text-green-400 dark:border-green-500/50',
-    warning: 'border-yellow-500/50 text-yellow-700 dark:text-yellow-400 dark:border-yellow-500/50',
-    info: 'border-blue-500/50 text-blue-700 dark:text-blue-400 dark:border-blue-500/50'
+    default: 'bg-[var(--background)] text-[var(--foreground)]',
+    destructive: 'border-[var(--destructive)]/50 text-[var(--destructive)] dark:border-[var(--destructive)] [&>svg]:text-[var(--destructive)]',
+    success: 'border-[var(--success)]/50 text-[var(--success-700)] dark:text-[var(--success-400)] dark:border-[var(--success)]/50',
+    warning: 'border-[var(--warning)]/50 text-[var(--warning-700)] dark:text-[var(--warning-400)] dark:border-[var(--warning)]/50',
+    info: 'border-[var(--primary)]/50 text-[var(--primary-700)] dark:text-[var(--primary-400)] dark:border-[var(--primary)]/50'
   };
 
   return (
@@ -69,7 +71,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(({
       ref={ref}
       role="alert"
       className={cn(
-        'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
+        'relative w-full rounded-lg border p-3 sm:p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-3 sm:[&>svg]:left-4 [&>svg]:top-3 sm:[&>svg]:top-4 [&>svg]:text-[var(--foreground)]',
         variantClasses[variant || 'default'],
         className
       )}
@@ -164,10 +166,10 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>(({
   }, [percentage, enableAnalytics, analyticsEvent, dispatch]);
 
   const variantClasses = {
-    default: 'bg-primary',
-    success: 'bg-green-500',
-    warning: 'bg-yellow-500',
-    destructive: 'bg-red-500'
+    default: 'bg-[var(--primary)]',
+    success: 'bg-[var(--success)]',
+    warning: 'bg-[var(--warning)]',
+    destructive: 'bg-[var(--destructive)]'
   };
 
   const sizeClasses = {
@@ -179,7 +181,7 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>(({
   return (
     <div
       ref={ref}
-      className={cn('relative w-full overflow-hidden rounded-full bg-secondary', sizeClasses[size], className)}
+      className={cn('relative w-full overflow-hidden rounded-full bg-[var(--surface-secondary)]', sizeClasses[size], className)}
       {...props}
     >
       <div
@@ -188,7 +190,7 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>(({
       />
       {showValue && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs font-medium text-primary-foreground">
+          <span className="text-xs font-medium text-[var(--primary-foreground)]">
             {Math.round(percentage)}%
           </span>
         </div>
@@ -202,7 +204,7 @@ Progress.displayName = 'Progress';
 // Badge Component
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning';
-  size?: 'sm' | 'default' | 'lg';
+  size?: 'xs' | 'sm' | 'default' | 'lg';
   // Your unique Redux integration
   enableAnalytics?: boolean;
   analyticsEvent?: string;
@@ -232,18 +234,19 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(({
   }, [enableAnalytics, analyticsEvent, children, dispatch]);
 
   const variantClasses = {
-    default: 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-    secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-    destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-    outline: 'text-foreground',
-    success: 'border-transparent bg-green-500 text-white hover:bg-green-600',
-    warning: 'border-transparent bg-yellow-500 text-white hover:bg-yellow-600'
+    default: 'border-transparent bg-[var(--surface-secondary)] text-[var(--text-primary)] hover:bg-[var(--neutral-200)]',
+    secondary: 'border-transparent bg-[var(--surface-secondary)] text-[var(--text-primary)] hover:bg-[var(--neutral-200)]',
+    destructive: 'border-transparent bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:bg-[var(--error-600)]',
+    outline: 'text-[var(--foreground)] border-[var(--border)]',
+    success: 'border-transparent bg-[var(--success)] text-[var(--success-foreground)] hover:bg-[var(--success-600)]',
+    warning: 'border-transparent bg-[var(--warning)] text-[var(--warning-foreground)] hover:bg-[var(--warning-600)]'
   };
 
   const sizeClasses = {
-    sm: 'px-2 py-0.5 text-xs',
-    default: 'px-2.5 py-0.5 text-xs',
-    lg: 'px-3 py-1 text-sm'
+    xs: responsiveSizes.badge.xs,
+    sm: responsiveSizes.badge.sm,
+    default: responsiveSizes.badge.default,
+    lg: responsiveSizes.badge.lg
   };
 
   return (
@@ -269,7 +272,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   src?: string;
   alt?: string;
   fallback?: string;
-  size?: 'sm' | 'default' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'default' | 'lg' | 'xl';
   // Your unique Redux integration
   enableAnalytics?: boolean;
   analyticsEvent?: string;
@@ -302,17 +305,19 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(({
   }, [enableAnalytics, analyticsEvent, alt, dispatch]);
 
   const sizeClasses = {
-    sm: 'h-8 w-8',
-    default: 'h-10 w-10',
-    lg: 'h-12 w-12',
-    xl: 'h-16 w-16'
+    xs: 'h-6 w-6 sm:h-8 sm:w-8',
+    sm: 'h-8 w-8 sm:h-10 sm:w-10',
+    default: 'h-10 w-10 sm:h-12 sm:w-12',
+    lg: 'h-12 w-12 sm:h-16 sm:w-16',
+    xl: 'h-16 w-16 sm:h-20 sm:w-20'
   };
 
   const textSizeClasses = {
-    sm: 'text-xs',
-    default: 'text-sm',
-    lg: 'text-base',
-    xl: 'text-lg'
+    xs: 'text-xs sm:text-sm',
+    sm: 'text-sm sm:text-base',
+    default: 'text-base sm:text-lg',
+    lg: 'text-lg sm:text-xl',
+    xl: 'text-xl sm:text-2xl'
   };
 
   const getInitials = (name?: string) => {
@@ -344,7 +349,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(({
         />
       ) : (
         <div className={cn(
-          'flex h-full w-full items-center justify-center rounded-full bg-muted font-medium',
+          'flex h-full w-full items-center justify-center rounded-full bg-[var(--surface-secondary)] font-medium text-[var(--text-primary)]',
           textSizeClasses[size]
         )}>
           {fallback || getInitials(alt)}

@@ -3,6 +3,7 @@
  */
 
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
+import { responsiveSpacing } from '../../utils/responsive-utils';
 
 interface InputGroupProps {
   inputs?: Array<{
@@ -17,9 +18,11 @@ interface InputGroupProps {
   className?: string;
 }
 
-const InputGroup = createFactoryComponent<InputGroupProps>(
-  'InputGroup',
-  'InputGroupFactory'
-);
+const InputGroup = (props: InputGroupProps) => {
+  return createFactoryComponent<InputGroupProps>('InputGroup', 'InputGroupFactory')({
+    ...props,
+    componentType: 'InputFactory'
+  });
+};
 
 export default InputGroup;

@@ -8,6 +8,12 @@ import { useEffect, useCallback } from 'react';
 import { store } from './store';
 import { authActions, type User } from './slices/authSlice';
 import { uiActions } from './slices/uiSlice';
+import { Logger } from '../utils/logger';
+import { safeFetch } from '../utils/async-safety';
+import type { ComponentProps, ComponentState, FilterValue, SearchResult } from '../types/common';
+
+// Initialize logger instance
+const logger = new Logger({ enableConsole: true });
 
 // Local type definitions (not exported due to Rollup build issues)
 type RootState = ReturnType<typeof store.getState>;
@@ -26,27 +32,44 @@ export const useAuth = () => {
 
   const login = useCallback(async (credentials: { email: string; password: string }) => {
     dispatch(authActions.loginStart());
-    try {
-      // Simulate API call - replace with actual auth service
 
-      const response = await fetch('/api/auth/login', {
+    try {
+      // 🔒 SECURITY FIX: Use safe fetch with timeout and proper error handling
+      const response = await safeFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
+        timeout: 15000, // 15 second timeout
+        retries: 1,
+        onTimeout: () => {
+          dispatch(authActions.loginFailure('Login request timed out'));
+        },
+        onError: (error) => {
+          logger.error('Login network error:', error, 'useAuth');
+        }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(authActions.loginSuccess({
-          user: data.user,
-          token: data.token,
-          expiresAt: data.expiresAt
-        }));
+      if (response && response.ok) {
+        try {
+          const data = await response.json();
+          dispatch(authActions.loginSuccess({
+            user: data.user,
+            token: data.token,
+            expiresAt: data.expiresAt
+          }));
+        } catch (_parseError) {
+          throw new Error('Invalid response format from server');
+        }
+      } else if (response) {
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`Login failed: ${response.status} ${errorText}`);
       } else {
-        throw new Error('Login failed');
+        throw new Error('Login request failed');
       }
     } catch (error) {
-      dispatch(authActions.loginFailure(error instanceof Error ? error.message : 'Login failed'));
+      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      dispatch(authActions.loginFailure(errorMessage));
+      logger.error('Login error:', error, 'useAuth');
     }
   }, [dispatch]);
 
@@ -91,7 +114,7 @@ export const useUI = () => {
     dispatch(uiActions.addNotification(notification));
   }, [dispatch]);
 
-  const openModal = useCallback((modalId: string, data?: any, size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full') => {
+  const openModal = useCallback((modalId: string, data?: unknown, size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full') => {
     dispatch(uiActions.openModal({ id: modalId, data, size }));
   }, [dispatch]);
 
@@ -126,32 +149,78 @@ export const useTheme = () => {
     dispatch(themeActions.toggleAnimations());
   }, [dispatch]);
 
-  // Auto-detect system preferences
+  // Auto-detect system preferences with improved cleanup
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR guard
+
     if (theme.mode === 'auto') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        dispatch(themeActions.setThemeMode(mediaQuery.matches ? 'dark' : 'light'));
+      const handleChange = (e: MediaQueryListEvent) => {
+        dispatch(themeActions.setThemeMode(e.matches ? 'dark' : 'light'));
       };
 
-      mediaQuery.addEventListener('change', handleChange);
-      handleChange(); // Initial check
+      // Modern API with fallback
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleChange);
+        handleChange({ matches: mediaQuery.matches } as MediaQueryListEvent); // Initial check
 
-      return () => mediaQuery.removeEventListener('change', handleChange);
+        return () => {
+          try {
+            mediaQuery.removeEventListener('change', handleChange);
+          } catch (error) {
+            logger.error('Failed to remove media query listener:', error, 'useTheme');
+          }
+        };
+      } else {
+        // Fallback for older browsers
+        mediaQuery.addListener(handleChange);
+        handleChange({ matches: mediaQuery.matches } as MediaQueryListEvent);
+
+        return () => {
+          try {
+            mediaQuery.removeListener(handleChange);
+          } catch (error) {
+            logger.error('Failed to remove media query listener (fallback):', error, 'useTheme');
+          }
+        };
+      }
     }
-  }, [theme.mode, dispatch]);
+  }, [theme.mode, dispatch]); // Fixed: include dispatch in dependencies
 
-  // Auto-detect reduced motion preference
+  // Auto-detect reduced motion preference with improved cleanup
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR guard
+
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleChange = () => {
-      dispatch(themeActions.setReducedMotion(mediaQuery.matches));
+    const handleChange = (e: MediaQueryListEvent) => {
+      dispatch(themeActions.setReducedMotion(e.matches));
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    handleChange(); // Initial check
+    // Modern API with fallback
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      handleChange({ matches: mediaQuery.matches } as MediaQueryListEvent); // Initial check
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
+      return () => {
+        try {
+          mediaQuery.removeEventListener('change', handleChange);
+        } catch (error) {
+          logger.error('Failed to remove reduced motion listener:', error, 'useTheme');
+        }
+      };
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+      handleChange({ matches: mediaQuery.matches } as MediaQueryListEvent);
+
+      return () => {
+        try {
+          mediaQuery.removeListener(handleChange);
+        } catch (error) {
+          logger.error('Failed to remove reduced motion listener (fallback):', error, 'useTheme');
+        }
+      };
+    }
   }, [dispatch]);
 
   return {
@@ -179,14 +248,14 @@ export const useComponent = (componentId: string, componentName?: string) => {
     }
   }, [component, componentId, componentName, dispatch]);
 
-  const updateProps = useCallback((props: Record<string, any>) => {
+  const updateProps = useCallback((props: ComponentProps) => {
     dispatch(componentActions.updateComponentProps({
       componentId,
       props
     }));
   }, [componentId, dispatch]);
 
-  const updateState = useCallback((stateUpdates: Record<string, any>) => {
+  const updateState = useCallback((stateUpdates: ComponentState) => {
     dispatch(componentActions.updateComponentState({
       componentId,
       stateUpdates
@@ -216,23 +285,50 @@ export const useComponent = (componentId: string, componentName?: string) => {
   };
 };
 
-// Responsive Hook
+// Responsive Hook with improved memory management
 export const useResponsive = () => {
   const viewport = useAppSelector(state => state.ui.viewport);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR guard
+
+    let timeoutId: number | null = null;
+
+    // Debounced resize handler to prevent excessive updates
     const handleResize = () => {
-      dispatch(uiActions.updateViewport({
-        width: window.innerWidth,
-        height: window.innerHeight
-      }));
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+
+      timeoutId = window.setTimeout(() => {
+        try {
+          dispatch(uiActions.updateViewport({
+            width: window.innerWidth,
+            height: window.innerHeight
+          }));
+        } catch (error) {
+          logger.error('Viewport update failed:', error, 'useViewport');
+        }
+        timeoutId = null;
+      }, 16); // ~60fps throttling
     };
 
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
+    // Initial check
+    handleResize();
 
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    return () => {
+      try {
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+        window.removeEventListener('resize', handleResize);
+      } catch (error) {
+        logger.error('Failed to cleanup resize listener:', error, 'useViewport');
+      }
+    };
   }, [dispatch]);
 
   return viewport;
@@ -247,7 +343,7 @@ export const useSearch = () => {
     dispatch(uiActions.setSearchQuery(query));
   }, [dispatch]);
 
-  const setFilter = useCallback((key: string, value: any) => {
+  const setFilter = useCallback((key: string, value: FilterValue) => {
     dispatch(uiActions.setSearchFilter({ key, value }));
   }, [dispatch]);
 
@@ -255,7 +351,7 @@ export const useSearch = () => {
     dispatch(uiActions.clearSearchFilters());
   }, [dispatch]);
 
-  const setResults = useCallback((results: any[]) => {
+  const setResults = useCallback((results: SearchResult[]) => {
     dispatch(uiActions.setSearchResults(results));
   }, [dispatch]);
 

@@ -17,6 +17,7 @@ export default {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@tamyla/ui-components$': '<rootDir>/__mocks__/@tamyla/ui-components.js',
+    '^@tamyla/ui-components-react$': '<rootDir>/src/index.ts',
     '^src/(.*)$': '<rootDir>/src/$1',
     '^store/(.*)$': '<rootDir>/src/store/$1',
     '^components/(.*)$': '<rootDir>/src/components/$1',

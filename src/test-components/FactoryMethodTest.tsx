@@ -114,14 +114,14 @@ const FactoryMethodTest: React.FC = () => {
   }, [testEnhancedFactoryMethods]);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+    <div style={{ padding: 'var(--spacing-5, 20px)', fontFamily: 'var(--font-family-mono, monospace)' }}>
       <h2>🧪 Factory Method Enhancement Test</h2>
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: 'var(--spacing-5, 20px)' }}>
         <strong>Current Test: </strong>
-        <span style={{ color: '#007bff' }}>{currentTest}</span>
+        <span style={{ color: 'var(--primary-600, #2563eb)' }}>{currentTest}</span>
       </div>
 
-      <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '5px' }}>
+      <div style={{ backgroundColor: 'var(--color-neutral-50, #f9fafb)', padding: 'var(--spacing-3, 15px)', borderRadius: 'var(--border-radius-md, 5px)' }}>
         <h3>Test Results:</h3>
         {testResults.length === 0 ? (
           <p>Running tests...</p>
@@ -137,12 +137,13 @@ const FactoryMethodTest: React.FC = () => {
         <ReactButton
           config={{ variant: 'primary' }}
           onEvent={() => addResult('✅ ReactButton click works')}
+          componentType="ButtonFactory"
         >
           Test Button Click
         </ReactButton>
       </div>
 
-      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#e7f3ff', borderRadius: '5px' }}>
+      <div style={{ marginTop: 'var(--spacing-5, 20px)', padding: 'var(--spacing-2, 10px)', backgroundColor: 'var(--primary-50, #eff6ff)', borderRadius: 'var(--border-radius-md, 5px)' }}>
         <strong>What this tests:</strong>
         <ul>
           <li>✅ Factory importer availability</li>

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils/test-setup';
 import { FileList } from '../FileList';
@@ -29,27 +29,27 @@ describe('FileList Molecule', () => {
 
   test('renders with default props', () => {
     render(<FileList />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with file list', () => {
     render(<FileList files={mockFiles} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with upload enabled', () => {
     render(<FileList allowUpload={true} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with delete enabled', () => {
     render(<FileList allowDelete={true} files={mockFiles} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with download enabled', () => {
     render(<FileList allowDownload={true} files={mockFiles} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('handles file add event', () => {
@@ -75,7 +75,7 @@ describe('FileList Molecule', () => {
     render(<FileList onFileRemove={handleFileRemove} files={mockFiles} />);
 
     // The component should handle remove events through its internal logic
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('handles file download event', () => {
@@ -83,7 +83,7 @@ describe('FileList Molecule', () => {
     render(<FileList onFileDownload={handleFileDownload} files={mockFiles} />);
 
     // The component should handle download events through its internal logic
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('handles drag and drop events', () => {
@@ -93,13 +93,14 @@ describe('FileList Molecule', () => {
 
     render(
       <FileList
+        allowUpload={true}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       />
     );
 
-    const dropZone = document.querySelector('.tamyla-file-list');
+    const dropZone = screen.getByRole('region');
     if (dropZone) {
       fireEvent.dragOver(dropZone);
       expect(handleDragOver).toHaveBeenCalledTimes(1);
@@ -107,24 +108,29 @@ describe('FileList Molecule', () => {
       fireEvent.dragLeave(dropZone);
       expect(handleDragLeave).toHaveBeenCalledTimes(1);
 
-      fireEvent.drop(dropZone);
+      // Mock dataTransfer for drop event
+      const mockDataTransfer = {
+        files: [new File(['test'], 'test.txt', { type: 'text/plain' })]
+      };
+
+      fireEvent.drop(dropZone, { dataTransfer: mockDataTransfer });
       expect(handleDrop).toHaveBeenCalledTimes(1);
     }
   });
 
   test('renders with max files limit', () => {
     render(<FileList maxFiles={5} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with accepted file types', () => {
     render(<FileList acceptedTypes={['.pdf', '.doc', '.txt']} />);
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 
   test('renders with upload progress', () => {
     render(<FileList files={mockFiles} />);
     // File with uploadProgress should render progress indicator
-    expect(document.querySelector('div')).toBeInTheDocument();
+    expect(screen.getByRole('region')).toBeInTheDocument();
   });
 });

@@ -1,5 +1,13 @@
 /**
- * SearchBar Molecule - Enhanced search with Factory Bridge integration
+ * Seaconst SearchContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+
+  @media (min-width: ${responsiveSizes.sm}px) {
+    max-width: ${600}px;
+  }
+`;lecule - Enhanced search with Factory Bridge integration
  */
 
 import React, { useCallback } from 'react';
@@ -7,11 +15,16 @@ import styled from 'styled-components';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
+import { responsiveSizes } from '../../utils/responsive-utils';
 
 const SearchContainer = styled.div`
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
+
+  @media (min-width: 640px) {
+    max-width: ${600}px;
+  }
 `;
 
 interface SearchSuggestion {
@@ -83,6 +96,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         showSuggestions={true}
         onTmylSearch={handleSearch}
         onTmylSearchSuggestion={handleSuggestionSelect}
+        componentType="InputFactory"
       />
     </SearchContainer>
   );

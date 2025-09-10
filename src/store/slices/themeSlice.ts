@@ -4,6 +4,7 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { designTokens } from '../../core/design-tokens';
 
 // Theme state interface
 export interface ThemeState {
@@ -23,7 +24,7 @@ export interface ThemeState {
 const initialState: ThemeState = {
   mode: 'dark', // Default to dark mode like Trading Portal
   currentTheme: 'dark', // Computed current theme
-  primaryColor: '#3b82f6',
+  primaryColor: designTokens.colors.primary[500],
   fontSize: 'md',
   animations: true,
   reducedMotion: false,

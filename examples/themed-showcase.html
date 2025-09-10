@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamyla UI Components - Themed Showcase</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+    <script src="https://unpkg.com/react-redux@8.1.3/dist/react-redux.min.js"></script>
+    <script src="https://unpkg.com/@reduxjs/toolkit@1.9.7/dist/redux-toolkit.umd.min.js"></script>
+    <script src="https://unpkg.com/styled-components@6.1.8/dist/styled-components.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.16/dist/framer-motion.min.js"></script>
+
+    <!-- Import the design tokens CSS -->
+    <link rel="stylesheet" href="../src/core/design-tokens.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-family);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: var(--space-2) var(--space-4);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: var(--font-weight-medium);
+            z-index: var(--z-fixed);
+        }
+
+        .showcase-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+            padding: var(--space-8);
+            background: var(--surface-elevated);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .showcase-header h1 {
+            margin: 0 0 var(--space-4) 0;
+            font-size: 2.5rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-12);
+        }
+
+        .component-demo {
+            background: var(--surface-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .component-demo:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .component-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-4);
+            color: var(--text-primary);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .demo-button {
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: all 0.2s ease;
+        }
+
+        .demo-button:hover {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
+        }
+
+        .demo-button.active {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+        }
+
+        .color-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .color-swatch {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .color-name {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .spacing-demo {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .spacing-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .spacing-bar {
+            height: 20px;
+            background: var(--primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .typography-demo {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .text-sample {
+            padding: var(--space-2);
+            border-left: 3px solid var(--primary);
+            background: var(--surface-secondary);
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+
+        /* Dark theme styles */
+        body.dark .showcase-header {
+            background: var(--surface-elevated);
+        }
+
+        body.dark .component-demo {
+            background: var(--surface-primary);
+            border-color: var(--border);
+        }
+
+        body.dark .demo-button {
+            background: var(--surface-secondary);
+            border-color: var(--border);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+    <div class="showcase-container">
+        <div class="showcase-header">
+            <h1>🎨 Tamyla UI Components</h1>
+            <p>Design System with CSS Custom Properties & Theme Provider</p>
+            <p><strong>Version:</strong> 1.0.0 | <strong>Theme:</strong> <span id="theme-status">Light</span></p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" style="display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-secondary);">
+            <div>🔄 Loading themed components...</div>
+        </div>
+
+        <!-- Main React App Container -->
+        <div id="react-app" style="display: none;"></div>
+    </div>
+
+    <!-- React Application -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { Provider } = ReactRedux;
+        const { configureStore, createSlice } = RTK;
+
+        // Mock the actual UI components library for demo purposes
+        // In a real app, you'd import: import { Button, Card, TamylaThemeProvider } from '@tamyla/ui-components-react'
+        const TamylaUIComponents = {
+            Button: ({ children, variant = 'default', size = 'default', onClick, className = '', ...props }) => {
+                const baseClasses = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+
+                const variantClasses = {
+                    default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+                    destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                    outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
+                    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+                    ghost: 'hover:bg-accent hover:text-accent-foreground',
+                    link: 'underline-offset-4 hover:underline text-primary'
+                };
+
+                const sizeClasses = {
+                    default: 'h-10 py-2 px-4',
+                    sm: 'h-9 px-3 rounded-md',
+                    lg: 'h-11 px-8 rounded-md',
+                    icon: 'h-10 w-10'
+                };
+
+                return React.createElement('button', {
+                    onClick,
+                    className: `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`,
+                    ...props
+                }, children);
+            },
+
+            Card: ({ children, className = '', ...props }) => {
+                return React.createElement('div', {
+                    className: `rounded-lg border bg-card text-card-foreground shadow-sm ${className}`,
+                    ...props
+                }, children);
+            },
+
+            CardHeader: ({ children, className = '', ...props }) => {
+                return React.createElement('div', {
+                    className: `flex flex-col space-y-1.5 p-6 ${className}`,
+                    ...props
+                }, children);
+            },
+
+            CardTitle: ({ children, className = '', ...props }) => {
+                return React.createElement('h3', {
+                    className: `text-2xl font-semibold leading-none tracking-tight ${className}`,
+                    ...props
+                }, children);
+            },
+
+            CardContent: ({ children, className = '', ...props }) => {
+                return React.createElement('div', {
+                    className: `p-6 pt-0 ${className}`,
+                    ...props
+                }, children);
+            }
+        };
+
+        // Theme store setup
+        const themeSlice = createSlice({
+            name: 'theme',
+            initialState: {
+                mode: 'light',
+                primaryColor: '#3b82f6',
+                fontSize: 'md',
+                animations: true,
+                reducedMotion: false,
+                highContrast: false
+            },
+            reducers: {
+                toggleTheme: (state) => {
+                    state.mode = state.mode === 'light' ? 'dark' : 'light';
+                }
+            }
+        });
+
+        const store = configureStore({
+            reducer: {
+                theme: themeSlice.reducer
+            }
+        });
+
+        // Main App Component
+        const App = () => {
+            const [activeDemo, setActiveDemo] = useState('buttons');
+
+            return React.createElement(Provider, { store },
+                React.createElement('div', null,
+                    React.createElement('div', { className: 'component-grid' },
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '🎯 Buttons'),
+                            React.createElement('div', { className: 'demo-controls' },
+                                React.createElement('button', {
+                                    className: `demo-button ${activeDemo === 'buttons' ? 'active' : ''}`,
+                                    onClick: () => setActiveDemo('buttons')
+                                }, 'Variants'),
+                                React.createElement('button', {
+                                    className: `demo-button ${activeDemo === 'sizes' ? 'active' : ''}`,
+                                    onClick: () => setActiveDemo('sizes')
+                                }, 'Sizes')
+                            ),
+                            activeDemo === 'buttons' ? React.createElement(ButtonVariants) : React.createElement(ButtonSizes)
+                        ),
+
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '📋 Cards'),
+                            React.createElement(CardDemo)
+                        ),
+
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '🎨 Colors'),
+                            React.createElement(ColorPalette)
+                        ),
+
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '📏 Spacing'),
+                            React.createElement(SpacingDemo)
+                        ),
+
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '📝 Typography'),
+                            React.createElement(TypographyDemo)
+                        ),
+
+                        React.createElement('div', { className: 'component-demo' },
+                            React.createElement('h3', { className: 'component-title' }, '🔧 Design Tokens'),
+                            React.createElement(DesignTokensDemo)
+                        )
+                    )
+                )
+            );
+        };
+
+        // Demo Components
+        const ButtonVariants = () => {
+            return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' } },
+                React.createElement(TamylaUIComponents.Button, { variant: 'default' }, 'Default Button'),
+                React.createElement(TamylaUIComponents.Button, { variant: 'secondary' }, 'Secondary Button'),
+                React.createElement(TamylaUIComponents.Button, { variant: 'destructive' }, 'Destructive Button'),
+                React.createElement(TamylaUIComponents.Button, { variant: 'outline' }, 'Outline Button'),
+                React.createElement(TamylaUIComponents.Button, { variant: 'ghost' }, 'Ghost Button'),
+                React.createElement(TamylaUIComponents.Button, { variant: 'link' }, 'Link Button')
+            );
+        };
+
+        const ButtonSizes = () => {
+            return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' } },
+                React.createElement(TamylaUIComponents.Button, { size: 'sm' }, 'Small Button'),
+                React.createElement(TamylaUIComponents.Button, { size: 'default' }, 'Default Button'),
+                React.createElement(TamylaUIComponents.Button, { size: 'lg' }, 'Large Button')
+            );
+        };
+
+        const CardDemo = () => {
+            return React.createElement(TamylaUIComponents.Card, null,
+                React.createElement(TamylaUIComponents.CardHeader, null,
+                    React.createElement(TamylaUIComponents.CardTitle, null, 'Card Title')
+                ),
+                React.createElement(TamylaUIComponents.CardContent, null,
+                    React.createElement('p', null, 'This card uses design tokens for consistent styling across light and dark themes.')
+                )
+            );
+        };
+
+        const ColorPalette = () => {
+            const colors = [
+                { name: 'Primary', value: 'var(--primary)' },
+                { name: 'Secondary', value: 'var(--neutral-200)' },
+                { name: 'Success', value: 'var(--success)' },
+                { name: 'Warning', value: 'var(--warning)' },
+                { name: 'Error', value: 'var(--error)' },
+                { name: 'Background', value: 'var(--background)' }
+            ];
+
+            return React.createElement('div', { className: 'color-palette' },
+                colors.map(color =>
+                    React.createElement('div', { key: color.name, className: 'color-item' },
+                        React.createElement('div', {
+                            className: 'color-swatch',
+                            style: { backgroundColor: color.value }
+                        }),
+                        React.createElement('span', { className: 'color-name' }, color.name)
+                    )
+                )
+            );
+        };
+
+        const SpacingDemo = () => {
+            const spaces = [
+                { name: 'space-1', value: 'var(--space-1)', width: '25px' },
+                { name: 'space-2', value: 'var(--space-2)', width: '50px' },
+                { name: 'space-4', value: 'var(--space-4)', width: '100px' },
+                { name: 'space-6', value: 'var(--space-6)', width: '150px' },
+                { name: 'space-8', value: 'var(--space-8)', width: '200px' }
+            ];
+
+            return React.createElement('div', { className: 'spacing-demo' },
+                spaces.map(space =>
+                    React.createElement('div', { key: space.name, className: 'spacing-item' },
+                        React.createElement('span', { style: { minWidth: '80px', fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' } }, space.name),
+                        React.createElement('div', {
+                            className: 'spacing-bar',
+                            style: { width: space.width }
+                        })
+                    )
+                )
+            );
+        };
+
+        const TypographyDemo = () => {
+            return React.createElement('div', { className: 'typography-demo' },
+                React.createElement('div', { className: 'text-sample' },
+                    React.createElement('div', { style: { fontSize: 'var(--font-size-xs)' } }, 'Extra Small Text (xs)'),
+                    React.createElement('div', { style: { fontSize: 'var(--font-size-sm)' } }, 'Small Text (sm)'),
+                    React.createElement('div', { style: { fontSize: 'var(--font-size-base)' } }, 'Base Text (base)'),
+                    React.createElement('div', { style: { fontSize: 'var(--font-size-lg)' } }, 'Large Text (lg)'),
+                    React.createElement('div', { style: { fontSize: 'var(--font-size-xl)' } }, 'Extra Large Text (xl)')
+                )
+            );
+        };
+
+        const DesignTokensDemo = () => {
+            return React.createElement('div', null,
+                React.createElement('p', { style: { marginBottom: 'var(--space-4)', color: 'var(--text-secondary)' } },
+                    'This demo uses CSS custom properties from the design tokens system.'
+                ),
+                React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' } },
+                    React.createElement('div', null,
+                        React.createElement('h4', { style: { marginBottom: 'var(--space-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' } }, 'Current Values'),
+                        React.createElement('div', { style: { fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' } },
+                            React.createElement('div', null, 'Primary: ', React.createElement('code', null, 'var(--primary)')),
+                            React.createElement('div', null, 'Border Radius: ', React.createElement('code', null, 'var(--radius)')),
+                            React.createElement('div', null, 'Shadow: ', React.createElement('code', null, 'var(--shadow)'))
+                        )
+                    ),
+                    React.createElement('div', null,
+                        React.createElement('h4', { style: { marginBottom: 'var(--space-2)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' } }, 'Usage'),
+                        React.createElement('div', { style: { fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' } },
+                            React.createElement('div', null, 'Colors: ', React.createElement('code', null, 'var(--primary-500)')),
+                            React.createElement('div', null, 'Spacing: ', React.createElement('code', null, 'var(--space-4)')),
+                            React.createElement('div', null, 'Typography: ', React.createElement('code', null, 'var(--font-size-lg)'))
+                        )
+                    )
+                )
+            );
+        };
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('react-app'));
+        root.render(React.createElement(App));
+
+        // Hide loading, show app
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('react-app').style.display = 'block';
+    </script>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeStatus = document.getElementById('theme-status');
+
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                themeStatus.textContent = 'Light';
+            } else {
+                body.classList.add('dark');
+                themeStatus.textContent = 'Dark';
+            }
+        }
+
+        // Initialize theme status
+        document.getElementById('theme-status').textContent = 'Light';
+    </script>
+</body>
+</html>

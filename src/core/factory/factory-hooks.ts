@@ -4,6 +4,7 @@
 
 import { useCallback } from 'react';
 import { factoryRegistry } from './factory-registry';
+import logger from '../../utils/logger';
 
 export function useFactoryBridge() {
   const createFactoryComponent = useCallback((
@@ -21,10 +22,10 @@ export function useFactoryBridge() {
         let element: HTMLElement;
         if (typeof factoryInstance === 'function') {
           const result = factoryInstance(config || {});
-          element = (result as any)?.element || result;
-        } else if ((factoryInstance as any)?.create) {
-          const result = (factoryInstance as any).create(config || {});
-          element = (result as any)?.element || result;
+          element = (result as { element?: HTMLElement })?.element || (result as HTMLElement);
+        } else if ((factoryInstance as { create?: unknown })?.create) {
+          const result = ((factoryInstance as { create?: (config: Record<string, any>) => unknown }).create as (config: Record<string, any>) => unknown)(config || {});
+          element = (result as { element?: HTMLElement })?.element || (result as HTMLElement);
         } else {
           reject(new Error(`Factory ${factoryName} doesn't have a creation method`));
           return;
@@ -50,7 +51,7 @@ export function useFactory(factoryName: string) {
 
   const createInstance = useCallback((config: Record<string, any> = {}) => {
     if (!factoryInstance) {
-      console.error(`Factory ${factoryName} not found`);
+      logger.error(`Factory ${factoryName} not found`, null, 'FactoryHooks');
       return null;
     }
 
@@ -60,11 +61,11 @@ export function useFactory(factoryName: string) {
       } else if ((factoryInstance as any)?.create) {
         return (factoryInstance as any).create(config);
       } else {
-        console.error(`Factory ${factoryName} doesn't have a creation method`);
+        logger.error(`Factory ${factoryName} doesn't have a creation method`, null, 'FactoryHooks');
         return null;
       }
     } catch (error) {
-      console.error(`Error creating instance of ${factoryName}:`, error);
+      logger.error(`Error creating instance of ${factoryName}`, { error }, 'FactoryHooks');
       return null;
     }
   }, [factoryName, factoryInstance]);

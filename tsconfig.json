@@ -3,8 +3,7 @@
     "target": "ES2020",
     "lib": [
       "DOM",
-      "DOM.Iterable",
-      "ES6"
+      "ES2020"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -12,6 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "module": "ES2020",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -19,7 +19,10 @@
     "jsx": "react-jsx",
     "declaration": true,
     "outDir": "./dist",
-    "module": "ESNext",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -28,14 +31,14 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/types/globals.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.*",
     "**/*.spec.*",
-    "src/core/index.d.ts",
     "src/demos",
     "src/demos-backup"
   ]

@@ -25,7 +25,7 @@ function ComprehensiveFactoryTest() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>🧪 Comprehensive Factory Bridge Test</h1>
-      
+
       <div style={{ marginBottom: '30px', padding: '15px', background: '#f0f8ff', borderRadius: '8px' }}>
         <h2>🔧 What We're Testing:</h2>
         <ul>
@@ -40,10 +40,10 @@ function ComprehensiveFactoryTest() {
           <h2>🏗️ Class-Based Factories</h2>
           <p><em>These were broken before our fix</em></p>
           {classBasedFactories.map((factory, index) => (
-            <div key={index} style={{ 
-              margin: '10px 0', 
-              padding: '10px', 
-              border: '1px solid #ddd', 
+            <div key={index} style={{
+              margin: '10px 0',
+              padding: '10px',
+              border: '1px solid #ddd',
               borderRadius: '4px',
               background: '#fff'
             }}>
@@ -60,10 +60,10 @@ function ComprehensiveFactoryTest() {
           <h2>⚡ Function-Based Factories</h2>
           <p><em>These should work regardless</em></p>
           {functionBasedFactories.map((factory, index) => (
-            <div key={index} style={{ 
-              margin: '10px 0', 
-              padding: '10px', 
-              border: '1px solid #ddd', 
+            <div key={index} style={{
+              margin: '10px 0',
+              padding: '10px',
+              border: '1px solid #ddd',
               borderRadius: '4px',
               background: '#fff'
             }}>

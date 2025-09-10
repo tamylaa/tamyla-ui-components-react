@@ -7,8 +7,20 @@
 // Basic building blocks
 export { Button } from './atoms/Button';
 export { Input } from './atoms/Input';
-export { Card } from './atoms/Card';
+export { default as Card } from './atoms/Card';
+export { CardHeader, CardTitle, CardContent } from './atoms/Card';
 export { StatusIndicator } from './atoms/StatusIndicator';
+export { default as ErrorBoundary } from './atoms/ErrorBoundary';
+
+// Button Variants (Factory-based)
+export { default as ButtonPrimary } from './atoms/ButtonPrimary';
+export { default as ButtonSecondary } from './atoms/ButtonSecondary';
+export { default as ButtonGhost } from './atoms/ButtonGhost';
+export { default as ButtonDanger } from './atoms/ButtonDanger';
+export { default as ButtonSuccess } from './atoms/ButtonSuccess';
+export { default as ButtonWithIcon } from './atoms/ButtonWithIcon';
+export { default as ButtonIconOnly } from './atoms/ButtonIconOnly';
+export { default as InputGroup } from './atoms/InputGroup';
 
 // ===== MOLECULES =====
 // Combinations of atoms
@@ -16,7 +28,10 @@ export {
   FormItem,
   FormLabel,
   FormControl,
+  FormDescription,  // 🆕 ADDED
   FormMessage,
+  FormField,        // 🆕 ADDED
+  FormInput,        // 🆕 ADDED
   FormTextarea
 } from './molecules/Form';
 
@@ -60,6 +75,14 @@ export {
   PopoverContent
 } from './molecules/Loading';
 
+// Additional Molecules (Factory-based)
+export { default as ActionCard } from './molecules/ActionCard';
+export { default as ContentCard } from './molecules/ContentCard';
+export { default as FileList } from './molecules/FileList';
+export { default as Notification } from './molecules/Notification';
+export { default as SearchBar } from './molecules/SearchBar';
+export { default as SearchBarNew } from './molecules/SearchBarNew';
+
 // ===== ORGANISMS =====
 // Complex components made of molecules and atoms
 export {
@@ -68,7 +91,8 @@ export {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
+  DialogFooter      // 🆕 ADDED
 } from './organisms/Dialog';
 
 export {
@@ -78,6 +102,13 @@ export {
   NavigationMenuTrigger,
   NavigationMenuContent
 } from './organisms/Navigation';
+
+// Additional Organisms (Factory-based)
+export { default as Dashboard, DashboardSearch, DashboardContent, DashboardKnowledge, DashboardMedia } from './organisms/Dashboard';
+export { default as SearchInterface } from './organisms/SearchInterface';
+export { default as Reward } from './organisms/Reward';
+export { default as Modal } from './organisms/Modal';
+export { default as MobileSidebar } from './organisms/MobileSidebar';
 
 // ===== APPLICATIONS =====
 // Full application features

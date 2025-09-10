@@ -41,10 +41,10 @@ describe('Input Component', () => {
 
   test('applies different variants correctly', () => {
     const { rerender } = render(<Input variant="default" />);
-    expect(screen.getByRole('textbox')).toHaveClass('border-input');
+    expect(screen.getByRole('textbox')).toHaveClass('border-[var(--border)]');
 
-    rerender(<Input variant="filled" />);
-    expect(screen.getByRole('textbox')).toHaveClass('bg-muted');
+    rerender(<Input variant="secondary" />);
+    expect(screen.getByRole('textbox')).toHaveClass('bg-[var(--surface-secondary)]');
 
     rerender(<Input variant="ghost" />);
     expect(screen.getByRole('textbox')).toHaveClass('border-transparent');
@@ -52,13 +52,13 @@ describe('Input Component', () => {
 
   test('applies different sizes correctly', () => {
     const { rerender } = render(<Input size="sm" />);
-    expect(screen.getByRole('textbox')).toHaveClass('h-9');
+    expect(screen.getByRole('textbox')).toHaveClass('min-h-[44px]', 'sm:h-10');
 
     rerender(<Input size="default" />);
-    expect(screen.getByRole('textbox')).toHaveClass('h-10');
+    expect(screen.getByRole('textbox')).toHaveClass('min-h-[44px]', 'sm:h-11');
 
     rerender(<Input size="lg" />);
-    expect(screen.getByRole('textbox')).toHaveClass('h-11');
+    expect(screen.getByRole('textbox')).toHaveClass('min-h-[48px]', 'sm:h-12');
   });
 
   test('shows error state correctly', () => {

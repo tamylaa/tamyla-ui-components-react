@@ -29,33 +29,33 @@ describe('Button Component', () => {
 
   test('applies different variants correctly', () => {
     const { rerender } = render(<Button variant="default">Default</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-primary');
+    expect(screen.getByRole('button')).toHaveClass('bg-[var(--primary)]');
 
     rerender(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-secondary');
+    expect(screen.getByRole('button')).toHaveClass('bg-[var(--surface-secondary)]');
 
     rerender(<Button variant="destructive">Destructive</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-destructive');
+    expect(screen.getByRole('button')).toHaveClass('bg-[var(--destructive)]');
 
     rerender(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border-input');
+    expect(screen.getByRole('button')).toHaveClass('border-[var(--border)]');
 
     rerender(<Button variant="ghost">Ghost</Button>);
-    expect(screen.getByRole('button')).toHaveClass('hover:bg-accent');
+    expect(screen.getByRole('button')).toHaveClass('hover:bg-[var(--surface-secondary)]');
   });
 
   test('applies different sizes correctly', () => {
     const { rerender } = render(<Button size="sm">Small</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-9');
+    expect(screen.getByRole('button')).toHaveClass('min-h-[44px]', 'sm:h-10');
 
     rerender(<Button size="default">Default</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-10');
+    expect(screen.getByRole('button')).toHaveClass('min-h-[44px]', 'sm:h-11');
 
     rerender(<Button size="lg">Large</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-11');
+    expect(screen.getByRole('button')).toHaveClass('min-h-[48px]', 'sm:h-12');
 
     rerender(<Button size="icon">Icon</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-10', 'w-10');
+    expect(screen.getByRole('button')).toHaveClass('min-h-[44px]', 'sm:h-12');
   });
 
   test('shows loading state correctly', () => {

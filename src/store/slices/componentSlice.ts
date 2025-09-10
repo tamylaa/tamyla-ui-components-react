@@ -3,39 +3,32 @@
  * Handles dynamic component behavior and configurations
  */
 
-
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type {
+  ComponentProps,
+  ComponentState as ComponentStateType,
+  BaseComponentConfig,
+  ComponentRegistryEntry,
+  ComponentUpdatePayload,
+  ComponentStateUpdatePayload
+} from '../../types/common';
 
 // Component configuration interface
-export interface ComponentConfig {
-  id: string;
-  type: 'atom' | 'molecule' | 'organism';
-  name: string;
-  props: Record<string, any>;
-  state: Record<string, any>;
-  isVisible: boolean;
-  isDisabled: boolean;
-  lastUpdated: string;
-}
+export interface ComponentConfig extends BaseComponentConfig {}
 
-// Component slice state
-export interface ComponentState {
+// Component slice state interface
+export interface ComponentSliceState {
   components: {
     [componentId: string]: ComponentConfig;
   };
   activeComponent: string | null;
   componentRegistry: {
-    [componentName: string]: {
-      type: 'atom' | 'molecule' | 'organism';
-      defaultProps: Record<string, any>;
-      stateSchema: Record<string, any>;
-    };
+    [componentName: string]: ComponentRegistryEntry;
   };
 }
 
 // Initial component state
-const initialState: ComponentState = {
+const initialState: ComponentSliceState = {
   components: {},
   activeComponent: null,
   componentRegistry: {
@@ -152,8 +145,8 @@ export const componentSlice = createSlice({
     registerComponent: (state, action: PayloadAction<{
       id: string;
       name: string;
-      props?: Record<string, any>;
-      initialState?: Record<string, any>;
+      props?: ComponentProps;
+      initialState?: ComponentStateType;
     }>) => {
       const { id, name, props = {}, initialState: compState = {} } = action.payload;
       const registryEntry = state.componentRegistry[name];
@@ -180,10 +173,7 @@ export const componentSlice = createSlice({
     },
 
     // Component props management
-    updateComponentProps: (state, action: PayloadAction<{
-      componentId: string;
-      props: Record<string, any>;
-    }>) => {
+    updateComponentProps: (state, action: PayloadAction<ComponentUpdatePayload>) => {
       const { componentId, props } = action.payload;
       if (state.components[componentId]) {
         state.components[componentId].props = {
@@ -195,10 +185,7 @@ export const componentSlice = createSlice({
     },
 
     // Component state management
-    updateComponentState: (state, action: PayloadAction<{
-      componentId: string;
-      stateUpdates: Record<string, any>;
-    }>) => {
+    updateComponentState: (state, action: PayloadAction<ComponentStateUpdatePayload>) => {
       const { componentId, stateUpdates } = action.payload;
       if (state.components[componentId]) {
         state.components[componentId].state = {
@@ -239,11 +226,7 @@ export const componentSlice = createSlice({
     // Component registry management
     registerComponentType: (state, action: PayloadAction<{
       name: string;
-      config: {
-        type: 'atom' | 'molecule' | 'organism';
-        defaultProps: Record<string, any>;
-        stateSchema: Record<string, any>;
-      };
+      config: ComponentRegistryEntry;
     }>) => {
       const { name, config } = action.payload;
       state.componentRegistry[name] = config;
@@ -257,8 +240,8 @@ export const componentSlice = createSlice({
     batchUpdateComponents: (state, action: PayloadAction<{
       updates: Array<{
         componentId: string;
-        props?: Record<string, any>;
-        state?: Record<string, any>;
+        props?: ComponentProps;
+        state?: ComponentStateType;
         isVisible?: boolean;
         isDisabled?: boolean;
       }>;

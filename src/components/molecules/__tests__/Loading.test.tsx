@@ -44,7 +44,7 @@ describe('Loading Components', () => {
       render(<Skeleton data-testid="skeleton" />);
       const skeleton = screen.getByTestId('skeleton');
       expect(skeleton).toBeInTheDocument();
-      expect(skeleton).toHaveClass('animate-pulse', 'rounded-md', 'bg-muted');
+      expect(skeleton).toHaveClass('animate-pulse', 'rounded-md', 'bg-[var(--surface-secondary)]');
     });
 
     it('renders with custom className', () => {

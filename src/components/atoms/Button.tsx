@@ -1,14 +1,41 @@
 /**
  * Enhanced Button Component - shadcn/ui inspired with Redux integration
- * Combines shadcn/ui patterns with your enterprise features
+ *
+ * A versatile button component that combines shadcn/ui design patterns with enterprise features
+ * including optional Redux integration, analytics tracking, and dynamic theming.
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Button>Click me</Button>
+ *
+ * // With variant and size
+ * <Button variant="primary" size="lg">Large Button</Button>
+ *
+ * // With Redux analytics
+ * <Button enableAnalytics analyticsEvent="save_click">Save</Button>
+ *
+ * // With icons
+ * <Button leftIcon={<SaveIcon />}>Save</Button>
+ *
+ * // Loading state
+ * <Button isLoading loadingText="Saving...">Save</Button>
+ * ```
  */
-
 import React, { forwardRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { useAnalyticsOptional, useThemeOptional, useUIOptional } from '../../utils/redux-optional';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 
-// shadcn/ui inspired variant system (simplified without external deps)
+/**
+ * Generates CSS classes for button styling based on variant and size
+ *
+ * @param options - Configuration object for button styling
+ * @returns Combined CSS class string
+ */
 const getButtonClasses = ({
   variant = 'default',
   size = 'default',
@@ -22,22 +49,30 @@ const getButtonClasses = ({
   disabled?: boolean;
   className?: string;
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  const baseClasses = combineResponsive(
+    'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2',
+    'disabled:opacity-50 disabled:pointer-events-none',
+    touchUtilities.tap,
+    touchUtilities.hover
+  );
 
+  // Theme-aware variant classes using CSS custom properties
   const variantClasses: Record<string, string> = {
-    default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-    destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-    outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
-    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-    ghost: 'hover:bg-accent hover:text-accent-foreground',
-    link: 'underline-offset-4 hover:underline text-primary',
+    default: 'bg-[var(--primary)] text-[var(--primary-foreground)] border border-[var(--primary)] hover:bg-[var(--primary-600)] hover:border-[var(--primary-600)]',
+    destructive: 'bg-[var(--destructive)] text-[var(--destructive-foreground)] border border-[var(--destructive)] hover:bg-[var(--error-600)] hover:border-[var(--error-600)]',
+    outline: 'bg-transparent text-[var(--foreground)] border border-[var(--border)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]',
+    secondary: 'bg-[var(--surface-secondary)] text-[var(--text-primary)] border border-[var(--border)] hover:bg-[var(--neutral-200)]',
+    ghost: 'bg-transparent text-[var(--text-secondary)] border border-transparent hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]',
+    link: 'bg-transparent text-[var(--primary)] border border-transparent underline-offset-4 hover:underline',
   };
 
   const sizeClasses: Record<string, string> = {
-    default: 'h-10 py-2 px-4',
-    sm: 'h-9 px-3 rounded-md',
-    lg: 'h-11 px-8 rounded-md',
-    icon: 'h-10 w-10',
+    xs: responsiveSizes.button.xs,
+    sm: responsiveSizes.button.sm,
+    default: responsiveSizes.button.default,
+    lg: responsiveSizes.button.lg,
+    icon: responsiveSizes.button.icon,
   };
 
   return cn(
@@ -50,21 +85,81 @@ const getButtonClasses = ({
   );
 };
 
+/**
+ * Props for the Button component
+ *
+ * Extends all standard HTML button attributes with additional features
+ */
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * Visual style variant of the button
+   * @default 'default'
+   */
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+
+  /**
+   * Size variant of the button
+   * @default 'default'
+   */
+  size?: 'xs' | 'sm' | 'default' | 'lg' | 'icon';
+
+  /**
+   * Whether the button is in a loading state
+   * @default false
+   */
   isLoading?: boolean;
+
+  /**
+   * Icon to display on the left side of the button content
+   */
   leftIcon?: React.ReactNode;
+
+  /**
+   * Icon to display on the right side of the button content
+   */
   rightIcon?: React.ReactNode;
-  // Your unique Redux integration
+
+  /**
+   * Whether to enable analytics tracking for button clicks
+   * @default false
+   */
   enableAnalytics?: boolean;
+
+  /**
+   * Custom analytics event name for tracking
+   * @default undefined
+   */
   analyticsEvent?: string;
+
+  /**
+   * Text to display when button is in loading state
+   * @default undefined
+   */
   loadingText?: string;
+
+  /**
+   * Whether to automatically adjust variant based on theme mode
+   * @default false
+   */
   useThemeVariant?: boolean;
-  // shadcn/ui patterns
-  // asChild?: boolean;
 }
 
+/**
+ * Button component with enhanced features and optional Redux integration
+ *
+ * Features:
+ * - Multiple visual variants and sizes
+ * - Loading states with custom text
+ * - Icon support (left/right)
+ * - Optional Redux analytics integration
+ * - Dynamic theming based on theme context
+ * - Accessibility features
+ * - Graceful degradation when Redux is not available
+ *
+ * @param props - Button component props
+ * @param ref - Forwarded ref for DOM access
+ * @returns React button element
+ */
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   variant = 'default',
   size = 'default',
@@ -81,36 +176,48 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   useThemeVariant = false,
   ...props
 }, ref) => {
+  // Optional Redux with graceful degradation
   const dispatch = useAppDispatch();
   const theme = useAppSelector(state => state.theme);
   const uiState = useAppSelector(state => state.ui);
+
+  // Optional Redux alternatives
+  const { trackEvent } = useAnalyticsOptional();
+  const optionalTheme = useThemeOptional();
+  const optionalUI = useUIOptional();
 
   // Enhanced click handler with Redux + Analytics
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(e);
 
-    // Your unique Redux analytics
+    // Your unique Redux analytics (with optional fallback)
     if (enableAnalytics) {
-      dispatch(uiActions.addNotification({
-        type: 'info',
-        title: 'Button Analytics',
-        message: `Button clicked: ${analyticsEvent || children}`,
-        autoClose: true,
-        duration: 2000
-      }));
+      if (dispatch) {
+        dispatch(uiActions.addNotification({
+          type: 'info',
+          title: 'Button Analytics',
+          message: `Button clicked: ${analyticsEvent || children}`,
+          autoClose: true,
+          duration: 2000
+        }));
+      } else {
+        trackEvent(analyticsEvent || 'button_click', { children });
+      }
     }
-  }, [onClick, enableAnalytics, analyticsEvent, dispatch, children]);
+  }, [onClick, enableAnalytics, analyticsEvent, dispatch, children, trackEvent]);
 
-  // Dynamic theming (your unique feature)
-  const actualVariant = useThemeVariant && theme.mode === 'dark'
+  // Dynamic theming (your unique feature) - works with or without Redux
+  const currentTheme = theme || optionalTheme;
+  const actualVariant = useThemeVariant && currentTheme?.mode === 'dark'
     ? variant === 'default' ? 'secondary' : variant
     : variant;
 
+  const currentUI = uiState || optionalUI;
   const buttonClasses = getButtonClasses({
     variant: actualVariant,
     size,
     isLoading,
-    disabled: disabled || uiState.loading.global,
+    disabled: disabled || currentUI?.loading?.global,
     className
   });
 
@@ -119,7 +226,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       className={buttonClasses}
       ref={ref}
       onClick={handleClick}
-      disabled={disabled || isLoading || uiState.loading.global}
+      disabled={disabled || isLoading || currentUI?.loading?.global}
       {...props}
     >
       {isLoading && (
@@ -152,3 +259,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 Button.displayName = 'Button';
 
 export { Button };
+
+// Performance optimized version with React.memo
+export const MemoizedButton = React.memo(Button);
+MemoizedButton.displayName = 'MemoizedButton';

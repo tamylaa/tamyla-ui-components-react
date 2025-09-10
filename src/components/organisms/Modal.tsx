@@ -3,10 +3,10 @@
  * Provides comprehensive modal dialogs with accessibility and animations
  */
 
-import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-
-// Import will be available when ui-components Modal is fixed
-// import { ModalFactory } from '@tamyla/ui-components';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
+import { ErrorBoundaryEnhanced, withErrorBoundary } from '../molecules/ErrorBoundaryEnhanced';
+import { dynamicImportUIComponents } from '../../utils/dynamic-ui-components';
+import logger from '../../utils/logger';
 
 export interface ModalProps {
   // Modal configuration
@@ -31,7 +31,7 @@ export interface ModalProps {
   onCancel?: () => void;
 
   // Form modal specific
-  onSubmit?: (formData: Record<string, unknown>) => void;
+  onSubmit?: (formData: Record<string, string | number | boolean | File>) => void;
 
   // Custom styling
   className?: string;
@@ -82,7 +82,45 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(({
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const cleanupFunctionsRef = useRef<(() => void)[]>([]);
   const [mounted, setMounted] = React.useState(false);
+
+  // Cleanup function
+  const cleanup = useCallback(() => {
+    // Abort any pending async operations
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    // Run all registered cleanup functions
+    cleanupFunctionsRef.current.forEach(cleanupFn => {
+      try {
+        cleanupFn();
+      } catch (error) {
+        logger.error('Modal cleanup function error:', error, 'Modal');
+      }
+    });
+    cleanupFunctionsRef.current = [];
+
+    // Clean up DOM elements
+    if (modalRef.current) {
+      // Remove event listeners
+      const modalElement = modalRef.current;
+      if (modalElement.parentNode) {
+        modalElement.parentNode.removeChild(modalElement);
+      }
+      modalRef.current = null;
+    }
+
+    // Clear container
+    if (containerRef.current) {
+      containerRef.current.innerHTML = '';
+    }
+
+    setMounted(false);
+  }, []);
 
   useEffect(() => {
     // TODO: Enable when ui-components Modal is fixed
@@ -122,7 +160,7 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(({
             ${showClose ? '<button class="tmyl-modal-close" style="float: right; background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>' : ''}
           </div>
           <div class="tmyl-modal-content">
-            ${typeof content === 'string' ? content : 'Modal content will be rendered here when ui-components Modal is fixed.'}
+            Modal content will be rendered here when ui-components Modal is fixed.
           </div>
           ${type === 'confirm' ? `
             <div class="tmyl-modal-footer" style="margin-top: 24px; text-align: right;">
@@ -187,35 +225,6 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(({
         modalElement.parentNode.removeChild(modalElement);
       }
     };
-
-    /* TODO: Replace with actual ModalFactory when fixed
-    try {
-      modalRef.current = new ModalFactory({
-        title,
-        content,
-        size,
-        type,
-        showClose,
-        closeOnBackdrop,
-        closeOnEscape,
-        autoFocus,
-        onOpen,
-        onClose,
-        onConfirm,
-        onCancel,
-        onSubmit,
-        ...props
-      });
-
-      if (containerRef.current && modalRef.current) {
-        containerRef.current.appendChild(modalRef.current.element);
-      }
-
-      setMounted(true);
-    } catch (error) {
-      console.error('Failed to create Modal:', error);
-    }
-    */
 
   }, [title, content, size, type, showClose, closeOnBackdrop, closeOnEscape,
     autoFocus, isOpen, onOpen, onClose, onConfirm, onCancel, onSubmit, className]);
@@ -288,12 +297,8 @@ export const Modal = forwardRef<ModalHandle, ModalProps>(({
       }
     },
     setContent: (newContent: string) => {
-      if (mounted && modalRef.current) {
-        const contentElement = modalRef.current.querySelector('.tmyl-modal-content');
-        if (contentElement) {
-          contentElement.innerHTML = newContent;
-        }
-      }
+      // Content updates should be handled via props, not direct DOM manipulation
+      logger.warn('Modal.setContent() is deprecated. Use props to update content.', undefined, 'Modal');
     },
     getModal: () => modalRef.current
   }), [mounted, onOpen, onClose]);

@@ -18,50 +18,12 @@ jest.mock('../../../core/factory/factory-importer', () => ({
         return {
           create: jest.fn((config = {}) => {
             console.log('🎭 Mock ActionCardFactory.create called with config:', config);
-            // Create a button element directly for ActionCard
-            const button = document.createElement('button');
-            button.setAttribute('role', 'button');
-            button.className = 'action-card-button';
-
-            // Handle title and description
-            if (config.title) {
-              // Create a span for the title
-              const titleSpan = document.createElement('span');
-              titleSpan.className = 'action-card-title';
-              titleSpan.textContent = config.title;
-              button.appendChild(titleSpan);
-
-              if (config.description) {
-                // Add a separator
-                button.appendChild(document.createTextNode(': '));
-
-                // Create a span for the description
-                const descSpan = document.createElement('span');
-                descSpan.className = 'action-card-description';
-                descSpan.textContent = config.description;
-                button.appendChild(descSpan);
-              }
-            } else if (config.description) {
-              button.textContent = config.description;
-            } else {
-              button.textContent = 'Action';
-            }
-
-            // Handle disabled state
-            if (config.disabled) {
-              button.setAttribute('disabled', 'true');
-            }
-
-            // Handle event handlers
-            if (config.onClick) {
-              button.addEventListener('click', config.onClick);
-            }
-            if (config.onHover) {
-              button.addEventListener('mouseenter', config.onHover);
-            }
-
-            console.log('🎭 Mock returning button element:', button.outerHTML);
-            return button;
+            // Create a hidden element to avoid interfering with enhanced component
+            const element = document.createElement('div');
+            element.setAttribute('data-factory', 'ActionCard');
+            element.setAttribute('data-testid', 'factory-container-ActionCard');
+            element.style.display = 'none';
+            return element;
           })
         };
       }
@@ -70,7 +32,8 @@ jest.mock('../../../core/factory/factory-importer', () => ({
         create: jest.fn((config = {}) => {
           const element = document.createElement('div');
           element.className = `mock-${name.toLowerCase()}`;
-          element.textContent = `${name} Mock`;
+          element.setAttribute('data-factory', name);
+          element.style.display = 'none';
           return element;
         })
       };
@@ -128,7 +91,7 @@ jest.mock('../../../core/factory/factory-importer', () => ({
 
   test('handles hover events', () => {
     const handleHover = jest.fn();
-    render(<ActionCard onHover={handleHover} />);
+    render(<ActionCard onMouseEnter={handleHover} />);
     const button = screen.getByRole('button');
     fireEvent.mouseEnter(button);
     expect(handleHover).toHaveBeenCalledTimes(1);
@@ -155,7 +118,7 @@ jest.mock('../../../core/factory/factory-importer', () => ({
   test('renders with disabled state', () => {
     render(<ActionCard disabled={true} />);
     const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-disabled', 'true');
   });
 
   test('renders with elevation', () => {

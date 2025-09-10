@@ -6,6 +6,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
+import type { StorageValue } from '../types/common';
 
 // Fallback storage for server-side rendering and testing
 const createNoopStorage = () => {
@@ -13,7 +14,7 @@ const createNoopStorage = () => {
     getItem(_key: string) {
       return Promise.resolve(null);
     },
-    setItem(_key: string, value: any) {
+    setItem(_key: string, value: StorageValue) {
       return Promise.resolve(value);
     },
     removeItem(_key: string) {
@@ -73,7 +74,7 @@ const persistedReducer = typeof window !== 'undefined'
 
 // Store configuration
 export const store = configureStore({
-  reducer: persistedReducer as any, // Type assertion to handle conditional persistence
+  reducer: persistedReducer as unknown as typeof rootReducer, // Type assertion to handle conditional persistence
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

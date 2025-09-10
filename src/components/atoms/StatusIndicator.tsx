@@ -4,6 +4,8 @@
 
 import React from 'react';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
+import { ComponentEventData } from '../../types/factory';
+import { responsiveSizes, combineResponsive } from '../../utils/responsive-utils';
 
 interface StatusIndicatorProps {
   status?: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'warning';
@@ -22,17 +24,20 @@ interface StatusIndicatorProps {
 }
 
 export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
+  size = 'default',
   onClick,
   onMouseEnter,
   onMouseLeave,
   ...props
 }) => {
-  const handleEvent = (_eventType: string, _detail: unknown) => {
+  const handleEvent = (_eventData: ComponentEventData) => {
     // Handle ui-components events if needed
   };
 
   return createFactoryComponent<StatusIndicatorProps>('StatusIndicator', 'StatusIndicator')({
     ...props,
+    size: size as 'xs' | 'sm' | 'md' | 'lg',
+    componentType: 'ButtonFactory', // Status indicators might use button factory
     onEvent: handleEvent,
     onClick,
     onMouseEnter,

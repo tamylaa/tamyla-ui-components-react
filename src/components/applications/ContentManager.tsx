@@ -13,7 +13,7 @@ interface _ContentItem {
   createdAt: Date;
   updatedAt: Date;
   tags?: string[];
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 interface ContentManagerProps {
@@ -25,10 +25,10 @@ interface ContentManagerProps {
   showPreview?: boolean;
   enableBulkActions?: boolean;
   // Event handlers
-  onContentUploaded?: (_content: Record<string, unknown>) => void;
-  onContentSelected?: (_content: Record<string, unknown>) => void;
+  onContentUploaded?: (_content: _ContentItem) => void;
+  onContentSelected?: (_content: _ContentItem) => void;
   onContentDeleted?: (_contentId: string) => void;
-  onContentUpdated?: (_content: Record<string, unknown>) => void;
+  onContentUpdated?: (_content: _ContentItem) => void;
 }
 
 export const ContentManager = createFactoryComponent<ContentManagerProps>(

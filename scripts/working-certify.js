@@ -76,10 +76,10 @@ console.log('\n🧩 PHASE 3: React Component Certification');
 console.log('========================================');
 
 const componentDirs = {
-  'src/atoms': 'atoms',
-  'src/molecules': 'molecules',
-  'src/organisms': 'organisms',
-  'src/applications': 'applications'
+  'src/components/atoms': 'atoms',
+  'src/components/molecules': 'molecules',
+  'src/components/organisms': 'organisms',
+  'src/components/applications': 'applications'
 };
 
 const componentCounts = {};

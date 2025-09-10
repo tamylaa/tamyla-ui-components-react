@@ -66,8 +66,8 @@ describe('ContentCard Molecule', () => {
   test('handles click events', () => {
     const handleClick = jest.fn();
     render(<ContentCard onClick={handleClick} />);
-    // Click on the card container
-    const card = document.querySelector('.tamyla-card');
+    // Click on the enhanced card container (not the factory mock)
+    const card = screen.getByRole('article');
     if (card) {
       fireEvent.click(card);
       expect(handleClick).toHaveBeenCalledTimes(1);
@@ -83,7 +83,7 @@ describe('ContentCard Molecule', () => {
         onMouseLeave={handleMouseLeave}
       />
     );
-    const card = document.querySelector('.tamyla-card');
+    const card = screen.getByRole('article');
     if (card) {
       fireEvent.mouseEnter(card);
       expect(handleMouseEnter).toHaveBeenCalledTimes(1);

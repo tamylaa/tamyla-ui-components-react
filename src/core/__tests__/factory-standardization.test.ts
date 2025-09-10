@@ -29,7 +29,7 @@ describe('Standardized Factory System', () => {
 
       Object.entries(factories).forEach(([_name, factory]) => {
         expect(factory).toBeDefined();
-        expect(typeof (factory as any).create).toBe('function');
+        expect(typeof (factory as { create?: unknown }).create).toBe('function');
       });
     });
 
@@ -111,7 +111,7 @@ describe('Standardized Factory System', () => {
 
       Object.entries(factories).forEach(([_name, factory]) => {
         totalCount++;
-        if (factory && typeof (factory as any).create === 'function') {
+        if (factory && typeof (factory as { create?: unknown }).create === 'function') {
           standardizedCount++;
         }
       });

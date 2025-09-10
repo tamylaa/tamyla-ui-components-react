@@ -11,9 +11,9 @@ function TestApp() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Native React Components Test</h1>
-      
-      <Card 
-        variant="outlined" 
+
+      <Card
+        variant="outlined"
         header={<h3>Button Examples</h3>}
         footer={<p>All styled with vanilla CSS classes</p>}
       >
@@ -25,7 +25,7 @@ function TestApp() {
           <Button isLoading>Loading...</Button>
         </div>
       </Card>
-      
+
       <Card variant="elevated" style={{ marginTop: '20px' }}>
         <h4>Why This Approach is Better:</h4>
         <ul>

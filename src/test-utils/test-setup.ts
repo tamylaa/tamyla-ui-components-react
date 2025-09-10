@@ -44,10 +44,10 @@ const customRender = (
 // Test utilities
 const testUtils = {
   // Mock functions
-  createMockFunction: () => jest.fn(),
+  createMockFunction: (): any => jest.fn(),
 
   // Mock Redux dispatch
-  mockDispatch: jest.fn(),
+  mockDispatch: jest.fn() as any,
 
   // Common test data
   testUser: {
@@ -59,7 +59,7 @@ const testUtils = {
   // Common test props
   defaultProps: {
     children: 'Test Content',
-    onClick: jest.fn(),
+    onClick: jest.fn() as any,
     className: 'test-class'
   }
 };

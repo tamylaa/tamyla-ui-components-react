@@ -6,6 +6,7 @@
 
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { UIComponentState, SearchResult, FilterValue } from '../../types/common';
 
 // Notification interface
 export interface Notification {
@@ -21,7 +22,7 @@ export interface Notification {
 // Modal interface
 export interface Modal {
   isOpen: boolean;
-  data?: any;
+  data?: unknown;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
 
@@ -52,8 +53,8 @@ export interface UIState {
   // Search state
   search: {
     query: string;
-    filters: { [key: string]: any };
-    results: any[];
+    filters: { [key: string]: FilterValue };
+    results: SearchResult[];
     isSearching: boolean;
   };
 
@@ -68,11 +69,7 @@ export interface UIState {
 
   // Component states
   componentStates: {
-    [componentId: string]: {
-      isVisible: boolean;
-      isExpanded: boolean;
-      data: any;
-    };
+    [componentId: string]: UIComponentState;
   };
 }
 
@@ -106,7 +103,7 @@ const initialState: UIState = {
     height: typeof window !== 'undefined' ? window.innerHeight : 1080,
     isMobile: false,
     isTablet: false,
-    isDesktop: true
+    isDesktop: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true // Default to desktop for SSR
   },
 
   componentStates: {}
@@ -145,7 +142,7 @@ export const uiSlice = createSlice({
     // Modal management
     openModal: (state, action: PayloadAction<{
       id: string;
-      data?: any;
+      data?: unknown;
       size?: Modal['size'];
     }>) => {
       state.modals[action.payload.id] = {
@@ -212,7 +209,7 @@ export const uiSlice = createSlice({
       state.search.query = action.payload;
     },
 
-    setSearchFilter: (state, action: PayloadAction<{ key: string; value: any }>) => {
+    setSearchFilter: (state, action: PayloadAction<{ key: string; value: FilterValue }>) => {
       state.search.filters[action.payload.key] = action.payload.value;
     },
 
@@ -220,7 +217,7 @@ export const uiSlice = createSlice({
       state.search.filters = {};
     },
 
-    setSearchResults: (state, action: PayloadAction<any[]>) => {
+    setSearchResults: (state, action: PayloadAction<SearchResult[]>) => {
       state.search.results = action.payload;
     },
 

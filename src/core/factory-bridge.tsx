@@ -4,49 +4,49 @@
  */
 
 import React, { useEffect, useRef, useCallback } from 'react';
-
-// Type definitions for ui-components integration
-interface FactoryComponentProps {
-  componentType: string;
-  config?: Record<string, any>;
-  children?: React.ReactNode;
-  className?: string;
-  onEvent?: (eventType: string, data: any) => void;
-}
+import logger from '../utils/logger';
+import type {
+  UIComponentsModule,
+  BaseFactoryComponent,
+  ComponentEventData,
+  FactoryBridgeProps
+} from '../types/factory';
 
 /**
  * Factory Bridge Component - React wrapper for ui-components
  */
-export const FactoryBridge: React.FC<FactoryComponentProps> = ({
+export const FactoryBridge: React.FC<FactoryBridgeProps> = ({
   componentType,
   config = {},
   children,
   className,
-  onEvent
+  onEvent,
+  onMount,
+  onUnmount
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const componentRef = useRef<any>(null);
+  const componentRef = useRef<BaseFactoryComponent | null>(null);
 
   useEffect(() => {
     const loadComponent = async () => {
       try {
         // Dynamic import from ui-components - handle missing peer dependency gracefully
-        let UIComponents: any = null;
+        let UIComponents: UIComponentsModule | null = null;
         try {
           const moduleName = '@tamyla/ui-components';
-          UIComponents = await import(moduleName);
+          UIComponents = await import(moduleName) as UIComponentsModule;
         } catch (importError) {
-          console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+          logger.warn('Peer dependency @tamyla/ui-components not available:', importError, 'FactoryBridge');
           return;
         }
 
-        if (!UIComponents || !(UIComponents as any)[componentType]) {
-          console.error(`Component type ${componentType} not found in ui-components`);
+        if (!UIComponents || !UIComponents[componentType]) {
+          logger.error(`Component type ${componentType} not found in ui-components`, undefined, 'FactoryBridge');
           return;
         }
 
         // Create component instance
-        const componentFactory = (UIComponents as any)[componentType];
+        const componentFactory = UIComponents[componentType] as any; // Temporary any until we have proper factory typing
         const element = componentFactory(config);
 
         // Store reference for cleanup
@@ -55,18 +55,30 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
         // Add to DOM
         if (containerRef.current) {
           containerRef.current.innerHTML = '';
-          containerRef.current.appendChild(element);
+          containerRef.current.appendChild(element.element);
         }
 
         // Setup event forwarding
         if (onEvent) {
-          element.addEventListener('*', (event: any) => {
-            onEvent(event.type, event.detail);
+          element.element.addEventListener('*', (event: Event) => {
+            const customEvent = event as any as { type: string; detail: unknown };
+            const eventData: ComponentEventData = {
+              type: customEvent.type,
+              target: componentType,
+              data: customEvent.detail,
+              timestamp: Date.now()
+            };
+            onEvent(eventData);
           });
         }
 
+        // Call onMount callback
+        if (onMount) {
+          onMount(element);
+        }
+
       } catch (error) {
-        console.error('Failed to load ui-component:', error);
+        logger.error('Failed to load ui-component:', error, 'FactoryBridge');
       }
     };
 
@@ -74,12 +86,18 @@ export const FactoryBridge: React.FC<FactoryComponentProps> = ({
 
     // Cleanup
     return () => {
+      if (componentRef.current) {
+        componentRef.current.destroy();
+        componentRef.current = null;
+      }
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
       }
-      componentRef.current = null;
+      if (onUnmount) {
+        onUnmount();
+      }
     };
-  }, [componentType, config, onEvent]);
+  }, [componentType, config, onEvent, onMount, onUnmount]);
 
   return (
     <div
@@ -103,22 +121,20 @@ export class FactoryBridgeService {
     try {
       // Handle missing peer dependency gracefully
       let UIComponents: any = null;
-      try {
-        const moduleName = '@tamyla/ui-components';
-        UIComponents = await import(moduleName);
-      } catch (importError) {
-        console.warn('Peer dependency @tamyla/ui-components not available:', importError);
-        return null;
-      }
-
-      if (!UIComponents || !(UIComponents as any)[componentType]) {
+    try {
+      const moduleName = '@tamyla/ui-components';
+      UIComponents = await import(moduleName);
+    } catch (importError) {
+      logger.warn('Peer dependency @tamyla/ui-components not available:', importError, 'FactoryBridge');
+      return null;
+    }      if (!UIComponents || !(UIComponents as any)[componentType]) {
         throw new Error(`Component type ${componentType} not found`);
       }
 
       const componentFactory = (UIComponents as any)[componentType];
       return componentFactory(config);
     } catch (error) {
-      console.error('Failed to create factory component:', error);
+      logger.error('Failed to create factory component:', error, 'FactoryBridge');
       return null;
     }
   }
@@ -130,11 +146,11 @@ export class FactoryBridgeService {
         const moduleName = '@tamyla/ui-components';
         return await import(moduleName);
       } catch (importError) {
-        console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+        logger.warn('Peer dependency @tamyla/ui-components not available:', importError, 'FactoryBridge');
         return null;
       }
     } catch (error) {
-      console.error('Failed to load ui-components:', error);
+      logger.error('Failed to load ui-components:', error, 'FactoryBridge');
       return null;
     }
   }

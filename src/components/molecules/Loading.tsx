@@ -7,6 +7,8 @@ import React, { forwardRef } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 
 // Skeleton Component
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,7 +40,7 @@ const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(({
   return (
     <div
       ref={ref}
-      className={cn('animate-pulse rounded-md bg-muted', className)}
+      className={cn('animate-pulse rounded-md bg-[var(--surface-secondary)]', className)}
       {...props}
     />
   );
@@ -96,7 +98,7 @@ const HoverCard = forwardRef<HTMLDivElement, HoverCardProps>(({
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           // Check if this is a HoverCardTrigger
-          if (child.type === HoverCardTrigger || (child.type as any)?.displayName === 'HoverCardTrigger') {
+          if (child.type === HoverCardTrigger || (child.type as { displayName?: string })?.displayName === 'HoverCardTrigger') {
             return React.cloneElement(child, {
               ...child.props,
               onMouseEnter: () => setIsOpen(true),
@@ -104,7 +106,7 @@ const HoverCard = forwardRef<HTMLDivElement, HoverCardProps>(({
             });
           }
           // Check if this is a HoverCardContent
-          if (child.type === HoverCardContent || (child.type as any)?.displayName === 'HoverCardContent') {
+          if (child.type === HoverCardContent || (child.type as { displayName?: string })?.displayName === 'HoverCardContent') {
             return isOpen ? child : null;
           }
         }
@@ -134,11 +136,13 @@ HoverCardTrigger.displayName = 'HoverCardTrigger';
 export interface HoverCardContentProps extends React.HTMLAttributes<HTMLDivElement> {
   side?: 'top' | 'right' | 'bottom' | 'left';
   align?: 'start' | 'center' | 'end';
+  size?: 'sm' | 'default' | 'lg';
 }
 
 const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps>(({
   side = 'top',
   align = 'center',
+  size = 'default',
   className,
   ...props
 }, ref) => {
@@ -155,13 +159,20 @@ const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps>(({
     end: 'right-0'
   };
 
+  const sizeClasses = {
+    sm: responsiveSizes.hovercard.sm,
+    default: responsiveSizes.hovercard.default,
+    lg: responsiveSizes.hovercard.lg
+  };
+
   return (
     <div
       ref={ref}
       className={cn(
-        'absolute z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none',
+        'absolute z-50 rounded-md border border-[var(--border)] bg-[var(--surface-primary)] p-4 text-[var(--text-primary)] shadow-md outline-none',
         'animate-in fade-in-0 zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+        sizeClasses[size],
         sideClasses[side],
         alignClasses[align],
         className
@@ -221,14 +232,14 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
       {React.Children.map(children, (child, index) => {
         if (React.isValidElement(child)) {
           // Check if this is a PopoverTrigger
-          if (child.type === PopoverTrigger || (child.type as any)?.displayName === 'PopoverTrigger') {
+          if (child.type === PopoverTrigger || (child.type as { displayName?: string })?.displayName === 'PopoverTrigger') {
             return React.cloneElement(child, {
               ...child.props,
               onClick: () => setIsOpen(!isOpen)
             });
           }
           // Check if this is a PopoverContent
-          if ((child.type === PopoverContent || (child.type as any)?.displayName === 'PopoverContent') && isOpen) {
+          if ((child.type === PopoverContent || (child.type as { displayName?: string })?.displayName === 'PopoverContent') && isOpen) {
             return React.cloneElement(child, {
               ...child.props,
               isOpen: true
@@ -265,6 +276,7 @@ export interface PopoverContentProps extends React.HTMLAttributes<HTMLDivElement
   side?: 'top' | 'right' | 'bottom' | 'left';
   align?: 'start' | 'center' | 'end';
   isOpen?: boolean;
+  size?: 'sm' | 'default' | 'lg';
 }
 
 const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(({
@@ -272,6 +284,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(({
   align = 'center',
   className,
   isOpen,
+  size = 'default',
   ...props
 }, ref) => {
   if (!isOpen) return null;
@@ -289,13 +302,20 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(({
     end: 'right-0'
   };
 
+  const sizeClasses = {
+    sm: responsiveSizes.popover.sm,
+    default: responsiveSizes.popover.default,
+    lg: responsiveSizes.popover.lg
+  };
+
   return (
     <div
       ref={ref}
       className={cn(
-        'absolute z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none',
+        'absolute z-50 rounded-md border border-[var(--border)] bg-[var(--surface-primary)] p-4 text-[var(--text-primary)] shadow-md outline-none',
         'animate-in fade-in-0 zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+        sizeClasses[size],
         sideClasses[side],
         alignClasses[align],
         className

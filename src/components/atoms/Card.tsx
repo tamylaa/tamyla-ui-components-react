@@ -1,14 +1,55 @@
 /**
  * Enhanced Card Component - shadcn/ui inspired with Redux integration
- * Combines shadcn/ui patterns with your enterprise features
- */
+ *
+ * A versatile card component that combines shadcn/ui design patterns with enterprise features
+ * including optional Redux state tracking, analytics, and interactive behaviors.
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Card>
+ *   <Card.Header>
+ *     <Card.Title>Card Title</Card.Title>
+ *   </Card.Header>
+ *   <Card.Content>
+ *     // Create compound component with proper typing
+const CardWithCompound = Card as CardComponent;
+CardWithCompound.Header = CardHeader;
+CardWithCompound.Title = CardTitle;
+CardWithCompound.Content = CardContent;
 
+// Export memoized version
+export const MemoizedCard = React.memo(CardWithCompound);
+MemoizedCard.displayName = 'MemoizedCard';
+
+export default CardWithCompound;ntent goes here
+ *   </Card.Content>
+ * </Card>
+ *
+ * // With variants and Redux tracking
+ * <Card
+ *   variant="elevated"
+ *   componentId="my-card"
+ *   enableStateTracking
+ *   enableAnalytics
+ * >
+ *   <Card.Content>Interactive card content</Card.Content>
+ * </Card>
+ * ```
+ */
 import React, { forwardRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions, componentActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, combineResponsive } from '../../utils/responsive-utils';
 
-// shadcn/ui inspired variant system (simplified without external deps)
+/**
+ * Generates CSS classes for card styling based on variant and padding
+ *
+ * @param options - Configuration object for card styling
+ * @returns Combined CSS class string
+ */
 const getCardClasses = ({
   variant = 'default',
   padding = 'default',
@@ -18,20 +59,21 @@ const getCardClasses = ({
   padding?: string;
   className?: string;
 }) => {
-  const baseClasses = 'rounded-lg border bg-card text-card-foreground shadow-sm';
+  const baseClasses = 'rounded-lg border bg-[var(--surface-primary)] text-[var(--text-primary)] shadow-sm border-[var(--border)]';
 
   const variantClasses: Record<string, string> = {
     default: '',
     outlined: 'border-2',
     elevated: 'shadow-lg',
-    filled: 'bg-muted',
+    filled: 'bg-[var(--surface-secondary)]',
   };
 
   const paddingClasses: Record<string, string> = {
     none: 'p-0',
-    sm: 'p-4',
-    default: 'p-6',
-    lg: 'p-8',
+    xs: responsiveSizes.card.xs,
+    sm: responsiveSizes.card.sm,
+    default: responsiveSizes.card.default,
+    lg: responsiveSizes.card.lg,
   };
 
   return cn(
@@ -42,23 +84,108 @@ const getCardClasses = ({
   );
 };
 
+/**
+ * Props for the Card component
+ *
+ * Extends all standard HTML div attributes with additional card-specific features
+ */
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Visual style variant of the card
+   * @default 'default'
+   */
   variant?: 'default' | 'outlined' | 'elevated' | 'filled';
-  padding?: 'none' | 'sm' | 'default' | 'lg';
+
+  /**
+   * Padding size for the card content
+   * @default 'default'
+   */
+  padding?: 'none' | 'xs' | 'sm' | 'default' | 'lg';
+
+  /**
+   * Header content for the card (alternative to Card.Header)
+   */
   header?: React.ReactNode;
+
+  /**
+   * Footer content for the card (alternative to Card.Footer)
+   */
   footer?: React.ReactNode;
-  // Your unique Redux integration
+
+  /**
+   * Whether to enable Redux state tracking for this card
+   * @default false
+   */
   enableStateTracking?: boolean;
+
+  /**
+   * Unique identifier for the card component (used for state tracking)
+   */
   componentId?: string;
+
+  /**
+   * Whether the card should be interactive (clickable)
+   * @default false
+   */
   interactive?: boolean;
+
+  /**
+   * Callback fired when card is expanded
+   */
   onExpand?: () => void;
+
+  /**
+   * Callback fired when card is collapsed
+   */
   onCollapse?: () => void;
+
+  /**
+   * Whether to enable analytics tracking for card interactions
+   * @default false
+   */
   enableAnalytics?: boolean;
+
+  /**
+   * Custom analytics event name for tracking
+   */
   analyticsEvent?: string;
-  // shadcn/ui patterns
+
+  /**
+   * Render as a different element (shadcn/ui pattern)
+   * @default false
+   */
   asChild?: boolean;
 }
 
+/**
+ * Extended Card interface for compound components
+ *
+ * Includes the main Card component and its sub-components for shadcn/ui-style usage
+ */
+export interface CardComponent extends React.ForwardRefExoticComponent<CardProps & React.RefAttributes<HTMLDivElement>> {
+  /** Card header sub-component */
+  Header: typeof CardHeader;
+  /** Card title sub-component */
+  Title: typeof CardTitle;
+  /** Card content sub-component */
+  Content: typeof CardContent;
+}
+
+/**
+ * Card component with enhanced features and optional Redux integration
+ *
+ * Features:
+ * - Multiple visual variants and padding options
+ * - Compound component pattern (Card.Header, Card.Title, Card.Content)
+ * - Optional Redux state tracking and analytics
+ * - Interactive behaviors (expand/collapse)
+ * - Accessibility features
+ * - Graceful degradation when Redux is not available
+ *
+ * @param props - Card component props
+ * @param ref - Forwarded ref for DOM access
+ * @returns React card element
+ */
 export const Card = forwardRef<HTMLDivElement, CardProps>(({
   variant = 'default',
   padding = 'default',
@@ -124,7 +251,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
         componentId,
         stateUpdates: {
           lastInteraction: new Date().toISOString(),
-          interactionCount: (componentState?.state?.interactionCount || 0) + 1
+          interactionCount: (Number(componentState?.state?.interactionCount) || 0) + 1
         }
       }));
     }
@@ -149,7 +276,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
       className={cn(
         cardClasses,
         interactive && 'cursor-pointer hover:shadow-md transition-shadow',
-        isExpanded && 'ring-2 ring-ring ring-offset-2',
+        isExpanded ? 'ring-2 ring-ring ring-offset-2' : '',
         theme.mode === 'dark' && 'border-border/50',
         className
       )}
@@ -169,14 +296,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
                 className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-accent hover:text-accent-foreground h-9 w-9"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleClick(e as any);
+                  handleClick(e as unknown as React.MouseEvent<HTMLDivElement>);
                 }}
                 aria-label={isExpanded ? 'Collapse card' : 'Expand card'}
               >
                 <svg
                   className={cn(
                     'h-4 w-4 transition-transform',
-                    isExpanded && 'rotate-180'
+                    isExpanded ? 'rotate-180' : ''
                   )}
                   width="16"
                   height="16"
@@ -208,7 +335,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
       {/* State indicators for debugging */}
       {enableStateTracking && componentId && (
         <div className="hidden">
-          Interactions: {componentState?.state?.interactionCount || 0}
+          Interactions: {String(componentState?.state?.interactionCount || 0)}
           Last: {componentState?.lastUpdated}
         </div>
       )}
@@ -219,6 +346,22 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({
 Card.displayName = 'Card';
 
 // CardHeader Component
+/**
+ * Card header sub-component
+ *
+ * Provides consistent spacing and styling for card headers.
+ * Typically contains the card title and any header actions.
+ *
+ * @example
+ * ```tsx
+ * <Card>
+ *   <Card.Header>
+ *     <Card.Title>Card Title</Card.Title>
+ *     <Button size="sm">Action</Button>
+ *   </Card.Header>
+ * </Card>
+ * ```
+ */
 export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({
@@ -235,6 +378,19 @@ export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(({
 CardHeader.displayName = 'CardHeader';
 
 // CardTitle Component
+/**
+ * Card title sub-component
+ *
+ * Provides consistent typography styling for card titles.
+ * Renders as an h3 element for proper semantic structure.
+ *
+ * @example
+ * ```tsx
+ * <Card.Header>
+ *   <Card.Title>My Card Title</Card.Title>
+ * </Card.Header>
+ * ```
+ */
 export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
 
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(({
@@ -251,6 +407,19 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(({
 CardTitle.displayName = 'CardTitle';
 
 // CardContent Component
+/**
+ * Card content sub-component
+ *
+ * Provides consistent spacing for card content areas.
+ * Removes top padding to align with card headers.
+ *
+ * @example
+ * ```tsx
+ * <Card.Content>
+ *   <p>This is the main content of the card.</p>
+ * </Card.Content>
+ * ```
+ */
 export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(({
@@ -266,4 +435,14 @@ export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(({
 
 CardContent.displayName = 'CardContent';
 
-export default Card;
+// ============================================
+// COMPOUND COMPONENT SETUP (Phase 2: Core Standardization)
+// ============================================
+
+// Create compound component with proper typing
+const CardWithCompound = Card as CardComponent;
+CardWithCompound.Header = CardHeader;
+CardWithCompound.Title = CardTitle;
+CardWithCompound.Content = CardContent;
+
+export default CardWithCompound;

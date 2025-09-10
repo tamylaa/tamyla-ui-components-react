@@ -21,10 +21,10 @@ console.log(`📁 Working directory: ${projectRoot}`);
 console.log('\n🔍 Checking project structure...');
 
 const expectedDirs = {
-  'src/atoms': 'Atomic components',
-  'src/molecules': 'Molecule components',
-  'src/organisms': 'Organism components',
-  'src/applications': 'Application components',
+  'src/components/atoms': 'Atomic components',
+  'src/components/molecules': 'Molecule components',
+  'src/components/organisms': 'Organism components',
+  'src/components/applications': 'Application components',
   'src/core': 'Core utilities',
   'src/store': 'Redux store setup',
   'scripts': 'Build and validation scripts'

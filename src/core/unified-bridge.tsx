@@ -1,12 +1,23 @@
 /**
  * Unified Factory Bridge - Single, clean React wrapper for ALL ui-components
  *
- * Mirrors the root platform's proven factory pattern with React-specific implementation.
- * Eliminates all duplication and inconsistency.
+ * Mirrors the root platform's proven factory pattern with React-specific implemen        // Show error placeholder
+        if (containerRef.current) {
+          containerRef.current.innerHTML = `
+            <div style="
+              padding: var(--spacing-4, 1rem);
+              border: 2px dashed var(--color-error-border, #ef4444);
+              border-radius: var(--border-radius-md, 0.375rem);
+              background: var(--color-error-bg, #fee2e2);
+              color: var(--color-error-text, #dc2626);
+              font-family: var(--font-family-mono, monospace);
+              text-align: center;
+            ">`Eliminates all duplication and inconsistency.
  * Uses dynamic imports to prevent SSR issues.
  */
 
 import React, { useEffect, useRef } from 'react';
+import logger from '../utils/logger';
 
 // Dynamic imports to prevent SSR DOM access issues
 // Factories will be loaded async when needed
@@ -30,7 +41,7 @@ import {
 */
 
 // Unified factory registry - will be populated dynamically to prevent SSR issues
-const FACTORY_REGISTRY: { [key: string]: any } = {};
+const FACTORY_REGISTRY: { [key: string]: unknown } = {};
 
 // Dynamic factory loader to prevent SSR issues
 const loadFactory = async (factoryName: string) => {
@@ -45,11 +56,11 @@ const loadFactory = async (factoryName: string) => {
     try {
       uiComponents = await import(/* @vite-ignore */ moduleName);
     } catch (importError) {
-      console.warn('Peer dependency @tamyla/ui-components not available:', importError);
+      logger.warn('Peer dependency @tamyla/ui-components not available', { error: importError }, 'UnifiedBridge');
     }
 
     if (!uiComponents) {
-      console.warn(`UnifiedBridge: @tamyla/ui-components not available for factory: ${factoryName}`);
+      logger.warn(`@tamyla/ui-components not available for factory: ${factoryName}`, null, 'UnifiedBridge');
       return null;
     }
 
@@ -72,10 +83,11 @@ const loadFactory = async (factoryName: string) => {
       return FACTORY_REGISTRY[factoryName];
     }
 
+    // eslint-disable-next-line no-console
     console.warn(`Factory ${factoryName} not found in @tamyla/ui-components`);
     return null;
   } catch (error) {
-    console.warn(`Failed to load factory ${factoryName}:`, error);
+    logger.warn(`Failed to load factory ${factoryName}`, { error }, 'UnifiedBridge');
     return null;
   }
 };
@@ -84,7 +96,7 @@ const loadFactory = async (factoryName: string) => {
 export type ComponentType = 'button' | 'input' | 'card' | 'actionCard' | 'searchBar' | 'contentCard' | 'fileList' | 'notification' | 'searchInterface';
 
 export interface ComponentProps {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -103,9 +115,9 @@ export function useComponentFactory() {
     // Handle different factory patterns consistently
     if (typeof factory === 'function') {
       // Function factory (ContentCard, FileList, etc.)
-      const functionFactory = factory as (props: ComponentProps) => any;
+      const functionFactory = factory as (props: ComponentProps) => unknown;
       const result = functionFactory(props);
-      element = result?.element || result;
+      element = (result as any)?.element || result;
     } else if (factory && typeof factory === 'object' && 'create' in factory && typeof factory.create === 'function') {
       // Object factory with .create() method (Button, ActionCard, SearchBar, etc.)
       const objectFactory = factory as { create: () => HTMLElement };
@@ -170,10 +182,10 @@ export const FactoryBridge: React.FC<FactoryBridgeProps> = ({
         if (containerRef.current) {
           containerRef.current.innerHTML = `
             <div style="
-              padding: 1rem; 
-              border: 2px dashed #ff6b6b; 
-              border-radius: 0.375rem; 
-              background: #ffe0e0; 
+              padding: 1rem;
+              border: 2px dashed #ff6b6b;
+              border-radius: 0.375rem;
+              background: #ffe0e0;
               color: #c92a2a;
               font-family: monospace;
               text-align: center;

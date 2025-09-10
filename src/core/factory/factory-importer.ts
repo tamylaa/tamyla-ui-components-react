@@ -3,6 +3,8 @@
  * Uses lazy loading to avoid DOM access during module initialization
  */
 
+import logger from '../../utils/logger';
+
 export class FactoryImporter {
   private static instance: FactoryImporter | null = null;
   private factories: Map<string, any> = new Map();
@@ -28,15 +30,15 @@ export class FactoryImporter {
       // Try to import factories from @tamyla/ui-components
       await this.loadFactoriesFromUIComponents();
     } catch (error) {
-      console.warn('FactoryImporter: Failed to load factories:', error);
+      logger.warn('Failed to load factories', { error }, 'FactoryImporter');
     }
   }
 
   private async loadFactoriesFromUIComponents(): Promise<void> {
     try {
       // Skip dynamic import in test environment
-      if (typeof jest !== 'undefined' || process.env.NODE_ENV === 'test') {
-        console.log('FactoryImporter: Skipping dynamic import in test environment');
+      if ((globalThis as any).jest !== undefined || process.env.NODE_ENV === 'test') {
+        logger.info('Skipping dynamic import in test environment', null, 'FactoryImporter');
         return;
       }
 
@@ -51,7 +53,7 @@ export class FactoryImporter {
       const uiComponents = await import(moduleName).catch(() => null);
 
       if (!uiComponents) {
-        console.warn('Factory Importer: @tamyla/ui-components not available, keeping mock factories');
+        logger.warn('@tamyla/ui-components not available, keeping mock factories', null, 'FactoryImporter');
         return;
       }
 
@@ -60,9 +62,9 @@ export class FactoryImporter {
       this.loadFromModule(uiComponents);
 
       // Success - factories loaded from @tamyla/ui-components
-      console.log('✅ Real factories loaded from @tamyla/ui-components');
+      logger.info('Real factories loaded from @tamyla/ui-components', null, 'FactoryImporter');
     } catch (error) {
-      console.warn('FactoryImporter: Failed to load real factories, using mocks:', error);
+      logger.warn('Failed to load real factories, using mocks', { error }, 'FactoryImporter');
       // Fallback to mock factories if import fails
       if (this.factories.size === 0) {
         this.createMockFactories();
@@ -73,7 +75,7 @@ export class FactoryImporter {
   private createSSRSafeFactories(): void {
     // Create factories that don't access DOM during SSR
     const createSSRFactory = (name: string) => ({
-      create: (props: any = {}) => {
+      create: (props: Record<string, any> = {}) => {
         // Return a factory that will create actual DOM elements when called in browser
         if (typeof document !== 'undefined') {
           const element = document.createElement('div');
@@ -90,7 +92,7 @@ export class FactoryImporter {
           style: {},
           // Simulate basic DOM element interface
           outerHTML: `<div class="tamyla-${name.toLowerCase()}-ssr">${name} (SSR)</div>`
-        } as any;
+        } as Record<string, any>;
       }
     });
 
@@ -120,7 +122,7 @@ export class FactoryImporter {
       this.factories.set(name, createSSRFactory(name));
     });
 
-    console.log('✅ SSR-safe factories created');
+    logger.info('SSR-safe factories created', null, 'FactoryImporter');
   }
 
   private createMockFactories(): void {
@@ -205,7 +207,7 @@ export class FactoryImporter {
 
     const createCardFactory = () => ({
       create: (props: any = {}) => {
-        console.log('🎭 ContentCardFactory.create called with props:', props);
+        logger.debug('ContentCardFactory.create called', { props }, 'FactoryImporter');
         const card = document.createElement('div');
         card.className = 'tamyla-card';
         card.style.cssText = 'border: 1px solid #e1e5e9; border-radius: 8px; padding: 16px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 8px 0;';
@@ -228,19 +230,19 @@ export class FactoryImporter {
         // Only attach direct event listeners if there's no onEvent callback (to avoid double firing)
         if (!props.onEvent) {
           if (props.onClick && typeof props.onClick === 'function') {
-            console.log('🎭 Attaching onClick handler to ContentCard');
+            logger.debug('Attaching onClick handler to ContentCard', null, 'FactoryImporter');
             card.addEventListener('click', props.onClick);
           }
           if (props.onMouseEnter && typeof props.onMouseEnter === 'function') {
-            console.log('🎭 Attaching onMouseEnter handler to ContentCard');
+            logger.debug('Attaching onMouseEnter handler to ContentCard', null, 'FactoryImporter');
             card.addEventListener('mouseenter', props.onMouseEnter);
           }
           if (props.onMouseLeave && typeof props.onMouseLeave === 'function') {
-            console.log('🎭 Attaching onMouseLeave handler to ContentCard');
+            logger.debug('Attaching onMouseLeave handler to ContentCard', null, 'FactoryImporter');
             card.addEventListener('mouseleave', props.onMouseLeave);
           }
         } else {
-          console.log('🎭 ContentCard using onEvent callback, skipping direct event listeners');
+          logger.debug('ContentCard using onEvent callback, skipping direct event listeners', null, 'FactoryImporter');
         }
 
         return card;
@@ -367,7 +369,7 @@ export class FactoryImporter {
     // Standardized factory creator for simple components
     const createStandardFactory = (elementType: string, className: string, defaultContent?: string) => ({
       create: (props: any = {}) => {
-        console.log(`🎭 ${className}Factory.create called with props:`, props);
+        logger.debug(`${className}Factory.create called`, { props }, 'FactoryImporter');
         const element = document.createElement(elementType);
         element.className = className;
         element.style.cssText = 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #f8f9fa; font-family: inherit;';
@@ -384,33 +386,33 @@ export class FactoryImporter {
         // Only attach direct event listeners if there's no onEvent callback (to avoid double firing)
         if (!props.onEvent) {
           if (props.onDragOver && typeof props.onDragOver === 'function') {
-            console.log(`🎭 Attaching onDragOver handler to ${className}`);
+            logger.debug(`Attaching onDragOver handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('dragover', props.onDragOver);
           }
           if (props.onDragLeave && typeof props.onDragLeave === 'function') {
-            console.log(`🎭 Attaching onDragLeave handler to ${className}`);
+            logger.debug(`Attaching onDragLeave handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('dragleave', props.onDragLeave);
           }
           if (props.onDrop && typeof props.onDrop === 'function') {
-            console.log(`🎭 Attaching onDrop handler to ${className}`);
+            logger.debug(`Attaching onDrop handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('drop', props.onDrop);
           }
 
           // Attach general event handlers that might be used by other components
           if (props.onClick && typeof props.onClick === 'function') {
-            console.log(`🎭 Attaching onClick handler to ${className}`);
+            logger.debug(`Attaching onClick handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('click', props.onClick);
           }
           if (props.onMouseEnter && typeof props.onMouseEnter === 'function') {
-            console.log(`🎭 Attaching onMouseEnter handler to ${className}`);
+            logger.debug(`Attaching onMouseEnter handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('mouseenter', props.onMouseEnter);
           }
           if (props.onMouseLeave && typeof props.onMouseLeave === 'function') {
-            console.log(`🎭 Attaching onMouseLeave handler to ${className}`);
+            logger.debug(`Attaching onMouseLeave handler to ${className}`, null, 'FactoryImporter');
             element.addEventListener('mouseleave', props.onMouseLeave);
           }
         } else {
-          console.log(`🎭 ${className} using onEvent callback, skipping direct event listeners`);
+          logger.debug(`${className} using onEvent callback, skipping direct event listeners`, null, 'FactoryImporter');
         }
 
         return element;
@@ -443,20 +445,22 @@ export class FactoryImporter {
     this.factories.set('OrganismFactory', this.enhanceFactoryWithMissingMethods({
       create: (type: string, props: any = {}) => {
         const factory = this.factories.get(`${type}Factory`);
-        if (factory && typeof factory.create === 'function') {
-          return factory.create(props);
+        if (factory && typeof (factory as { create?: unknown }).create === 'function') {
+          return (factory as { create: (props: any) => unknown }).create(props);
         }
         return createStandardFactory('div', `tamyla-${type}`, `${type} Organism`).create(props);
       },
       createSearchInterface: (props: any = {}) => createSearchInterfaceFactory().create(props)
     }, null, 'OrganismFactory'));
 
-    console.log('✅ ALL mock factories created with consistent structure');
-    console.log('Available factories:', Array.from(this.factories.keys()));
+    if (process.env.NODE_ENV === 'development') {
+      logger.info('ALL mock factories created with consistent structure', null, 'FactoryImporter');
+      logger.debug('Available factories', { factories: Array.from(this.factories.keys()) }, 'FactoryImporter');
+    }
   }
 
   private loadFromModule(module: any): void {
-    console.log('🔄 Loading factories from module...');
+    logger.info('Loading factories from module...', null, 'FactoryImporter');
 
     // Core factories - import with error handling
     const coreImports = this.safeRequireFromModule(module, [
@@ -477,9 +481,9 @@ export class FactoryImporter {
       const normalizedFactory = this.normalizeFactory(value, key);
       if (this.isValidFactory(normalizedFactory)) {
         this.factories.set(key, normalizedFactory);
-        console.log(`✅ Loaded and normalized real factory: ${key}`);
+        logger.info(`Loaded and normalized real factory: ${key}`, null, 'FactoryImporter');
       } else {
-        console.warn(`⚠️ Invalid factory ${key}, keeping mock`);
+        logger.warn(`Invalid factory ${key}, keeping mock`, null, 'FactoryImporter');
       }
     });
 
@@ -500,9 +504,9 @@ export class FactoryImporter {
       const normalizedFactory = this.normalizeFactory(value, key);
       if (this.isValidFactory(normalizedFactory)) {
         this.factories.set(key, normalizedFactory);
-        console.log(`✅ Loaded and normalized optional factory: ${key}`);
+        logger.info(`Loaded and normalized optional factory: ${key}`, null, 'FactoryImporter');
       } else if (value !== undefined) {
-        console.warn(`⚠️ Invalid optional factory ${key}, keeping mock`);
+        logger.warn(`Invalid optional factory ${key}, keeping mock`, null, 'FactoryImporter');
       }
     });
   }
@@ -510,13 +514,13 @@ export class FactoryImporter {
   /**
    * Normalize any factory structure to use the consistent create method pattern
    */
-  private normalizeFactory(factory: any, factoryName?: string): any {
+  private normalizeFactory(factory: unknown, factoryName?: string): unknown {
     if (!factory) return null;
 
     let normalizedFactory: any = null;
 
     // If it's already an object with a create method, use as base
-    if (typeof factory === 'object' && typeof factory.create === 'function') {
+    if (typeof factory === 'object' && typeof (factory as any).create === 'function') {
       normalizedFactory = factory;
     }
     // If it's a class constructor, wrap it properly (check this first - more specific condition)
@@ -524,7 +528,7 @@ export class FactoryImporter {
       normalizedFactory = {
         create: (props: any = {}) => {
           try {
-            const instance = new factory(props);
+            const instance = new (factory as any)(props);
             // If the instance has a render method, call it to get DOM
             if (instance.render && typeof instance.render === 'function') {
               return instance.render();
@@ -539,7 +543,7 @@ export class FactoryImporter {
             element.textContent = `${factory.name} Instance`;
             return element;
           } catch (error) {
-            console.warn(`Failed to instantiate ${factory.name}:`, error);
+            logger.warn(`Failed to instantiate ${factory.name}`, { error }, 'FactoryImporter');
             // Return fallback element
             const element = document.createElement('div');
             element.className = `tamyla-${factory.name.toLowerCase()}-fallback`;
@@ -595,7 +599,7 @@ export class FactoryImporter {
             return element;
 
           } catch (error) {
-            console.warn(`Function factory error for ${factory.name || 'unnamed'}:`, error);
+            logger.warn(`Function factory error for ${factory.name || 'unnamed'}`, { error }, 'FactoryImporter');
             const element = document.createElement('div');
             element.className = 'tamyla-function-factory-error';
             element.textContent = `Function factory error: ${error instanceof Error ? error.message : 'Unknown error'}`;
@@ -610,9 +614,9 @@ export class FactoryImporter {
       const possibleMethods = ['render', 'createElement', 'build', 'generate'];
 
       for (const method of possibleMethods) {
-        if (typeof factory[method] === 'function') {
+        if (typeof (factory as any)[method] === 'function') {
           normalizedFactory = {
-            create: factory[method].bind(factory)
+            create: (factory as any)[method].bind(factory)
           };
           break;
         }
@@ -628,8 +632,8 @@ export class FactoryImporter {
             element.textContent = `Normalized Factory (${Object.keys(factory).join(', ')})`;
 
             // Apply any style or config from the factory object
-            if (factory.style) {
-              Object.assign(element.style, factory.style);
+            if ((factory as any).style) {
+              Object.assign(element.style, (factory as any).style);
             }
 
             return element;
@@ -640,7 +644,7 @@ export class FactoryImporter {
 
     // If we couldn't normalize it, return null
     if (!normalizedFactory) {
-      console.warn('Unable to normalize factory:', factory);
+      logger.warn('Unable to normalize factory', { factory }, 'FactoryImporter');
       return null;
     }
 
@@ -651,14 +655,14 @@ export class FactoryImporter {
   /**
    * Add missing methods that React components expect
    */
-  private enhanceFactoryWithMissingMethods(normalizedFactory: any, originalFactory: any, factoryName?: string): any {
-    const name = factoryName || originalFactory?.name || originalFactory?.constructor?.name || 'Unknown';
+  private enhanceFactoryWithMissingMethods(normalizedFactory: unknown, originalFactory: unknown, factoryName?: string): unknown {
+    const name = factoryName || (originalFactory as any)?.name || (originalFactory as any)?.constructor?.name || 'Unknown';
 
     // Add missing methods based on factory type
     if (name.includes('Button')) {
       // ButtonFactory missing methods
-      if (!normalizedFactory.enableTradingPortalPatterns) {
-        normalizedFactory.enableTradingPortalPatterns = () => {
+      if (!(normalizedFactory as any).enableTradingPortalPatterns) {
+        (normalizedFactory as any).enableTradingPortalPatterns = () => {
           // Mock implementation for trading portal patterns
           return {
             enabled: true,
@@ -673,24 +677,24 @@ export class FactoryImporter {
       const mockSelectionManager = {
         on: (event: string, callback: Function) => {
           // Mock event listener
-          console.log(`Mock event listener added for: ${event}`);
-          return () => console.log(`Mock event listener removed for: ${event}`);
+          logger.debug(`Mock event listener added for: ${event}`, null, 'FactoryImporter');
+          return () => logger.debug(`Mock event listener removed for: ${event}`, null, 'FactoryImporter');
         },
         off: (event: string, callback?: Function) => {
-          console.log(`Mock event listener removed for: ${event}`);
+          logger.debug(`Mock event listener removed for: ${event}`, null, 'FactoryImporter');
         },
-        emit: (event: string, data?: any) => {
-          console.log(`Mock event emitted: ${event}`, data);
+        emit: (event: string, data?: unknown) => {
+          logger.debug(`Mock event emitted: ${event}`, { data }, 'FactoryImporter');
         }
       };
 
       // Enhance the factory creation to include selectionManager
-      const originalCreate = normalizedFactory.create;
-      normalizedFactory.create = (props: any = {}) => {
+      const originalCreate = (normalizedFactory as any).create;
+      (normalizedFactory as any).create = (props: any = {}) => {
         try {
           // Add mock selectionManager to the instance
-          if (originalFactory.prototype) {
-            originalFactory.prototype.selectionManager = mockSelectionManager;
+          if ((originalFactory as any).prototype) {
+            (originalFactory as any).prototype.selectionManager = mockSelectionManager;
           }
           return originalCreate(props);
         } catch (error) {
@@ -705,9 +709,9 @@ export class FactoryImporter {
 
     if (name.includes('SearchInterface')) {
       // SearchInterface missing methods
-      if (!normalizedFactory.setResults) {
-        normalizedFactory.setResults = (results: any[]) => {
-          console.log('Mock setResults called with:', results);
+      if (!(normalizedFactory as any).setResults) {
+        (normalizedFactory as any).setResults = (results: unknown[]) => {
+          logger.debug('Mock setResults called', { results }, 'FactoryImporter');
           return normalizedFactory;
         };
       }
@@ -715,8 +719,8 @@ export class FactoryImporter {
 
     if (name.includes('Organism')) {
       // OrganismFactory missing methods
-      if (!normalizedFactory.createSearchInterface) {
-        normalizedFactory.createSearchInterface = (_props: any = {}) => {
+      if (!(normalizedFactory as any).createSearchInterface) {
+        (normalizedFactory as any).createSearchInterface = (_props: any = {}) => {
           const element = document.createElement('div');
           element.className = 'tamyla-search-interface';
           element.textContent = 'Search Interface (Mock)';
@@ -744,26 +748,26 @@ export class FactoryImporter {
         if (module[prop] !== undefined) {
           result[prop] = module[prop];
         } else if (required) {
-          console.warn(`FactoryImporter: Required property ${prop} not found in ${moduleName}`);
+          logger.warn(`Required property ${prop} not found in ${moduleName}`, null, 'FactoryImporter');
         }
       });
 
       return result;
     } catch (error) {
       if (required) {
-        console.error(`FactoryImporter: Failed to import ${moduleName}:`, error);
+        logger.error(`Failed to import ${moduleName}`, { error }, 'FactoryImporter');
       }
       return {};
     }
   }
 
-  private safeRequireFromModule(module: any, properties: string[], required = true): Record<string, any> {
+  private safeRequireFromModule(module: unknown, properties: string[], required = true): Record<string, any> {
     try {
       const result: Record<string, any> = {};
 
       properties.forEach(prop => {
-        if (module[prop] !== undefined) {
-          let factory = module[prop];
+        if ((module as any)[prop] !== undefined) {
+          let factory = (module as any)[prop];
 
           // Handle class constructors that need 'new'
           if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
@@ -771,7 +775,7 @@ export class FactoryImporter {
             factory = {
               create: (props: any = {}) => {
                 try {
-                  const instance = new module[prop](props);
+                  const instance = new (module as any)[prop](props);
 
                   // If the instance has a render method, call it with container
                   if (instance.render && typeof instance.render === 'function') {
@@ -801,7 +805,7 @@ export class FactoryImporter {
                     try {
                       instance.initialize(props?.container);
                     } catch (initError) {
-                      console.warn(`Failed to initialize ${prop}:`, initError);
+                      logger.warn(`Failed to initialize ${prop}`, { error: initError }, 'FactoryImporter');
                     }
                     // Check again for element after initialization
                     if (instance.element instanceof HTMLElement) {
@@ -815,7 +819,7 @@ export class FactoryImporter {
                   element.textContent = `${prop} Instance`;
                   return element;
                 } catch (error) {
-                  console.warn(`Failed to instantiate ${prop}:`, error);
+                  logger.warn(`Failed to instantiate ${prop}`, { error }, 'FactoryImporter');
                   // Return fallback element
                   const element = document.createElement('div');
                   element.className = `tamyla-${prop.toLowerCase()}-fallback`;
@@ -828,27 +832,27 @@ export class FactoryImporter {
 
           result[prop] = factory;
         } else if (required) {
-          console.warn(`FactoryImporter: Required property ${prop} not found in module`);
+          logger.warn(`Required property ${prop} not found in module`, null, 'FactoryImporter');
         }
       });
 
       return result;
     } catch (error) {
       if (required) {
-        console.error('FactoryImporter: Failed to extract properties from module:', error);
+        logger.error('Failed to extract properties from module', { error }, 'FactoryImporter');
       }
       return {};
     }
   }
 
-  getFactory(name: string): any {
+  getFactory(name: string): unknown {
     // Ensure mock factories are created if this is the first access
     if (this.factories.size === 0) {
       this.createMockFactories();
     }
 
     // Lazy initialize real factories on first access (only in browser and not in test)
-    if (!this.initialized && typeof window !== 'undefined' && typeof jest === 'undefined' && process.env.NODE_ENV !== 'test') {
+    if (!this.initialized && typeof window !== 'undefined' && (globalThis as any).jest === undefined && process.env.NODE_ENV !== 'test') {
       this.initializationPromise = this.initializeFactories();
     }
 
@@ -856,7 +860,7 @@ export class FactoryImporter {
     const factory = this.factories.get(name);
 
     if (!factory) {
-      console.warn(`FactoryImporter: No factory found for ${name}, creating fallback`);
+      logger.warn(`No factory found for ${name}, creating fallback`, null, 'FactoryImporter');
 
       // Create a fallback factory on-demand
       const fallbackFactory = {
@@ -907,7 +911,7 @@ let _factoryImporter: any;
 try {
   _factoryImporter = FactoryImporter.getInstance();
 } catch (error) {
-  console.error('FactoryImporter: Error creating instance:', error);
+  logger.error('Error creating instance', { error }, 'FactoryImporter');
   _factoryImporter = {
     getFactory: (name: string) => ({
       create: (props: any = {}) => {

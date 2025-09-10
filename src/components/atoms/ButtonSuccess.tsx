@@ -1,5 +1,6 @@
 import React from 'react';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
+import { ComponentEventData } from '../../types/factory';
 
 export interface ButtonSuccessProps {
   children?: React.ReactNode;
@@ -18,22 +19,27 @@ export const ButtonSuccess: React.FC<ButtonSuccessProps> = ({
   children,
   ...props
 }) => {
-  const handleEvent = (eventType: string, detail: any) => {
-    if (eventType === 'click' && onClick) {
-      const syntheticEvent = {
-        ...detail,
-        preventDefault: () => detail.preventDefault(),
-        stopPropagation: () => detail.stopPropagation(),
-        target: detail.target,
-        currentTarget: detail.currentTarget
-      } as React.MouseEvent<HTMLButtonElement>;
-      onClick(syntheticEvent);
+  const handleEvent = (eventData: ComponentEventData) => {
+    if (eventData.type === 'click' && onClick) {
+      // Create a synthetic React event from the DOM event
+      const domEvent = (eventData.data as { event: MouseEvent })?.event;
+      if (domEvent) {
+        const syntheticEvent = {
+          ...domEvent,
+          preventDefault: () => domEvent.preventDefault(),
+          stopPropagation: () => domEvent.stopPropagation(),
+          target: domEvent.target,
+          currentTarget: domEvent.currentTarget
+        } as unknown as React.MouseEvent<HTMLButtonElement>;
+        onClick(syntheticEvent);
+      }
     }
   };
 
   return createFactoryComponent<ButtonSuccessProps>('ButtonSuccess', 'ButtonSuccess')({
     ...props,
     children,
+    componentType: 'ButtonFactory',
     onEvent: handleEvent
   });
 };

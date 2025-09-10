@@ -7,8 +7,11 @@ import React, { forwardRef, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/store';
 import { cn } from '../../utils/classnames';
+import { StandardizedInputProps, ComponentVariant, ComponentSize } from '../types/common';
+import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { responsiveSizes, combineResponsive } from '../../utils/responsive-utils';
 
-// shadcn/ui inspired variant system (simplified without external deps)
+// shadcn/ui inspired variant system (standardized)
 const getInputClasses = ({
   variant = 'default',
   size = 'default',
@@ -16,24 +19,27 @@ const getInputClasses = ({
   error = false,
   className = ''
 }: {
-  variant?: string;
-  size?: string;
+  variant?: ComponentVariant;
+  size?: ComponentSize;
   disabled?: boolean;
   error?: boolean;
   className?: string;
 }) => {
-  const baseClasses = 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
+  const baseClasses = 'flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--surface-primary)] px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
-  const variantClasses: Record<string, string> = {
+  const variantClasses: Record<ComponentVariant, string> = {
     default: '',
-    filled: 'bg-muted',
+    destructive: 'border-[var(--destructive)] focus-visible:ring-[var(--destructive)]',
+    outline: 'border-2',
+    secondary: 'bg-[var(--surface-secondary)]',
     ghost: 'border-transparent bg-transparent focus-visible:ring-0',
   };
 
-  const sizeClasses: Record<string, string> = {
-    sm: 'h-9 px-3',
-    default: 'h-10 px-3 py-2',
-    lg: 'h-11 px-3 py-2',
+  const sizeClasses: Record<ComponentSize, string> = {
+    xs: responsiveSizes.input.xs,
+    sm: responsiveSizes.input.sm,
+    default: responsiveSizes.input.default,
+    lg: responsiveSizes.input.lg
   };
 
   return cn(
@@ -45,9 +51,10 @@ const getInputClasses = ({
   );
 };
 
-export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  variant?: 'default' | 'filled' | 'ghost';
-  size?: 'sm' | 'default' | 'lg';
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, StandardizedInputProps {
+  // Input-specific overrides for variant (removing 'filled', adding standard variants)
+  variant?: ComponentVariant;
+  size?: ComponentSize;
   // Your unique Redux integration
   enableAnalytics?: boolean;
   analyticsEvent?: string;

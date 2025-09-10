@@ -4,10 +4,12 @@
  */
 
 import { factoryImporter } from './factory-importer';
+import logger from '../../utils/logger';
+import type { FactoryFunction } from '../../types/factory';
 
 export class FactoryRegistry {
   private static instance: FactoryRegistry;
-  private factoryMap: Map<string, any> = new Map();
+  private factoryMap: Map<string, FactoryFunction> = new Map();
 
   private constructor() {
     this.initializeFactories();
@@ -63,50 +65,50 @@ export class FactoryRegistry {
     this.registerFactory('Reward', () => this.safeCall(factoryImporter.getFactory('RewardSystem'), 'create'));
   }
 
-  private registerFactory(name: string, factoryFn: () => any): void {
+  private registerFactory(name: string, factoryFn: () => unknown): void {
     this.factoryMap.set(name, factoryFn);
   }
 
-  private safeCall(factory: any, method?: string): any {
+  private safeCall(factory: unknown, method?: string): unknown {
     try {
       if (!factory) {
-        console.warn('FactoryRegistry: Factory is null/undefined');
+        logger.warn('Factory is null/undefined', null, 'FactoryRegistry');
         return null;
       }
 
       // If factory is a class, instantiate it first
       if (typeof factory === 'function' && factory.prototype && factory.prototype.constructor === factory) {
-        const instance = new factory();
+        const instance = new (factory as new () => unknown)();
 
         if (method) {
-          if (typeof instance[method] === 'function') {
-            return instance[method].bind(instance);
+          if (typeof (instance as Record<string, any>)[method] === 'function') {
+            return (instance as Record<string, any>)[method] as () => unknown;
           } else {
-            console.warn(`FactoryRegistry: Method ${method} not found on factory instance`);
+            logger.warn(`Method ${method} not found on factory instance`, null, 'FactoryRegistry');
             return null;
           }
         }
 
         // If no method specified but instance has create method, return that
-        if (typeof instance.create === 'function') {
-          return instance.create.bind(instance);
+        if (typeof (instance as Record<string, any>).create === 'function') {
+          return (instance as Record<string, any>).create as () => unknown;
         }
 
         return instance;
       }
 
       if (method) {
-        if (typeof factory[method] === 'function') {
-          return factory[method].bind(factory);
+        if (typeof (factory as Record<string, any>)[method] === 'function') {
+          return (factory as Record<string, any>)[method] as () => unknown;
         } else {
-          console.warn(`FactoryRegistry: Method ${method} not found on factory`);
+          logger.warn(`Method ${method} not found on factory`, null, 'FactoryRegistry');
           return null;
         }
       }
 
       // If no method specified, check if it has a create method (consistent pattern)
-      if (typeof factory?.create === 'function') {
-        return factory.create.bind(factory);
+      if (typeof (factory as Record<string, any>)?.create === 'function') {
+        return (factory as Record<string, any>).create as () => unknown;
       }
 
       // Legacy fallback: if it's a direct function
@@ -114,25 +116,25 @@ export class FactoryRegistry {
         return factory;
       }
 
-      console.warn('FactoryRegistry: Factory does not have a create method or is not a function');
+      logger.warn('Factory does not have a create method or is not a function', null, 'FactoryRegistry');
       return null;
     } catch (error) {
-      console.error('FactoryRegistry: Error calling factory method:', error);
+      logger.error('Error calling factory method', { error }, 'FactoryRegistry');
       return null;
     }
   }
 
-  getFactory(name: string): any {
+  getFactory(name: string): unknown {
     const factoryFn = this.factoryMap.get(name);
     if (!factoryFn) {
-      console.warn(`FactoryRegistry: Factory ${name} not found`);
+      logger.warn(`Factory ${name} not found`, null, 'FactoryRegistry');
       return null;
     }
 
     try {
       return factoryFn();
     } catch (error) {
-      console.error(`FactoryRegistry: Error getting factory ${name}:`, error);
+      logger.error(`Error getting factory ${name}`, { error }, 'FactoryRegistry');
       return null;
     }
   }
