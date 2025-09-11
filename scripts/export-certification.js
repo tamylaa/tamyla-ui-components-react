@@ -67,7 +67,9 @@ class ExportCertification {
       `export {.*${exportName}.*}`,
       `export const ${exportName}`,
       `export function ${exportName}`,
-      `export class ${exportName}`
+      `export class ${exportName}`,
+      ` as ${exportName}`,  // Added: for "Lc as useUIOptional" pattern
+      `${exportName} as `   // Added: for reverse pattern
     ];
 
     return patterns.some(pattern => {
@@ -281,7 +283,7 @@ class ExportCertification {
 }
 
 // Run certification if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file:///${process.argv[1]?.replace(/\\/g, '/')}`) {
   const certification = new ExportCertification();
   certification.run().then(success => {
     process.exit(success ? 0 : 1);

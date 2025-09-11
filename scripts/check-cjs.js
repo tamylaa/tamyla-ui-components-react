@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(path.join(__dirname, '..'));
 const scanDirs = ['src', 'scripts'];
-const cjsPatterns = [/\brequire\s*\(/, /\bmodule\.exports\b/, /\bexports\./];
+const cjsPatterns = [/\brequire\s*\(/, /\bmodule\.exports\b/, /^(?:\s*)exports\s*\.\s*\w/, /\bexports\s*\.\s*\w\s*=/]; // More specific CommonJS exports patterns
 
 function walk(dir) {
   const results = [];

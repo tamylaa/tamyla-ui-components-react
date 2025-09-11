@@ -103,10 +103,12 @@ const createFactoryComponent = (VanillaComponent) => {
   });
 };
 
-// Creating React Components
+// Creating React Components (Conceptual Example)
 const ReactButton = createFactoryComponent(TamylaUIComponents.Button);
 const ReactInput = createFactoryComponent(TamylaUIComponents.Input);
-// ... etc
+
+// For production use, import pre-built components:
+import { ButtonPrimary, ButtonSecondary, Input } from '@tamyla/ui-components-react';
 ```
 
 ### Key Benefits Demonstrated
