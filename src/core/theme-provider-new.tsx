@@ -184,10 +184,14 @@ export interface StyledTheme {
 
 // Main theme provider component
 export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ children }) => {
-  // Safely get theme state with fallback
+  // Always call hooks at the top level - never conditionally
   let themeState: ThemeState;
+  let hasReduxError = false;
+
   try {
-    themeState = useAppSelector(state => state.theme) || {
+    // This will throw if Redux is not available
+    const reduxState = useAppSelector(state => state.theme);
+    themeState = reduxState || {
       mode: 'light' as const,
       currentTheme: 'light' as const,
       primaryColor: designTokens.colors.primary[500],
@@ -197,8 +201,9 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
       highContrast: false,
       customColors: {}
     };
-  } catch (error) {
+  } catch (_error) {
     // Redux not available, use default theme
+    hasReduxError = true;
     themeState = {
       mode: 'light' as const,
       currentTheme: 'light' as const,

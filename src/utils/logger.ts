@@ -3,6 +3,14 @@
  * Browser-compatible logging with console output and optional storage
  */
 
+// Browser environment type declarations
+declare const localStorage: {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear(): void;
+};
+
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -32,10 +40,10 @@ class Logger {
   private storageKey = 'tamyla-ui-components-logs';
 
   constructor(config: Partial<LogConfig> = {}) {
-    const isProduction = typeof window !== 'undefined' && 
-                        (window.location?.hostname !== 'localhost' && 
+    const isProduction = typeof window !== 'undefined' &&
+                        (window.location?.hostname !== 'localhost' &&
                          !window.location?.hostname.includes('127.0.0.1'));
-    
+
     this.config = {
       level: isProduction ? LogLevel.INFO : LogLevel.DEBUG,
       enableConsole: true,
@@ -70,7 +78,7 @@ class Logger {
     if (!this.config.enableConsole || typeof console === 'undefined') return;
 
     const formattedMessage = this.formatMessage(entry);
-    
+
     switch (entry.level) {
       case 'DEBUG':
         console.debug(formattedMessage, entry.data || '');
@@ -95,14 +103,14 @@ class Logger {
     try {
       const stored = localStorage.getItem(this.storageKey);
       const logs: LogEntry[] = stored ? JSON.parse(stored) : [];
-      
+
       logs.push(entry);
-      
+
       // Keep only the most recent entries
       if (logs.length > this.config.maxStorageEntries) {
         logs.splice(0, logs.length - this.config.maxStorageEntries);
       }
-      
+
       localStorage.setItem(this.storageKey, JSON.stringify(logs));
     } catch (error) {
       // Storage might be disabled or full, fail silently
@@ -114,7 +122,7 @@ class Logger {
     if (!this.shouldLog(level)) return;
 
     const entry = this.createLogEntry(level, message, data, source);
-    
+
     this.writeToConsole(entry);
     this.writeToStorage(entry);
   }
