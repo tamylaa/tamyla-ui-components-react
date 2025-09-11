@@ -10,6 +10,10 @@ on:
       - 'rollup.config.js'
       - 'tsconfig.json'
       - '.github/workflows/**'
+      - 'scripts/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'examples/**'
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
