@@ -155,9 +155,32 @@ export { designTokens } from './core/design-tokens';
 // Theme provider and styling
 export { TamylaThemeProvider, GlobalStyles, useTamylaTheme } from './core/theme-provider-new';
 
-// Store exports
-export { store, persistor } from './store/store';
-export { authActions, uiActions, themeActions, componentActions } from './store/store';
+// Store exports - Explicitly preserve these for external consumers
+import { store, persistor, authActions, uiActions, themeActions, componentActions } from './store/store';
+
+export { store, persistor, authActions, uiActions, themeActions, componentActions };
+
+// Force preservation of Redux exports by creating side effects
+// This prevents tree-shaking from removing these exports
+if (typeof window !== 'undefined' && window) {
+  // Attach to window to ensure they're preserved
+  (window as any).__TAMYLA_REDUX_EXPORTS__ = {
+    store,
+    persistor,
+    authActions,
+    uiActions,
+    themeActions,
+    componentActions
+  };
+}
+
+// Also export them as named exports to ensure they're available
+export const reduxStore = store;
+export const reduxPersistor = persistor;
+export const reduxAuthActions = authActions;
+export const reduxUiActions = uiActions;
+export const reduxThemeActions = themeActions;
+export const reduxComponentActions = componentActions;
 
 // Hooks exports
 export {
@@ -201,3 +224,73 @@ export const FEATURES = [
   'Jest testing suite',
   'Dual-mode architecture: Native + Wrapper components'
 ];
+
+// ============================================
+// ENTERPRISE-GRADE UTILITIES (MUST PRESERVE)
+// ============================================
+
+// Advanced security and safety utilities
+export {
+  safeAsync,
+  safeFetch,
+  safeDynamicImport
+} from './utils/async-safety';
+
+export type { AsyncOperationOptions } from './utils/async-safety';
+
+export {
+  sanitizeHTML,
+  safeSetInnerHTML,
+  safeCreateElementFromHTML
+} from './utils/dom-safety';
+
+export {
+  dynamicImportUIComponents
+} from './utils/dynamic-ui-components';
+
+export type { UIComponentsModule } from './utils/dynamic-ui-components';
+
+export {
+  FactoryHealthMonitor
+} from './utils/factory-health-monitor';
+
+export type { FactoryHealthStatus } from './utils/factory-health-monitor';
+
+// Enhanced logging for enterprise monitoring
+export {
+  Logger,
+  LogLevel
+} from './utils/logger';
+
+export type {
+  LogConfig,
+  LogEntry
+} from './utils/logger';
+
+// ============================================
+// TYPE DEFINITIONS (MUST PRESERVE)
+// ============================================
+
+export type {
+  ComponentProps,
+  ComponentState,
+  BaseComponentConfig,
+  ComponentRegistryEntry
+} from './types/common';
+
+export type {
+  BaseFactoryComponent,
+  FactoryCreator,
+  ComponentEventData
+} from './types/factory';
+
+// Handle naming conflicts explicitly
+export type { ComponentFactory as CommonComponentFactory } from './types/common';
+export type { ComponentFactory as FactoryComponentFactory, FactoryConfig } from './types/factory';
+
+// ============================================
+// CSS DESIGN TOKENS (MUST PRESERVE)
+// ============================================
+
+// Note: CSS design tokens are included via package.json "files" and "sideEffects"
+// Consumers should import: import '@tamyla/ui-components-react/src/core/design-tokens.css'

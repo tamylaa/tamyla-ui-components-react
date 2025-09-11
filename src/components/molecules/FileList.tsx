@@ -15,10 +15,10 @@ import { responsiveSizes } from '../../utils/responsive-utils';
 const FileListContainer = styled.div<{
   isDragOver: boolean;
 }>`
-  border: 2px dashed ${props => props.isDragOver ? props.theme.primaryColor || '#3b82f6' : '#d1d5db'};
+  border: 2px dashed ${props => props.isDragOver ? props.theme?.primaryColor || '#3b82f6' : '#d1d5db'};
   border-radius: 8px;
   padding: ${responsiveSizes.card.default};
-  background: ${props => props.theme.mode === 'dark' ? '#1f2937' : '#f9fafb'};
+  background: ${props => props.theme?.mode === 'dark' ? '#1f2937' : '#f9fafb'};
   transition: all 0.3s ease;
   min-height: 200px;
   display: flex;
@@ -28,7 +28,7 @@ const FileListContainer = styled.div<{
   text-align: center;
 
   ${props => props.isDragOver && `
-    background: ${props.theme.primaryColor || '#3b82f6'}10;
+    background: ${props.theme?.primaryColor || '#3b82f6'}10;
     transform: scale(1.02);
   `}
 `;

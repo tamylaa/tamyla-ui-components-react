@@ -29,9 +29,9 @@ const ActionCardContainer = styled.div<{
     switch (props.variant) {
       case 'primary':
         return `
-          background: ${props.theme.primaryColor || '#3b82f6'};
+          background: ${props.theme?.primaryColor || '#3b82f6'};
           color: white;
-          border: 1px solid ${props.theme.primaryColor || '#3b82f6'};
+          border: 1px solid ${props.theme?.primaryColor || '#3b82f6'};
         `;
       case 'success':
         return `
@@ -53,9 +53,9 @@ const ActionCardContainer = styled.div<{
         `;
       default:
         return `
-          background: ${props.theme.mode === 'dark' ? '#1f2937' : 'white'};
-          color: ${props.theme.mode === 'dark' ? 'white' : '#1f2937'};
-          border: 1px solid ${props.theme.mode === 'dark' ? '#374151' : '#e5e7eb'};
+          background: ${props.theme?.mode === 'dark' ? '#1f2937' : 'white'};
+          color: ${props.theme?.mode === 'dark' ? 'white' : '#1f2937'};
+          border: 1px solid ${props.theme?.mode === 'dark' ? '#374151' : '#e5e7eb'};
         `;
     }
   }}
@@ -78,7 +78,7 @@ const ActionCardContainer = styled.div<{
 
   /* Focus styles for accessibility */
   &:focus-visible {
-    outline: 2px solid ${props => props.theme.primaryColor || '#3b82f6'};
+    outline: 2px solid ${props => props.theme?.primaryColor || '#3b82f6'};
     outline-offset: 2px;
   }
 

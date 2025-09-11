@@ -20,8 +20,8 @@ const ContentCardContainer = styled.article<{
   overflow: hidden;
   transition: all 0.3s ease;
   cursor: ${props => props.interactive ? 'pointer' : 'default'};
-  background: ${props => props.theme.mode === 'dark' ? '#1f2937' : 'white'};
-  border: 1px solid ${props => props.theme.mode === 'dark' ? '#374151' : '#e5e7eb'};
+  background: ${props => props.theme?.mode === 'dark' ? '#1f2937' : 'white'};
+  border: 1px solid ${props => props.theme?.mode === 'dark' ? '#374151' : '#e5e7eb'};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   /* Variant styles */
@@ -29,7 +29,7 @@ const ContentCardContainer = styled.article<{
     switch (props.variant) {
       case 'featured':
         return `
-          border-color: ${props.theme.primaryColor || '#3b82f6'};
+          border-color: ${props.theme?.primaryColor || '#3b82f6'};
           box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
         `;
       case 'compact':
@@ -42,7 +42,7 @@ const ContentCardContainer = styled.article<{
             ${props.interactive && `
               transform: translateY(-2px);
               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-              border-color: ${props.theme.primaryColor || '#3b82f6'};
+              border-color: ${props.theme?.primaryColor || '#3b82f6'};
             `}
           }
         `;
@@ -51,7 +51,7 @@ const ContentCardContainer = styled.article<{
 
   /* Focus styles for accessibility */
   &:focus-visible {
-    outline: 2px solid ${props => props.theme.primaryColor || '#3b82f6'};
+    outline: 2px solid ${props => props.theme?.primaryColor || '#3b82f6'};
     outline-offset: 2px;
   }
 `;

@@ -29,11 +29,15 @@ const config = [
         target: 'es2020',
         jsx: 'automatic',
         tsconfig: 'tsconfig.json',
-        minify: true,
-        treeShaking: true,
+        minify: true, // Re-enable minification
+        treeShaking: true, // Re-enable tree-shaking
         define: {
           'process.env.NODE_ENV': '"production"'
-        }
+        },
+        // Preserve exports that might be tree-shaken
+        keepNames: true,
+        // Ensure side effects are preserved
+        pure: []
       })
     ],
     external: ['react', 'react-dom', '@tamyla/ui-components']

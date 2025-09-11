@@ -6,6 +6,7 @@
 import React, { createContext, useContext } from 'react';
 import { ThemeProvider as StyledThemeProvider, createGlobalStyle, DefaultTheme } from 'styled-components';
 import { useAppSelector } from '../store/hooks';
+import { ThemeState } from '../store/slices/themeSlice';
 import { designTokens } from './design-tokens';
 
 // Theme context interface
@@ -183,7 +184,32 @@ export interface StyledTheme {
 
 // Main theme provider component
 export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ children }) => {
-  const themeState = useAppSelector(state => state.theme);
+  // Safely get theme state with fallback
+  let themeState: ThemeState;
+  try {
+    themeState = useAppSelector(state => state.theme) || {
+      mode: 'light' as const,
+      currentTheme: 'light' as const,
+      primaryColor: designTokens.colors.primary[500],
+      fontSize: 'md' as const,
+      animations: true,
+      reducedMotion: false,
+      highContrast: false,
+      customColors: {}
+    };
+  } catch (error) {
+    // Redux not available, use default theme
+    themeState = {
+      mode: 'light' as const,
+      currentTheme: 'light' as const,
+      primaryColor: designTokens.colors.primary[500],
+      fontSize: 'md' as const,
+      animations: true,
+      reducedMotion: false,
+      highContrast: false,
+      customColors: {}
+    };
+  }
 
   // Apply theme class to document body with SSR safety
   React.useEffect(() => {

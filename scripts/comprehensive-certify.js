@@ -373,6 +373,16 @@ declare module 'styled-components' {
     // Test build system - MUST succeed for certification
     await this.runCommand('npm run build', 'React build system', true);
 
+    // Test export preservation - MUST succeed for certification
+    this.log('🔍 Validating export preservation...');
+    const exportValidation = await this.runCommand('node scripts/export-certification.js', 'Export validation', true);
+    if (exportValidation.success) {
+      this.log('✅ Export validation passed', 'success');
+    } else {
+      this.log('❌ Export validation failed', 'error');
+      throw new Error('Export validation failed - critical enterprise features may be missing');
+    }
+
     this.log('✅ Phase 2 Complete: React build validated', 'success');
   }
 
