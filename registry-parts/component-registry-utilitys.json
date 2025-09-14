@@ -1,0 +1,34 @@
+{
+  "TamylaThemeProvider": {
+    "category": "utility",
+    "description": "Theme context provider with Redux integration",
+    "props": {
+      "children": {
+        "type": "ReactNode",
+        "description": "Child components"
+      },
+      "theme": {
+        "type": "object",
+        "description": "Custom theme object"
+      },
+      "enablePersistence": {
+        "type": "boolean",
+        "default": true,
+        "description": "Persist theme choice"
+      }
+    },
+    "examples": [
+      "<TamylaThemeProvider><App /></TamylaThemeProvider>",
+      "<TamylaThemeProvider theme={customTheme}><App /></TamylaThemeProvider>"
+    ],
+    "useCases": [
+      "Theme management",
+      "App initialization",
+      "Custom theming",
+      "Dark mode support"
+    ],
+    "relatedComponents": [
+      "useTamylaTheme"
+    ]
+  }
+}

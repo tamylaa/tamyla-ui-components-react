@@ -15,18 +15,21 @@ export function createFactoryComponent<T extends object>(
   const Component: React.FC<T & FactoryComponentProps> = (props) => {
     const { config, onEvent, className, children, ...restProps } = props;
 
+    // Determine the actual factory to use - check componentType in config first, then fallback to factoryName
+    const actualFactoryName = (config?.componentType as string) || factoryName;
+
     // Check if factory is available
-    if (!factoryRegistry.hasFactory(factoryName)) {
+    if (!factoryRegistry.hasFactory(actualFactoryName)) {
       return (
         <div style={{ color: 'red', padding: '10px', border: '1px solid red' }}>
-          Factory {factoryName} not available
+          Factory {actualFactoryName} not available
         </div>
       );
     }
 
     return (
       <FactoryBridge
-        factory={factoryName}
+        factory={actualFactoryName}
         config={{ ...config, ...restProps }}
         onEvent={onEvent}
         className={className}
@@ -47,6 +50,8 @@ export const ReactButtonSecondary = createFactoryComponent('ButtonSecondary', 'R
 export const ReactButtonGhost = createFactoryComponent('ButtonGhost', 'ReactButtonGhost');
 export const ReactButtonDanger = createFactoryComponent('ButtonDanger', 'ReactButtonDanger');
 export const ReactButtonSuccess = createFactoryComponent('ButtonSuccess', 'ReactButtonSuccess');
+export const ReactButtonWithIcon = createFactoryComponent('ButtonWithIcon', 'ReactButtonWithIcon');
+export const ReactButtonIconOnly = createFactoryComponent('ButtonIconOnly', 'ReactButtonIconOnly');
 
 // Input Components
 export const ReactInput = createFactoryComponent('Input', 'ReactInput');

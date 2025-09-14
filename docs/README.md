@@ -28,7 +28,14 @@ GitHub-related setup and configuration documentation:
 
 ### `guides/`
 General guides and library documentation:
+- `API_REFERENCE.md` - Comprehensive component API documentation
+- `COMPONENT_DISCOVERY_GUIDE.md` - AI agent component discovery guide
+- `DESIGN_TOKENS_GUIDE.md` - Structured design tokens reference
 - `HYBRID_COMPONENT_LIBRARY_README.md` - Hybrid component library guide
+- `MIGRATION_GUIDE.md` - Component migration patterns
+- `STORYBOOK_GUIDE.md` - Interactive component development guide
+- `TROUBLESHOOTING.md` - Common issues and solutions
+- `TYPESCRIPT_NAVIGATION_GUIDE.md` - TypeScript definitions navigation
 
 ### `reports/`
 General reports and analysis documentation (currently empty, available for future use)

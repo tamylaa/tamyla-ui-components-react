@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "package": "@tamyla/ui-components-react",
+    "version": "5.0.0",
+    "lastUpdated": "2025-01-12",
+    "description": "React component library with Factory Bridge pattern",
+    "architecture": "Dual-mode (Native + Wrapper components)",
+    "designSystem": "Atomic Design (Atoms → Molecules → Organisms → Applications)"
+  }
+}

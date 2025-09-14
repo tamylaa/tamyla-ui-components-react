@@ -1,11 +1,12 @@
 # @tamyla/ui-components-react
 
-React-based UI component library with Factory Bridge pattern - integrates seamlessly with @tamyla/ui-components.
+React-based UI component library with Factory Bridge pattern - integrates seamlessly with @tamyla/ui-components. Enhanced AI agent discoverability with structured component registry and comprehensive guides.
 
 [![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/tamylaa/ui-components-react/releases)
 [![ESM Only](https://img.shields.io/badge/module-ESM-orange.svg)](https://nodejs.org/api/esm.html)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![Enterprise Ready](https://img.shields.io/badge/enterprise-ready-green.svg)](https://github.com/tamylaa/ui-components-react/blob/main/CHANGELOG.md)
+[![AI Agent Friendly](https://img.shields.io/badge/AI%20Agent-friendly-blue.svg)](https://github.com/tamylaa/ui-components-react/blob/main/docs/guides/COMPONENT_DISCOVERY_GUIDE.md)
 
 > **📋 [View Changelog](CHANGELOG.md)** - Complete v5.0.0 enterprise architecture documentation
 

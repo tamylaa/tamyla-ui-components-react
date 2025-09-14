@@ -1,0 +1,2989 @@
+{
+  "components": {
+    "Button": {
+      "category": "atom",
+      "description": "Base button component with full variant support",
+      "props": {
+        "variant": {
+          "type": "string",
+          "options": [
+            "default",
+            "destructive",
+            "outline",
+            "secondary",
+            "ghost",
+            "link"
+          ],
+          "default": "default",
+          "description": "Visual style variant"
+        },
+        "size": {
+          "type": "string",
+          "options": [
+            "xs",
+            "sm",
+            "default",
+            "lg",
+            "icon"
+          ],
+          "default": "default",
+          "description": "Size variant"
+        },
+        "isLoading": {
+          "type": "boolean",
+          "default": false,
+          "description": "Shows loading spinner"
+        },
+        "leftIcon": {
+          "type": "ReactNode",
+          "description": "Icon on the left side"
+        },
+        "rightIcon": {
+          "type": "ReactNode",
+          "description": "Icon on the right side"
+        },
+        "enableAnalytics": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable click tracking"
+        },
+        "useThemeVariant": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-adjust based on theme"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "type": {
+          "type": "string",
+          "options": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "default": "button",
+          "description": "Button type"
+        }
+      },
+      "examples": [
+        "<Button>Click me</Button>",
+        "<Button variant='primary' size='lg'>Large Primary</Button>",
+        "<Button variant='ghost' size='sm'>Small Ghost</Button>",
+        "<Button leftIcon={<Icon />} rightIcon={<ChevronRight />}>With Icons</Button>",
+        "<Button isLoading>Processing...</Button>"
+      ],
+      "useCases": [
+        "Primary actions",
+        "Secondary actions",
+        "Form submissions",
+        "Navigation elements",
+        "Interactive elements"
+      ],
+      "relatedComponents": [
+        "ButtonPrimary",
+        "ButtonSecondary",
+        "ButtonGhost",
+        "ButtonDanger"
+      ]
+    },
+    "Input": {
+      "category": "atom",
+      "description": "Text input component with validation and theme integration",
+      "props": {
+        "type": {
+          "type": "string",
+          "default": "text",
+          "description": "Input type"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text"
+        },
+        "value": {
+          "type": "string",
+          "description": "Controlled value"
+        },
+        "defaultValue": {
+          "type": "string",
+          "description": "Uncontrolled default value"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Required field"
+        },
+        "error": {
+          "type": "boolean",
+          "default": false,
+          "description": "Error state"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "onBlur": {
+          "type": "function",
+          "description": "Blur handler"
+        },
+        "onFocus": {
+          "type": "function",
+          "description": "Focus handler"
+        }
+      },
+      "examples": [
+        "<Input placeholder='Enter your name' />",
+        "<Input type='email' required error={!isValid} placeholder='Email address' />",
+        "<Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' />"
+      ],
+      "useCases": [
+        "Text input fields",
+        "Email inputs",
+        "Password fields",
+        "Search inputs",
+        "Form fields"
+      ],
+      "relatedComponents": [
+        "FormInput",
+        "FormField"
+      ]
+    },
+    "Card": {
+      "category": "atom",
+      "description": "Content container with shadow and border options",
+      "props": {
+        "variant": {
+          "type": "string",
+          "options": [
+            "default",
+            "elevated",
+            "outlined"
+          ],
+          "default": "default",
+          "description": "Card style variant"
+        },
+        "padding": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Internal padding"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Card content"
+        }
+      },
+      "examples": [
+        "<Card><p>Simple card content</p></Card>",
+        "<Card variant='elevated' padding='lg'><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Content</CardContent></Card>"
+      ],
+      "useCases": [
+        "Content containers",
+        "Information panels",
+        "Form sections",
+        "Dashboard widgets",
+        "Product cards"
+      ],
+      "relatedComponents": [
+        "CardHeader",
+        "CardTitle",
+        "CardContent"
+      ]
+    },
+    "CardHeader": {
+      "category": "atom",
+      "description": "Card header section component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Header content"
+        }
+      },
+      "examples": [
+        "<CardHeader><CardTitle>Card Title</CardTitle></CardHeader>"
+      ],
+      "useCases": [
+        "Card headers",
+        "Section titles",
+        "Content organization"
+      ],
+      "relatedComponents": [
+        "Card",
+        "CardTitle",
+        "CardContent"
+      ]
+    },
+    "CardTitle": {
+      "category": "atom",
+      "description": "Card title component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Title content"
+        }
+      },
+      "examples": [
+        "<CardTitle>Important Information</CardTitle>"
+      ],
+      "useCases": [
+        "Card titles",
+        "Section headings",
+        "Content labeling"
+      ],
+      "relatedComponents": [
+        "Card",
+        "CardHeader",
+        "CardContent"
+      ]
+    },
+    "CardContent": {
+      "category": "atom",
+      "description": "Card content section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content"
+        }
+      },
+      "examples": [
+        "<CardContent><p>This is the main content of the card.</p></CardContent>"
+      ],
+      "useCases": [
+        "Card body content",
+        "Main content areas",
+        "Information display"
+      ],
+      "relatedComponents": [
+        "Card",
+        "CardHeader",
+        "CardTitle"
+      ]
+    },
+    "StatusIndicator": {
+      "category": "atom",
+      "description": "Status display component",
+      "props": {
+        "status": {
+          "type": "string",
+          "options": [
+            "success",
+            "warning",
+            "error",
+            "info"
+          ],
+          "description": "Status type"
+        },
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Indicator size"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<StatusIndicator status='success' />",
+        "<StatusIndicator status='error' size='lg' />"
+      ],
+      "useCases": [
+        "Status indicators",
+        "Loading states",
+        "Validation feedback",
+        "System status"
+      ]
+    },
+    "ErrorBoundary": {
+      "category": "atom",
+      "description": "Error boundary component for error handling",
+      "props": {
+        "fallback": {
+          "type": "ReactNode",
+          "description": "Fallback UI to render on error"
+        },
+        "onError": {
+          "type": "function",
+          "description": "Error callback function"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Child components to wrap"
+        }
+      },
+      "examples": [
+        "<ErrorBoundary fallback={<div>Something went wrong</div>}><MyComponent /></ErrorBoundary>"
+      ],
+      "useCases": [
+        "Error handling",
+        "Graceful degradation",
+        "Debugging",
+        "User experience protection"
+      ]
+    },
+    "ButtonPrimary": {
+      "category": "atom",
+      "description": "Primary action button with enhanced styling",
+      "props": {
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "fullWidth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width button"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonPrimary>Primary Action</ButtonPrimary>",
+        "<ButtonPrimary size='lg'>Large Primary</ButtonPrimary>"
+      ],
+      "useCases": [
+        "Primary actions",
+        "Main call-to-action buttons",
+        "Important user flows"
+      ],
+      "relatedComponents": [
+        "Button",
+        "ButtonSuccess",
+        "ButtonSecondary"
+      ]
+    },
+    "ButtonSecondary": {
+      "category": "atom",
+      "description": "Secondary action button",
+      "props": {
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "fullWidth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width button"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonSecondary>Secondary Action</ButtonSecondary>"
+      ],
+      "useCases": [
+        "Secondary actions",
+        "Cancel buttons",
+        "Alternative options"
+      ],
+      "relatedComponents": [
+        "Button",
+        "ButtonPrimary",
+        "ButtonGhost"
+      ]
+    },
+    "ButtonGhost": {
+      "category": "atom",
+      "description": "Subtle secondary button with transparent background",
+      "props": {
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "fullWidth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width button"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonGhost>Ghost Button</ButtonGhost>"
+      ],
+      "useCases": [
+        "Subtle actions",
+        "Menu items",
+        "Secondary navigation"
+      ],
+      "relatedComponents": [
+        "Button",
+        "ButtonSecondary"
+      ]
+    },
+    "ButtonDanger": {
+      "category": "atom",
+      "description": "Destructive action button for delete/cancel operations",
+      "props": {
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "fullWidth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width button"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonDanger>Delete Item</ButtonDanger>"
+      ],
+      "useCases": [
+        "Delete actions",
+        "Destructive operations",
+        "Dangerous confirmations"
+      ],
+      "relatedComponents": [
+        "Button",
+        "ButtonPrimary"
+      ]
+    },
+    "ButtonSuccess": {
+      "category": "atom",
+      "description": "Success-themed button component",
+      "props": {
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "fullWidth": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width button"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonSuccess>Save Changes</ButtonSuccess>",
+        "<ButtonSuccess size='lg' fullWidth>Complete Setup</ButtonSuccess>"
+      ],
+      "useCases": [
+        "Success actions",
+        "Confirmation buttons",
+        "Positive user flows"
+      ],
+      "migrationNotes": "Consider migrating to Button with variant='default' for better consistency",
+      "relatedComponents": [
+        "Button",
+        "ButtonPrimary"
+      ]
+    },
+    "ButtonWithIcon": {
+      "category": "atom",
+      "description": "Button component with icon support",
+      "props": {
+        "icon": {
+          "type": "ReactNode",
+          "description": "Icon to display"
+        },
+        "iconPosition": {
+          "type": "string",
+          "options": [
+            "left",
+            "right"
+          ],
+          "default": "left",
+          "description": "Icon position"
+        },
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Button content"
+        }
+      },
+      "examples": [
+        "<ButtonWithIcon icon={<Icon />}>With Icon</ButtonWithIcon>"
+      ],
+      "useCases": [
+        "Icon buttons",
+        "Action buttons with icons",
+        "Enhanced UI elements"
+      ],
+      "relatedComponents": [
+        "Button",
+        "ButtonIconOnly"
+      ]
+    },
+    "ButtonIconOnly": {
+      "category": "atom",
+      "description": "Icon-only button component",
+      "props": {
+        "icon": {
+          "type": "ReactNode",
+          "description": "Icon to display"
+        },
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Size variant"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "onClick": {
+          "type": "function",
+          "description": "Click handler"
+        },
+        "ariaLabel": {
+          "type": "string",
+          "description": "Accessibility label"
+        }
+      },
+      "examples": [
+        "<ButtonIconOnly icon={<Icon />} ariaLabel='Close' />"
+      ],
+      "useCases": [
+        "Icon-only buttons",
+        "Toolbar actions",
+        "Compact interfaces"
+      ],
+      "relatedComponents": [
+        "ButtonWithIcon",
+        "Button"
+      ]
+    },
+    "InputGroup": {
+      "category": "atom",
+      "description": "Input group component for combined inputs",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Input group content"
+        }
+      },
+      "examples": [
+        "<InputGroup><Input /><Button>Search</Button></InputGroup>"
+      ],
+      "useCases": [
+        "Combined input elements",
+        "Search bars",
+        "Form field groups"
+      ],
+      "relatedComponents": [
+        "Input",
+        "Button"
+      ]
+    },
+    "FormField": {
+      "category": "molecule",
+      "description": "Form field wrapper with label, input, and error message",
+      "props": {
+        "name": {
+          "type": "string",
+          "description": "Field name"
+        },
+        "label": {
+          "type": "string",
+          "description": "Field label"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Required field"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Form input component"
+        }
+      },
+      "examples": [
+        "<FormField name='email' label='Email Address' required error={errors.email}><FormInput type='email' placeholder='Enter your email' /></FormField>"
+      ],
+      "useCases": [
+        "Form field containers",
+        "Input field wrappers",
+        "Validation display",
+        "Accessible form fields"
+      ],
+      "relatedComponents": [
+        "FormInput",
+        "FormTextarea",
+        "Input"
+      ]
+    },
+    "FormInput": {
+      "category": "molecule",
+      "description": "Enhanced input component for forms",
+      "props": {
+        "type": {
+          "type": "string",
+          "default": "text",
+          "description": "Input type"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<FormInput type='email' placeholder='Enter email' />"
+      ],
+      "useCases": [
+        "Form inputs",
+        "Validated fields",
+        "Structured forms"
+      ],
+      "relatedComponents": [
+        "FormField",
+        "Input"
+      ]
+    },
+    "FormTextarea": {
+      "category": "molecule",
+      "description": "Multi-line text input for forms",
+      "props": {
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text"
+        },
+        "rows": {
+          "type": "number",
+          "default": 3,
+          "description": "Number of rows"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<FormTextarea placeholder='Enter your message' rows={5} />"
+      ],
+      "useCases": [
+        "Long text input",
+        "Comments",
+        "Descriptions",
+        "Multi-line content"
+      ],
+      "relatedComponents": [
+        "FormField",
+        "FormInput"
+      ]
+    },
+    "FormItem": {
+      "category": "molecule",
+      "description": "Form item wrapper component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Form item content"
+        }
+      },
+      "examples": [
+        "<FormItem><FormLabel>Email</FormLabel><FormInput type='email' /></FormItem>"
+      ],
+      "useCases": [
+        "Form structure",
+        "Field organization",
+        "Layout components"
+      ],
+      "relatedComponents": [
+        "FormLabel",
+        "FormControl"
+      ]
+    },
+    "FormLabel": {
+      "category": "molecule",
+      "description": "Form label component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Label content"
+        }
+      },
+      "examples": [
+        "<FormLabel>Email Address</FormLabel>"
+      ],
+      "useCases": [
+        "Field labels",
+        "Accessibility",
+        "Form structure"
+      ],
+      "relatedComponents": [
+        "FormItem",
+        "FormControl"
+      ]
+    },
+    "FormControl": {
+      "category": "molecule",
+      "description": "Form control wrapper",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Control content"
+        }
+      },
+      "examples": [
+        "<FormControl><FormInput /></FormControl>"
+      ],
+      "useCases": [
+        "Control containers",
+        "Input wrappers",
+        "Form structure"
+      ],
+      "relatedComponents": [
+        "FormItem",
+        "FormLabel"
+      ]
+    },
+    "FormDescription": {
+      "category": "molecule",
+      "description": "Form field description component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Description content"
+        }
+      },
+      "examples": [
+        "<FormDescription>Enter your email address for notifications</FormDescription>"
+      ],
+      "useCases": [
+        "Field help text",
+        "Instructions",
+        "Additional information"
+      ],
+      "relatedComponents": [
+        "FormField",
+        "FormMessage"
+      ]
+    },
+    "FormMessage": {
+      "category": "molecule",
+      "description": "Form validation message component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Message content"
+        }
+      },
+      "examples": [
+        "<FormMessage>This field is required</FormMessage>"
+      ],
+      "useCases": [
+        "Error messages",
+        "Validation feedback",
+        "Form feedback"
+      ],
+      "relatedComponents": [
+        "FormField",
+        "FormDescription"
+      ]
+    },
+    "Select": {
+      "category": "molecule",
+      "description": "Select dropdown component",
+      "props": {
+        "options": {
+          "type": "array",
+          "description": "Select options"
+        },
+        "value": {
+          "type": "string",
+          "description": "Selected value"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Select options={options} onChange={handleChange} placeholder='Select option' />"
+      ],
+      "useCases": [
+        "Dropdown selections",
+        "Option lists",
+        "Form selects"
+      ],
+      "relatedComponents": [
+        "FormField"
+      ]
+    },
+    "Checkbox": {
+      "category": "molecule",
+      "description": "Checkbox input component",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "description": "Checked state"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "label": {
+          "type": "string",
+          "description": "Checkbox label"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Checkbox checked={isChecked} onChange={setIsChecked} label='Accept terms' />"
+      ],
+      "useCases": [
+        "Boolean inputs",
+        "Multiple selections",
+        "Terms acceptance"
+      ],
+      "relatedComponents": [
+        "RadioGroup",
+        "Switch"
+      ]
+    },
+    "RadioGroup": {
+      "category": "molecule",
+      "description": "Radio button group component",
+      "props": {
+        "value": {
+          "type": "string",
+          "description": "Selected value"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "options": {
+          "type": "array",
+          "description": "Radio options"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<RadioGroup value={selected} onChange={setSelected} options={options} />"
+      ],
+      "useCases": [
+        "Single selections",
+        "Option groups",
+        "Exclusive choices"
+      ],
+      "relatedComponents": [
+        "Checkbox",
+        "Select"
+      ]
+    },
+    "RadioGroupItem": {
+      "category": "molecule",
+      "description": "Individual radio button item",
+      "props": {
+        "value": {
+          "type": "string",
+          "description": "Item value"
+        },
+        "label": {
+          "type": "string",
+          "description": "Item label"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<RadioGroupItem value='option1' label='Option 1' />"
+      ],
+      "useCases": [
+        "Radio options",
+        "Individual choices",
+        "Group selections"
+      ],
+      "relatedComponents": [
+        "RadioGroup"
+      ]
+    },
+    "Switch": {
+      "category": "molecule",
+      "description": "Toggle switch component",
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "description": "Switch state"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "label": {
+          "type": "string",
+          "description": "Switch label"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Switch checked={enabled} onChange={setEnabled} label='Enable feature' />"
+      ],
+      "useCases": [
+        "Toggle settings",
+        "On/off switches",
+        "Feature toggles"
+      ],
+      "relatedComponents": [
+        "Checkbox"
+      ]
+    },
+    "Slider": {
+      "category": "molecule",
+      "description": "Range slider component",
+      "props": {
+        "value": {
+          "type": "number",
+          "description": "Slider value"
+        },
+        "min": {
+          "type": "number",
+          "default": 0,
+          "description": "Minimum value"
+        },
+        "max": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum value"
+        },
+        "step": {
+          "type": "number",
+          "default": 1,
+          "description": "Step increment"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Change handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Slider value={volume} onChange={setVolume} min={0} max={100} />"
+      ],
+      "useCases": [
+        "Volume controls",
+        "Range inputs",
+        "Value selection"
+      ]
+    },
+    "Alert": {
+      "category": "molecule",
+      "description": "Informational alert component",
+      "props": {
+        "variant": {
+          "type": "string",
+          "options": [
+            "default",
+            "success",
+            "warning",
+            "error"
+          ],
+          "default": "default",
+          "description": "Alert style"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Alert content"
+        }
+      },
+      "examples": [
+        "<Alert variant='success'><AlertTitle>Success!</AlertTitle><AlertDescription>Your changes have been saved.</AlertDescription></Alert>",
+        "<Alert variant='error'><AlertTitle>Error</AlertTitle><AlertDescription>Something went wrong.</AlertDescription></Alert>"
+      ],
+      "useCases": [
+        "Success messages",
+        "Error notifications",
+        "Warning alerts",
+        "Info messages",
+        "Status updates"
+      ],
+      "relatedComponents": [
+        "AlertTitle",
+        "AlertDescription"
+      ]
+    },
+    "AlertTitle": {
+      "category": "molecule",
+      "description": "Alert title component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Title content"
+        }
+      },
+      "examples": [
+        "<AlertTitle>Important Notice</AlertTitle>"
+      ],
+      "useCases": [
+        "Alert headings",
+        "Notification titles",
+        "Message headers"
+      ],
+      "relatedComponents": [
+        "Alert",
+        "AlertDescription"
+      ]
+    },
+    "AlertDescription": {
+      "category": "molecule",
+      "description": "Alert description component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Description content"
+        }
+      },
+      "examples": [
+        "<AlertDescription>This is additional information about the alert.</AlertDescription>"
+      ],
+      "useCases": [
+        "Alert details",
+        "Message content",
+        "Additional information"
+      ],
+      "relatedComponents": [
+        "Alert",
+        "AlertTitle"
+      ]
+    },
+    "Progress": {
+      "category": "molecule",
+      "description": "Progress bar component",
+      "props": {
+        "value": {
+          "type": "number",
+          "description": "Progress value (0-100)"
+        },
+        "max": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum value"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Progress value={75} />"
+      ],
+      "useCases": [
+        "Loading progress",
+        "Upload progress",
+        "Task completion"
+      ]
+    },
+    "Badge": {
+      "category": "molecule",
+      "description": "Badge component for labels and tags",
+      "props": {
+        "variant": {
+          "type": "string",
+          "options": [
+            "default",
+            "secondary",
+            "destructive",
+            "outline"
+          ],
+          "default": "default",
+          "description": "Badge style"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Badge content"
+        }
+      },
+      "examples": [
+        "<Badge>New</Badge>",
+        "<Badge variant='destructive'>Error</Badge>"
+      ],
+      "useCases": [
+        "Status indicators",
+        "Labels",
+        "Tags",
+        "Notifications"
+      ]
+    },
+    "Avatar": {
+      "category": "molecule",
+      "description": "User avatar component",
+      "props": {
+        "src": {
+          "type": "string",
+          "description": "Image source URL"
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alt text"
+        },
+        "fallback": {
+          "type": "string",
+          "description": "Fallback text"
+        },
+        "size": {
+          "type": "string",
+          "options": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "Avatar size"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Avatar src='/avatar.jpg' alt='User' />",
+        "<Avatar fallback='JD' size='lg' />"
+      ],
+      "useCases": [
+        "User profiles",
+        "Team members",
+        "Account avatars"
+      ]
+    },
+    "Table": {
+      "category": "molecule",
+      "description": "Data table component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Table content"
+        }
+      },
+      "examples": [
+        "<Table><TableHeader><TableRow><TableHead>Name</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>John</TableCell></TableRow></TableBody></Table>"
+      ],
+      "useCases": [
+        "Data display",
+        "Lists",
+        "Structured information"
+      ],
+      "relatedComponents": [
+        "TableHeader",
+        "TableBody",
+        "TableRow",
+        "TableCell"
+      ]
+    },
+    "TableHeader": {
+      "category": "molecule",
+      "description": "Table header section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Header content"
+        }
+      },
+      "examples": [
+        "<TableHeader><TableRow><TableHead>Column 1</TableHead></TableRow></TableHeader>"
+      ],
+      "useCases": [
+        "Table headers",
+        "Column labels",
+        "Table structure"
+      ],
+      "relatedComponents": [
+        "Table",
+        "TableHead"
+      ]
+    },
+    "TableBody": {
+      "category": "molecule",
+      "description": "Table body section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Body content"
+        }
+      },
+      "examples": [
+        "<TableBody><TableRow><TableCell>Data</TableCell></TableRow></TableBody>"
+      ],
+      "useCases": [
+        "Table data",
+        "Row content",
+        "Table structure"
+      ],
+      "relatedComponents": [
+        "Table",
+        "TableRow"
+      ]
+    },
+    "TableFooter": {
+      "category": "molecule",
+      "description": "Table footer section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Footer content"
+        }
+      },
+      "examples": [
+        "<TableFooter><TableRow><TableCell>Total</TableCell></TableRow></TableFooter>"
+      ],
+      "useCases": [
+        "Table summaries",
+        "Footer content",
+        "Table structure"
+      ],
+      "relatedComponents": [
+        "Table",
+        "TableRow"
+      ]
+    },
+    "TableHead": {
+      "category": "molecule",
+      "description": "Table header cell",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Header content"
+        }
+      },
+      "examples": [
+        "<TableHead>Name</TableHead>"
+      ],
+      "useCases": [
+        "Column headers",
+        "Table labels",
+        "Header cells"
+      ],
+      "relatedComponents": [
+        "TableHeader",
+        "TableCell"
+      ]
+    },
+    "TableRow": {
+      "category": "molecule",
+      "description": "Table row component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Row content"
+        }
+      },
+      "examples": [
+        "<TableRow><TableCell>Data 1</TableCell><TableCell>Data 2</TableCell></TableRow>"
+      ],
+      "useCases": [
+        "Table rows",
+        "Data rows",
+        "Row structure"
+      ],
+      "relatedComponents": [
+        "TableBody",
+        "TableCell"
+      ]
+    },
+    "TableCell": {
+      "category": "molecule",
+      "description": "Table cell component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Cell content"
+        }
+      },
+      "examples": [
+        "<TableCell>Cell content</TableCell>"
+      ],
+      "useCases": [
+        "Table data",
+        "Cell content",
+        "Table structure"
+      ],
+      "relatedComponents": [
+        "TableRow",
+        "TableHead"
+      ]
+    },
+    "TableCaption": {
+      "category": "molecule",
+      "description": "Table caption component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Caption content"
+        }
+      },
+      "examples": [
+        "<TableCaption>User data table</TableCaption>"
+      ],
+      "useCases": [
+        "Table descriptions",
+        "Accessibility",
+        "Table titles"
+      ],
+      "relatedComponents": [
+        "Table"
+      ]
+    },
+    "Calendar": {
+      "category": "molecule",
+      "description": "Calendar component for date selection",
+      "props": {
+        "value": {
+          "type": "Date",
+          "description": "Selected date"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Date change handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Calendar value={selectedDate} onChange={setSelectedDate} />"
+      ],
+      "useCases": [
+        "Date selection",
+        "Date pickers",
+        "Calendar interfaces"
+      ]
+    },
+    "Skeleton": {
+      "category": "molecule",
+      "description": "Loading skeleton component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Skeleton content"
+        }
+      },
+      "examples": [
+        "<Skeleton className='h-4 w-32' />"
+      ],
+      "useCases": [
+        "Loading states",
+        "Content placeholders",
+        "Progressive loading"
+      ]
+    },
+    "HoverCard": {
+      "category": "molecule",
+      "description": "Hover card component with trigger and content",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Hover card content"
+        }
+      },
+      "examples": [
+        "<HoverCard><HoverCardTrigger>Hover me</HoverCardTrigger><HoverCardContent>Content</HoverCardContent></HoverCard>"
+      ],
+      "useCases": [
+        "Tooltips",
+        "Preview cards",
+        "Contextual information"
+      ],
+      "relatedComponents": [
+        "HoverCardTrigger",
+        "HoverCardContent"
+      ]
+    },
+    "HoverCardTrigger": {
+      "category": "molecule",
+      "description": "Hover card trigger component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Trigger content"
+        }
+      },
+      "examples": [
+        "<HoverCardTrigger>Hover for info</HoverCardTrigger>"
+      ],
+      "useCases": [
+        "Hover triggers",
+        "Interactive elements",
+        "Preview triggers"
+      ],
+      "relatedComponents": [
+        "HoverCard",
+        "HoverCardContent"
+      ]
+    },
+    "HoverCardContent": {
+      "category": "molecule",
+      "description": "Hover card content component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content"
+        }
+      },
+      "examples": [
+        "<HoverCardContent>Additional information</HoverCardContent>"
+      ],
+      "useCases": [
+        "Hover content",
+        "Preview information",
+        "Contextual details"
+      ],
+      "relatedComponents": [
+        "HoverCard",
+        "HoverCardTrigger"
+      ]
+    },
+    "Popover": {
+      "category": "molecule",
+      "description": "Popover component with trigger and content",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Popover content"
+        }
+      },
+      "examples": [
+        "<Popover><PopoverTrigger>Click me</PopoverTrigger><PopoverContent>Content</PopoverContent></Popover>"
+      ],
+      "useCases": [
+        "Dropdown menus",
+        "Context menus",
+        "Action menus"
+      ],
+      "relatedComponents": [
+        "PopoverTrigger",
+        "PopoverContent"
+      ]
+    },
+    "PopoverTrigger": {
+      "category": "molecule",
+      "description": "Popover trigger component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Trigger content"
+        }
+      },
+      "examples": [
+        "<PopoverTrigger>Open menu</PopoverTrigger>"
+      ],
+      "useCases": [
+        "Menu triggers",
+        "Dropdown triggers",
+        "Action triggers"
+      ],
+      "relatedComponents": [
+        "Popover",
+        "PopoverContent"
+      ]
+    },
+    "PopoverContent": {
+      "category": "molecule",
+      "description": "Popover content component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content"
+        }
+      },
+      "examples": [
+        "<PopoverContent><Button>Action 1</Button><Button>Action 2</Button></PopoverContent>"
+      ],
+      "useCases": [
+        "Menu content",
+        "Dropdown content",
+        "Action lists"
+      ],
+      "relatedComponents": [
+        "Popover",
+        "PopoverTrigger"
+      ]
+    },
+    "ActionCard": {
+      "category": "molecule",
+      "description": "Card with action buttons",
+      "props": {
+        "title": {
+          "type": "string",
+          "description": "Card title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Card description"
+        },
+        "actions": {
+          "type": "array",
+          "description": "Action buttons"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<ActionCard title='Project' description='Manage your project' actions={[<Button>Edit</Button>, <Button>Delete</Button>]} />"
+      ],
+      "useCases": [
+        "Action items",
+        "Management cards",
+        "Interactive content"
+      ],
+      "relatedComponents": [
+        "Card",
+        "ContentCard"
+      ]
+    },
+    "ContentCard": {
+      "category": "molecule",
+      "description": "Card for content display",
+      "props": {
+        "title": {
+          "type": "string",
+          "description": "Card title"
+        },
+        "content": {
+          "type": "ReactNode",
+          "description": "Card content"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<ContentCard title='Article' content={<p>Article content...</p>} />"
+      ],
+      "useCases": [
+        "Content display",
+        "Article cards",
+        "Information cards"
+      ],
+      "relatedComponents": [
+        "Card",
+        "ActionCard"
+      ]
+    },
+    "FileList": {
+      "category": "molecule",
+      "description": "File listing component",
+      "props": {
+        "files": {
+          "type": "array",
+          "description": "File list"
+        },
+        "onFileSelect": {
+          "type": "function",
+          "description": "File selection handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<FileList files={files} onFileSelect={handleSelect} />"
+      ],
+      "useCases": [
+        "File management",
+        "Document lists",
+        "Asset browsers"
+      ]
+    },
+    "Notification": {
+      "category": "molecule",
+      "description": "Notification display component",
+      "props": {
+        "type": {
+          "type": "string",
+          "options": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "description": "Notification type"
+        },
+        "title": {
+          "type": "string",
+          "description": "Notification title"
+        },
+        "message": {
+          "type": "string",
+          "description": "Notification message"
+        },
+        "onClose": {
+          "type": "function",
+          "description": "Close handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Notification type='success' title='Success' message='Operation completed' onClose={handleClose} />"
+      ],
+      "useCases": [
+        "System notifications",
+        "Toast messages",
+        "Status updates"
+      ]
+    },
+    "SearchBar": {
+      "category": "molecule",
+      "description": "Search input with button",
+      "props": {
+        "placeholder": {
+          "type": "string",
+          "default": "Search...",
+          "description": "Placeholder text"
+        },
+        "value": {
+          "type": "string",
+          "description": "Search value"
+        },
+        "onSearch": {
+          "type": "function",
+          "description": "Search handler"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Value change handler"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disabled state"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<SearchBar placeholder='Search products...' onSearch={(query) => console.log(query)} />"
+      ],
+      "useCases": [
+        "Search functionality",
+        "Filter interfaces",
+        "Data lookup",
+        "Navigation search"
+      ],
+      "relatedComponents": [
+        "SearchBarNew",
+        "Input"
+      ]
+    },
+    "SearchBarNew": {
+      "category": "molecule",
+      "description": "Enhanced search bar with filters",
+      "props": {
+        "placeholder": {
+          "type": "string",
+          "default": "Search...",
+          "description": "Placeholder text"
+        },
+        "value": {
+          "type": "string",
+          "description": "Search value"
+        },
+        "onSearch": {
+          "type": "function",
+          "description": "Search handler"
+        },
+        "onChange": {
+          "type": "function",
+          "description": "Value change handler"
+        },
+        "showFilters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show filter options"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<SearchBarNew placeholder='Search with filters...' showFilters onSearch={(query, filters) => handleSearch(query, filters)} />"
+      ],
+      "useCases": [
+        "Advanced search",
+        "Filtered search",
+        "Complex queries"
+      ],
+      "relatedComponents": [
+        "SearchBar",
+        "Input"
+      ]
+    },
+    "Dialog": {
+      "category": "organism",
+      "description": "Modal dialog system",
+      "props": {
+        "open": {
+          "type": "boolean",
+          "description": "Dialog open state"
+        },
+        "onOpenChange": {
+          "type": "function",
+          "description": "Open state change handler"
+        },
+        "modal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Modal behavior"
+        }
+      },
+      "examples": [
+        "<Dialog open={isOpen} onOpenChange={setIsOpen}><DialogContent><DialogHeader><DialogTitle>Title</DialogTitle></DialogHeader><p>Content</p></DialogContent></Dialog>"
+      ],
+      "useCases": [
+        "Modal dialogs",
+        "Confirmation dialogs",
+        "Form modals",
+        "Detail views",
+        "Settings panels"
+      ],
+      "relatedComponents": [
+        "DialogTrigger",
+        "DialogContent",
+        "DialogHeader",
+        "DialogTitle"
+      ]
+    },
+    "DialogTrigger": {
+      "category": "organism",
+      "description": "Dialog trigger component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Trigger content"
+        }
+      },
+      "examples": [
+        "<DialogTrigger>Open Dialog</DialogTrigger>"
+      ],
+      "useCases": [
+        "Dialog openers",
+        "Modal triggers",
+        "Action buttons"
+      ],
+      "relatedComponents": [
+        "Dialog",
+        "DialogContent"
+      ]
+    },
+    "DialogContent": {
+      "category": "organism",
+      "description": "Dialog content container",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Dialog content"
+        }
+      },
+      "examples": [
+        "<DialogContent><DialogHeader><DialogTitle>Title</DialogTitle></DialogHeader><p>Content</p></DialogContent>"
+      ],
+      "useCases": [
+        "Dialog bodies",
+        "Modal content",
+        "Dialog structure"
+      ],
+      "relatedComponents": [
+        "Dialog",
+        "DialogHeader",
+        "DialogFooter"
+      ]
+    },
+    "DialogHeader": {
+      "category": "organism",
+      "description": "Dialog header section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Header content"
+        }
+      },
+      "examples": [
+        "<DialogHeader><DialogTitle>Dialog Title</DialogTitle></DialogHeader>"
+      ],
+      "useCases": [
+        "Dialog titles",
+        "Header sections",
+        "Dialog structure"
+      ],
+      "relatedComponents": [
+        "DialogContent",
+        "DialogTitle"
+      ]
+    },
+    "DialogTitle": {
+      "category": "organism",
+      "description": "Dialog title component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Title content"
+        }
+      },
+      "examples": [
+        "<DialogTitle>Confirm Action</DialogTitle>"
+      ],
+      "useCases": [
+        "Dialog titles",
+        "Modal headings",
+        "Dialog labels"
+      ],
+      "relatedComponents": [
+        "DialogHeader",
+        "DialogDescription"
+      ]
+    },
+    "DialogDescription": {
+      "category": "organism",
+      "description": "Dialog description component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Description content"
+        }
+      },
+      "examples": [
+        "<DialogDescription>Are you sure you want to delete this item?</DialogDescription>"
+      ],
+      "useCases": [
+        "Dialog descriptions",
+        "Modal details",
+        "Confirmation text"
+      ],
+      "relatedComponents": [
+        "DialogTitle",
+        "DialogHeader"
+      ]
+    },
+    "DialogFooter": {
+      "category": "organism",
+      "description": "Dialog footer section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Footer content"
+        }
+      },
+      "examples": [
+        "<DialogFooter><Button>Cancel</Button><Button variant='destructive'>Delete</Button></DialogFooter>"
+      ],
+      "useCases": [
+        "Dialog actions",
+        "Footer buttons",
+        "Dialog controls"
+      ],
+      "relatedComponents": [
+        "DialogContent",
+        "DialogClose"
+      ]
+    },
+    "DialogClose": {
+      "category": "organism",
+      "description": "Dialog close component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Close content"
+        }
+      },
+      "examples": [
+        "<DialogClose>×</DialogClose>"
+      ],
+      "useCases": [
+        "Dialog closers",
+        "Modal dismiss",
+        "Close buttons"
+      ],
+      "relatedComponents": [
+        "Dialog",
+        "DialogFooter"
+      ]
+    },
+    "Navigation": {
+      "category": "organism",
+      "description": "Navigation menu component",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Navigation content"
+        }
+      },
+      "examples": [
+        "<Navigation><NavigationMenu><NavigationMenuItem>Home</NavigationMenuItem></NavigationMenu></Navigation>"
+      ],
+      "useCases": [
+        "Site navigation",
+        "Menu systems",
+        "Navigation bars"
+      ],
+      "relatedComponents": [
+        "NavigationMenu",
+        "NavigationMenuItem"
+      ]
+    },
+    "NavigationMenu": {
+      "category": "organism",
+      "description": "Navigation menu container",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Menu content"
+        }
+      },
+      "examples": [
+        "<NavigationMenu><NavigationMenuItem>Home</NavigationMenuItem><NavigationMenuItem>About</NavigationMenuItem></NavigationMenu>"
+      ],
+      "useCases": [
+        "Menu containers",
+        "Navigation lists",
+        "Menu structure"
+      ],
+      "relatedComponents": [
+        "Navigation",
+        "NavigationMenuItem"
+      ]
+    },
+    "NavigationMenuItem": {
+      "category": "organism",
+      "description": "Navigation menu item",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Item content"
+        }
+      },
+      "examples": [
+        "<NavigationMenuItem><a href='/'>Home</a></NavigationMenuItem>"
+      ],
+      "useCases": [
+        "Menu items",
+        "Navigation links",
+        "Menu entries"
+      ],
+      "relatedComponents": [
+        "NavigationMenu",
+        "NavigationMenuTrigger"
+      ]
+    },
+    "NavigationMenuTrigger": {
+      "category": "organism",
+      "description": "Navigation menu trigger",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Trigger content"
+        }
+      },
+      "examples": [
+        "<NavigationMenuTrigger>Products ▼</NavigationMenuTrigger>"
+      ],
+      "useCases": [
+        "Dropdown triggers",
+        "Submenu openers",
+        "Menu expanders"
+      ],
+      "relatedComponents": [
+        "NavigationMenuItem",
+        "NavigationMenuContent"
+      ]
+    },
+    "NavigationMenuContent": {
+      "category": "organism",
+      "description": "Navigation menu content",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content"
+        }
+      },
+      "examples": [
+        "<NavigationMenuContent><NavigationMenuItem>Subitem 1</NavigationMenuItem></NavigationMenuContent>"
+      ],
+      "useCases": [
+        "Dropdown content",
+        "Submenu content",
+        "Menu panels"
+      ],
+      "relatedComponents": [
+        "NavigationMenuTrigger"
+      ]
+    },
+    "Dashboard": {
+      "category": "organism",
+      "description": "Main dashboard layout",
+      "props": {
+        "layout": {
+          "type": "string",
+          "options": [
+            "default",
+            "compact",
+            "wide"
+          ],
+          "default": "default",
+          "description": "Layout variant"
+        },
+        "showSidebar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show sidebar"
+        }
+      },
+      "examples": [
+        "<Dashboard><DashboardSearch /><DashboardContent>Main content</DashboardContent></Dashboard>"
+      ],
+      "useCases": [
+        "Main application layouts",
+        "Admin dashboards",
+        "Data management interfaces",
+        "Analytics dashboards"
+      ],
+      "relatedComponents": [
+        "DashboardSearch",
+        "DashboardContent",
+        "DashboardKnowledge",
+        "DashboardMedia"
+      ]
+    },
+    "DashboardSearch": {
+      "category": "organism",
+      "description": "Dashboard search section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Search content"
+        }
+      },
+      "examples": [
+        "<DashboardSearch><SearchBar onSearch={handleSearch} /></DashboardSearch>"
+      ],
+      "useCases": [
+        "Dashboard search",
+        "Global search",
+        "Content discovery"
+      ],
+      "relatedComponents": [
+        "Dashboard",
+        "SearchBar"
+      ]
+    },
+    "DashboardContent": {
+      "category": "organism",
+      "description": "Dashboard content area",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content"
+        }
+      },
+      "examples": [
+        "<DashboardContent><Card><CardTitle>Dashboard</CardTitle><CardContent>Content</CardContent></Card></DashboardContent>"
+      ],
+      "useCases": [
+        "Main content areas",
+        "Dashboard body",
+        "Content containers"
+      ],
+      "relatedComponents": [
+        "Dashboard",
+        "Card"
+      ]
+    },
+    "DashboardKnowledge": {
+      "category": "organism",
+      "description": "Dashboard knowledge section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Knowledge content"
+        }
+      },
+      "examples": [
+        "<DashboardKnowledge><Card><CardTitle>Knowledge Base</CardTitle></Card></DashboardKnowledge>"
+      ],
+      "useCases": [
+        "Knowledge sections",
+        "Help content",
+        "Documentation areas"
+      ],
+      "relatedComponents": [
+        "Dashboard"
+      ]
+    },
+    "DashboardMedia": {
+      "category": "organism",
+      "description": "Dashboard media section",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Media content"
+        }
+      },
+      "examples": [
+        "<DashboardMedia><Card><CardTitle>Media Library</CardTitle></Card></DashboardMedia>"
+      ],
+      "useCases": [
+        "Media sections",
+        "Asset management",
+        "File areas"
+      ],
+      "relatedComponents": [
+        "Dashboard"
+      ]
+    },
+    "SearchInterface": {
+      "category": "organism",
+      "description": "Advanced search interface",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Search interface content"
+        }
+      },
+      "examples": [
+        "<SearchInterface><SearchBarNew showFilters onSearch={handleAdvancedSearch} /></SearchInterface>"
+      ],
+      "useCases": [
+        "Advanced search",
+        "Filter interfaces",
+        "Search dashboards"
+      ],
+      "relatedComponents": [
+        "SearchBarNew"
+      ]
+    },
+    "Reward": {
+      "category": "organism",
+      "description": "Reward display component",
+      "props": {
+        "type": {
+          "type": "string",
+          "description": "Reward type"
+        },
+        "value": {
+          "type": "number",
+          "description": "Reward value"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<Reward type='points' value={100} />"
+      ],
+      "useCases": [
+        "Gamification",
+        "Achievement displays",
+        "Reward systems"
+      ]
+    },
+    "Modal": {
+      "category": "organism",
+      "description": "Modal wrapper component",
+      "props": {
+        "isOpen": {
+          "type": "boolean",
+          "description": "Modal open state"
+        },
+        "onClose": {
+          "type": "function",
+          "description": "Close handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Modal content"
+        }
+      },
+      "examples": [
+        "<Modal isOpen={isOpen} onClose={handleClose}><Card>Modal content</Card></Modal>"
+      ],
+      "useCases": [
+        "Modal dialogs",
+        "Popups",
+        "Overlays"
+      ],
+      "relatedComponents": [
+        "Dialog"
+      ]
+    },
+    "MobileSidebar": {
+      "category": "organism",
+      "description": "Mobile sidebar component",
+      "props": {
+        "isOpen": {
+          "type": "boolean",
+          "description": "Sidebar open state"
+        },
+        "onClose": {
+          "type": "function",
+          "description": "Close handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Sidebar content"
+        }
+      },
+      "examples": [
+        "<MobileSidebar isOpen={isOpen} onClose={handleClose}><Navigation /></MobileSidebar>"
+      ],
+      "useCases": [
+        "Mobile navigation",
+        "Responsive sidebars",
+        "Mobile menus"
+      ],
+      "relatedComponents": [
+        "Navigation"
+      ]
+    },
+    "EnhancedSearch": {
+      "category": "application",
+      "description": "Advanced search application",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Search application content"
+        }
+      },
+      "examples": [
+        "<EnhancedSearch><SearchInterface /></EnhancedSearch>"
+      ],
+      "useCases": [
+        "Search applications",
+        "Advanced search interfaces",
+        "Search dashboards"
+      ],
+      "relatedComponents": [
+        "SearchInterface",
+        "SearchBarNew"
+      ]
+    },
+    "ContentManager": {
+      "category": "application",
+      "description": "Content management system",
+      "props": {
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        },
+        "children": {
+          "type": "ReactNode",
+          "description": "Content management content"
+        }
+      },
+      "examples": [
+        "<ContentManager><Dashboard /></ContentManager>"
+      ],
+      "useCases": [
+        "CMS interfaces",
+        "Content management",
+        "Admin panels"
+      ],
+      "relatedComponents": [
+        "Dashboard",
+        "FileList"
+      ]
+    },
+    "CampaignSelector": {
+      "category": "application",
+      "description": "Campaign selection interface",
+      "props": {
+        "campaigns": {
+          "type": "array",
+          "description": "Available campaigns"
+        },
+        "onSelect": {
+          "type": "function",
+          "description": "Selection handler"
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      },
+      "examples": [
+        "<CampaignSelector campaigns={campaigns} onSelect={handleSelect} />"
+      ],
+      "useCases": [
+        "Campaign management",
+        "Project selection",
+        "Workflow interfaces"
+      ]
+    },
+    "TamylaThemeProvider": {
+      "category": "utility",
+      "description": "Theme context provider with Redux integration",
+      "props": {
+        "children": {
+          "type": "ReactNode",
+          "description": "Child components"
+        },
+        "theme": {
+          "type": "object",
+          "description": "Custom theme object"
+        },
+        "enablePersistence": {
+          "type": "boolean",
+          "default": true,
+          "description": "Persist theme choice"
+        }
+      },
+      "examples": [
+        "<TamylaThemeProvider><App /></TamylaThemeProvider>",
+        "<TamylaThemeProvider theme={customTheme}><App /></TamylaThemeProvider>"
+      ],
+      "useCases": [
+        "Theme management",
+        "App initialization",
+        "Custom theming",
+        "Dark mode support"
+      ],
+      "relatedComponents": [
+        "useTamylaTheme"
+      ]
+    }
+  },
+  "metadata": {
+    "package": "@tamyla/ui-components-react",
+    "version": "5.0.0",
+    "lastUpdated": "2025-01-12",
+    "description": "React component library with Factory Bridge pattern",
+    "architecture": "Dual-mode (Native + Wrapper components)",
+    "designSystem": "Atomic Design (Atoms → Molecules → Organisms → Applications)"
+  },
+  "designTokens": {
+    "colors": {
+      "primary": {
+        "50": "#eff6ff",
+        "100": "#dbeafe",
+        "200": "#bfdbfe",
+        "300": "#93c5fd",
+        "400": "#60a5fa",
+        "500": "#3b82f6",
+        "600": "#2563eb",
+        "700": "#1d4ed8",
+        "800": "#1e40af",
+        "900": "#1e3a8a",
+        "950": "#172554"
+      },
+      "neutral": {
+        "50": "#fafafa",
+        "100": "#f5f5f5",
+        "200": "#e5e5e5",
+        "300": "#d4d4d4",
+        "400": "#a3a3a3",
+        "500": "#737373",
+        "600": "#525252",
+        "700": "#404040",
+        "800": "#262626",
+        "900": "#171717",
+        "950": "#0a0a0a"
+      },
+      "success": {
+        "50": "#f0fdf4",
+        "500": "#10b981",
+        "900": "#14532d"
+      },
+      "warning": {
+        "50": "#fffbeb",
+        "500": "#f59e0b",
+        "900": "#78350f"
+      },
+      "error": {
+        "50": "#fef2f2",
+        "500": "#ef4444",
+        "900": "#7f1d1d"
+      }
+    },
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem"
+    },
+    "borderRadius": {
+      "none": "0",
+      "sm": "0.125rem",
+      "md": "0.375rem",
+      "lg": "0.5rem",
+      "xl": "0.75rem",
+      "2xl": "1rem",
+      "3xl": "1.5rem",
+      "full": "9999px"
+    },
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "md": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+      "xl": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+    }
+  },
+  "usagePatterns": {
+    "buttons": {
+      "primaryActions": {
+        "description": "Primary user actions like save, submit, create",
+        "components": [
+          "ButtonPrimary",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='default' size='lg'>Save Changes</Button>",
+          "<ButtonPrimary>Submit Form</ButtonPrimary>"
+        ]
+      },
+      "secondaryActions": {
+        "description": "Secondary actions like cancel, back, skip",
+        "components": [
+          "ButtonSecondary",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='ghost'>Cancel</Button>",
+          "<ButtonSecondary>Back</ButtonSecondary>"
+        ]
+      },
+      "destructiveActions": {
+        "description": "Dangerous actions like delete, remove, cancel",
+        "components": [
+          "ButtonDanger",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='destructive'>Delete Item</Button>",
+          "<ButtonDanger>Remove</ButtonDanger>"
+        ]
+      }
+    },
+    "forms": {
+      "basicForm": {
+        "description": "Simple form with validation",
+        "components": [
+          "FormField",
+          "FormInput",
+          "Button"
+        ],
+        "examples": [
+          "<FormField label='Email' required><FormInput type='email' /></FormField><Button type='submit'>Submit</Button>"
+        ]
+      },
+      "searchForm": {
+        "description": "Search interface with filters",
+        "components": [
+          "SearchBar",
+          "SearchBarNew"
+        ],
+        "examples": [
+          "<SearchBar onSearch={handleSearch} placeholder='Search...' />"
+        ]
+      }
+    },
+    "layout": {
+      "cardLayout": {
+        "description": "Content presentation with cards",
+        "components": [
+          "Card",
+          "CardHeader",
+          "CardTitle",
+          "CardContent"
+        ],
+        "examples": [
+          "<Card><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Content</CardContent></Card>"
+        ]
+      },
+      "dashboardLayout": {
+        "description": "Complex application layout",
+        "components": [
+          "Dashboard",
+          "DashboardSearch",
+          "DashboardContent"
+        ],
+        "examples": [
+          "<Dashboard><DashboardSearch /><DashboardContent>Main content</DashboardContent></Dashboard>"
+        ]
+      }
+    }
+  },
+  "migrationGuides": {
+    "ButtonSuccess": {
+      "to": "Button",
+      "reason": "Better consistency and more features",
+      "before": "<ButtonSuccess size='lg' fullWidth>Get Started</ButtonSuccess>",
+      "after": "<Button variant='default' size='lg' className='w-full'>Get Started</Button>",
+      "benefits": [
+        "More variants",
+        "Better theming",
+        "Consistent API"
+      ]
+    },
+    "ButtonPrimary": {
+      "to": "Button",
+      "reason": "Unified component API",
+      "before": "<ButtonPrimary size='lg'>Action</ButtonPrimary>",
+      "after": "<Button variant='default' size='lg'>Action</Button>",
+      "benefits": [
+        "Same appearance",
+        "More features",
+        "Better maintainability"
+      ]
+    }
+  },
+  "troubleshooting": {
+    "buttonIssues": {
+      "squareEdges": {
+        "symptoms": [
+          "Button has square corners",
+          "Not matching design"
+        ],
+        "solutions": [
+          {
+            "description": "Use base Button component",
+            "code": "<Button variant='default'>Rounded by default</Button>"
+          },
+          {
+            "description": "Apply design token",
+            "code": ".my-button { border-radius: 0.5rem !important; }"
+          }
+        ]
+      },
+      "smallText": {
+        "symptoms": [
+          "Button text too small",
+          "Hard to read"
+        ],
+        "solutions": [
+          {
+            "description": "Use size prop",
+            "code": "<Button size='lg'>Large text</Button>"
+          },
+          {
+            "description": "Custom font size",
+            "code": ".my-button { font-size: 1.75rem !important; }"
+          }
+        ]
+      }
+    },
+    "themeIssues": {
+      "notWorking": {
+        "symptoms": [
+          "Theme not applied",
+          "Styling not changing"
+        ],
+        "solutions": [
+          {
+            "description": "Ensure theme provider is at app root",
+            "code": "root.render(<TamylaThemeProvider><App /></TamylaThemeProvider>);"
+          },
+          {
+            "description": "Check for CSS import",
+            "code": "import '@tamyla/ui-components-react/src/core/design-tokens.css';"
+          }
+        ]
+      }
+    }
+  }
+}

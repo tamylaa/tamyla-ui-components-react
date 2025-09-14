@@ -1,9 +1,71 @@
-Scripts organization
----------------------
+Scripts Organization
+===================
 
-This folder contains executable scripts used for validation, certification, deployment, and development tooling.
+This folder contains executable scripts used for validation, certification, deployment, and development tooling, organized into logical categories for better maintainability.
+
+## Directory Structure
+
+```
+scripts/
+├── build/          # Build and compilation scripts
+├── dev/            # Development utilities and tools
+├── test/           # Testing and validation scripts
+├── deploy/         # Deployment and publishing scripts
+├── README.md       # This documentation
+└── [legacy files]  # Backward compatibility scripts
+```
+
+## Script Categories
+
+### Build Scripts (`scripts/build/`)
+- `split-registry.js` - Split/combine component registry for atomic design organization
+
+### Development Scripts (`scripts/dev/`)
+- `dev-utils.js` - Development utilities for component exploration and debugging
+
+### Test Scripts (`scripts/test/`)
+- Testing and validation tools for component coverage and quality assurance
+
+### Deploy Scripts (`scripts/deploy/`)
+- Deployment automation and publishing workflows
 
 ## Enhanced Scripts
+
+### `check-bundle.js`
+**Bundle Certification and Peer Dependency Validation Tool**
+- Validates that peer dependencies (styled-components, react, react-dom) are properly externalized
+- Prevents runtime errors like "z.div is not a function" caused by bundled dependencies
+- Monitors bundle size and provides certification reports
+- Automatically runs after build and before publish
+
+**Usage:**
+```bash
+# Run bundle certification
+npm run check:bundle
+
+# Debug bundle imports
+npm run debug:bundle
+
+# Verify specific fixes
+npm run verify:fix
+
+# Automatically runs after build
+npm run build
+```
+
+**Related:** See `README-bundle-analysis.md` for comprehensive bundle analysis documentation.
+
+### `verify-bundle-fix.js`
+**Bundle Fix Verification Tool**
+- Comprehensive verification that "z.div is not a function" error is resolved
+- Analyzes styled-components import patterns and variable naming
+- Validates bundle externalization and size optimization
+
+### `analyze-bundle-imports.js`
+**Bundle Import Analysis Tool**
+- Detailed analysis of dependency import patterns in built bundle
+- Useful for debugging externalization issues and bundle structure
+- Shows exact import statements and variable usage patterns
 
 ### `fix-typescript-eslint.js`
 **TypeScript ESLint Configuration and Fix Tool**
@@ -43,20 +105,36 @@ node scripts/react-component-validation.js --json
 node scripts/react-component-validation.js --report
 ```
 
-## Script Categories
+## NPM Script Integration
 
-- `scripts/*.js` - original scripts. Most are ESM modules and should be invoked directly.
-- `scripts/*.cjs` - CommonJS scripts (named `.cjs` to preserve CJS semantics in an ESM package).
-- `scripts/esm/*` - convenience ESM wrapper files (re-export the top-level scripts).
-- `scripts/cjs/*` - convenience CJS wrappers that require the `.cjs` files.
+The scripts are integrated with npm scripts in `package.json`:
 
-## Why this layout?
-- Keeps the repository backward compatible while making intent explicit.
-- CI and contributors can call the wrapper paths to ensure correct module semantics.
+```json
+{
+  "scripts": {
+    "registry:split": "node scripts/build/split-registry.js split",
+    "registry:combine": "node scripts/build/split-registry.js combine",
+    "dev:discover": "node scripts/dev/dev-utils.js discover"
+  }
+}
+```
 
-## Example usage:
+## Usage Examples
 
- - ESM: `node scripts/esm/working-certify.js`
- - CJS: `node scripts/cjs/comprehensive-certify.cjs`
- - Enhanced: `node scripts/fix-typescript-eslint.js --dry-run`
- - Validation: `node scripts/react-component-validation.js --json`
+```bash
+# Split component registry into atomic design parts
+npm run registry:split
+
+# Combine registry parts back into single file
+npm run registry:combine
+
+# Discover components by category
+npm run dev:discover atom
+
+# Direct script execution
+node scripts/dev/dev-utils.js discover molecule
+```
+
+## Backward Compatibility
+
+Legacy scripts remain in the root `scripts/` directory for backward compatibility, but new development should use the categorized subdirectories.

@@ -1,0 +1,165 @@
+{
+  "usagePatterns": {
+    "buttons": {
+      "primaryActions": {
+        "description": "Primary user actions like save, submit, create",
+        "components": [
+          "ButtonPrimary",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='default' size='lg'>Save Changes</Button>",
+          "<ButtonPrimary>Submit Form</ButtonPrimary>"
+        ]
+      },
+      "secondaryActions": {
+        "description": "Secondary actions like cancel, back, skip",
+        "components": [
+          "ButtonSecondary",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='ghost'>Cancel</Button>",
+          "<ButtonSecondary>Back</ButtonSecondary>"
+        ]
+      },
+      "destructiveActions": {
+        "description": "Dangerous actions like delete, remove, cancel",
+        "components": [
+          "ButtonDanger",
+          "Button"
+        ],
+        "examples": [
+          "<Button variant='destructive'>Delete Item</Button>",
+          "<ButtonDanger>Remove</ButtonDanger>"
+        ]
+      }
+    },
+    "forms": {
+      "basicForm": {
+        "description": "Simple form with validation",
+        "components": [
+          "FormField",
+          "FormInput",
+          "Button"
+        ],
+        "examples": [
+          "<FormField label='Email' required><FormInput type='email' /></FormField><Button type='submit'>Submit</Button>"
+        ]
+      },
+      "searchForm": {
+        "description": "Search interface with filters",
+        "components": [
+          "SearchBar",
+          "SearchBarNew"
+        ],
+        "examples": [
+          "<SearchBar onSearch={handleSearch} placeholder='Search...' />"
+        ]
+      }
+    },
+    "layout": {
+      "cardLayout": {
+        "description": "Content presentation with cards",
+        "components": [
+          "Card",
+          "CardHeader",
+          "CardTitle",
+          "CardContent"
+        ],
+        "examples": [
+          "<Card><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Content</CardContent></Card>"
+        ]
+      },
+      "dashboardLayout": {
+        "description": "Complex application layout",
+        "components": [
+          "Dashboard",
+          "DashboardSearch",
+          "DashboardContent"
+        ],
+        "examples": [
+          "<Dashboard><DashboardSearch /><DashboardContent>Main content</DashboardContent></Dashboard>"
+        ]
+      }
+    }
+  },
+  "migrationGuides": {
+    "ButtonSuccess": {
+      "to": "Button",
+      "reason": "Better consistency and more features",
+      "before": "<ButtonSuccess size='lg' fullWidth>Get Started</ButtonSuccess>",
+      "after": "<Button variant='default' size='lg' className='w-full'>Get Started</Button>",
+      "benefits": [
+        "More variants",
+        "Better theming",
+        "Consistent API"
+      ]
+    },
+    "ButtonPrimary": {
+      "to": "Button",
+      "reason": "Unified component API",
+      "before": "<ButtonPrimary size='lg'>Action</ButtonPrimary>",
+      "after": "<Button variant='default' size='lg'>Action</Button>",
+      "benefits": [
+        "Same appearance",
+        "More features",
+        "Better maintainability"
+      ]
+    }
+  },
+  "troubleshooting": {
+    "buttonIssues": {
+      "squareEdges": {
+        "symptoms": [
+          "Button has square corners",
+          "Not matching design"
+        ],
+        "solutions": [
+          {
+            "description": "Use base Button component",
+            "code": "<Button variant='default'>Rounded by default</Button>"
+          },
+          {
+            "description": "Apply design token",
+            "code": ".my-button { border-radius: 0.5rem !important; }"
+          }
+        ]
+      },
+      "smallText": {
+        "symptoms": [
+          "Button text too small",
+          "Hard to read"
+        ],
+        "solutions": [
+          {
+            "description": "Use size prop",
+            "code": "<Button size='lg'>Large text</Button>"
+          },
+          {
+            "description": "Custom font size",
+            "code": ".my-button { font-size: 1.75rem !important; }"
+          }
+        ]
+      }
+    },
+    "themeIssues": {
+      "notWorking": {
+        "symptoms": [
+          "Theme not applied",
+          "Styling not changing"
+        ],
+        "solutions": [
+          {
+            "description": "Ensure theme provider is at app root",
+            "code": "root.render(<TamylaThemeProvider><App /></TamylaThemeProvider>);"
+          },
+          {
+            "description": "Check for CSS import",
+            "code": "import '@tamyla/ui-components-react/src/core/design-tokens.css';"
+          }
+        ]
+      }
+    }
+  }
+}

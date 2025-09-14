@@ -1,0 +1,1275 @@
+{
+  "FormField": {
+    "category": "molecule",
+    "description": "Form field wrapper with label, input, and error message",
+    "props": {
+      "name": {
+        "type": "string",
+        "description": "Field name"
+      },
+      "label": {
+        "type": "string",
+        "description": "Field label"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message"
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Required field"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Form input component"
+      }
+    },
+    "examples": [
+      "<FormField name='email' label='Email Address' required error={errors.email}><FormInput type='email' placeholder='Enter your email' /></FormField>"
+    ],
+    "useCases": [
+      "Form field containers",
+      "Input field wrappers",
+      "Validation display",
+      "Accessible form fields"
+    ],
+    "relatedComponents": [
+      "FormInput",
+      "FormTextarea",
+      "Input"
+    ]
+  },
+  "FormInput": {
+    "category": "molecule",
+    "description": "Enhanced input component for forms",
+    "props": {
+      "type": {
+        "type": "string",
+        "default": "text",
+        "description": "Input type"
+      },
+      "placeholder": {
+        "type": "string",
+        "description": "Placeholder text"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<FormInput type='email' placeholder='Enter email' />"
+    ],
+    "useCases": [
+      "Form inputs",
+      "Validated fields",
+      "Structured forms"
+    ],
+    "relatedComponents": [
+      "FormField",
+      "Input"
+    ]
+  },
+  "FormTextarea": {
+    "category": "molecule",
+    "description": "Multi-line text input for forms",
+    "props": {
+      "placeholder": {
+        "type": "string",
+        "description": "Placeholder text"
+      },
+      "rows": {
+        "type": "number",
+        "default": 3,
+        "description": "Number of rows"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<FormTextarea placeholder='Enter your message' rows={5} />"
+    ],
+    "useCases": [
+      "Long text input",
+      "Comments",
+      "Descriptions",
+      "Multi-line content"
+    ],
+    "relatedComponents": [
+      "FormField",
+      "FormInput"
+    ]
+  },
+  "FormItem": {
+    "category": "molecule",
+    "description": "Form item wrapper component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Form item content"
+      }
+    },
+    "examples": [
+      "<FormItem><FormLabel>Email</FormLabel><FormInput type='email' /></FormItem>"
+    ],
+    "useCases": [
+      "Form structure",
+      "Field organization",
+      "Layout components"
+    ],
+    "relatedComponents": [
+      "FormLabel",
+      "FormControl"
+    ]
+  },
+  "FormLabel": {
+    "category": "molecule",
+    "description": "Form label component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Label content"
+      }
+    },
+    "examples": [
+      "<FormLabel>Email Address</FormLabel>"
+    ],
+    "useCases": [
+      "Field labels",
+      "Accessibility",
+      "Form structure"
+    ],
+    "relatedComponents": [
+      "FormItem",
+      "FormControl"
+    ]
+  },
+  "FormControl": {
+    "category": "molecule",
+    "description": "Form control wrapper",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Control content"
+      }
+    },
+    "examples": [
+      "<FormControl><FormInput /></FormControl>"
+    ],
+    "useCases": [
+      "Control containers",
+      "Input wrappers",
+      "Form structure"
+    ],
+    "relatedComponents": [
+      "FormItem",
+      "FormLabel"
+    ]
+  },
+  "FormDescription": {
+    "category": "molecule",
+    "description": "Form field description component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Description content"
+      }
+    },
+    "examples": [
+      "<FormDescription>Enter your email address for notifications</FormDescription>"
+    ],
+    "useCases": [
+      "Field help text",
+      "Instructions",
+      "Additional information"
+    ],
+    "relatedComponents": [
+      "FormField",
+      "FormMessage"
+    ]
+  },
+  "FormMessage": {
+    "category": "molecule",
+    "description": "Form validation message component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Message content"
+      }
+    },
+    "examples": [
+      "<FormMessage>This field is required</FormMessage>"
+    ],
+    "useCases": [
+      "Error messages",
+      "Validation feedback",
+      "Form feedback"
+    ],
+    "relatedComponents": [
+      "FormField",
+      "FormDescription"
+    ]
+  },
+  "Select": {
+    "category": "molecule",
+    "description": "Select dropdown component",
+    "props": {
+      "options": {
+        "type": "array",
+        "description": "Select options"
+      },
+      "value": {
+        "type": "string",
+        "description": "Selected value"
+      },
+      "placeholder": {
+        "type": "string",
+        "description": "Placeholder text"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Select options={options} onChange={handleChange} placeholder='Select option' />"
+    ],
+    "useCases": [
+      "Dropdown selections",
+      "Option lists",
+      "Form selects"
+    ],
+    "relatedComponents": [
+      "FormField"
+    ]
+  },
+  "Checkbox": {
+    "category": "molecule",
+    "description": "Checkbox input component",
+    "props": {
+      "checked": {
+        "type": "boolean",
+        "description": "Checked state"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "label": {
+        "type": "string",
+        "description": "Checkbox label"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Checkbox checked={isChecked} onChange={setIsChecked} label='Accept terms' />"
+    ],
+    "useCases": [
+      "Boolean inputs",
+      "Multiple selections",
+      "Terms acceptance"
+    ],
+    "relatedComponents": [
+      "RadioGroup",
+      "Switch"
+    ]
+  },
+  "RadioGroup": {
+    "category": "molecule",
+    "description": "Radio button group component",
+    "props": {
+      "value": {
+        "type": "string",
+        "description": "Selected value"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "options": {
+        "type": "array",
+        "description": "Radio options"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<RadioGroup value={selected} onChange={setSelected} options={options} />"
+    ],
+    "useCases": [
+      "Single selections",
+      "Option groups",
+      "Exclusive choices"
+    ],
+    "relatedComponents": [
+      "Checkbox",
+      "Select"
+    ]
+  },
+  "RadioGroupItem": {
+    "category": "molecule",
+    "description": "Individual radio button item",
+    "props": {
+      "value": {
+        "type": "string",
+        "description": "Item value"
+      },
+      "label": {
+        "type": "string",
+        "description": "Item label"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<RadioGroupItem value='option1' label='Option 1' />"
+    ],
+    "useCases": [
+      "Radio options",
+      "Individual choices",
+      "Group selections"
+    ],
+    "relatedComponents": [
+      "RadioGroup"
+    ]
+  },
+  "Switch": {
+    "category": "molecule",
+    "description": "Toggle switch component",
+    "props": {
+      "checked": {
+        "type": "boolean",
+        "description": "Switch state"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "label": {
+        "type": "string",
+        "description": "Switch label"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Switch checked={enabled} onChange={setEnabled} label='Enable feature' />"
+    ],
+    "useCases": [
+      "Toggle settings",
+      "On/off switches",
+      "Feature toggles"
+    ],
+    "relatedComponents": [
+      "Checkbox"
+    ]
+  },
+  "Slider": {
+    "category": "molecule",
+    "description": "Range slider component",
+    "props": {
+      "value": {
+        "type": "number",
+        "description": "Slider value"
+      },
+      "min": {
+        "type": "number",
+        "default": 0,
+        "description": "Minimum value"
+      },
+      "max": {
+        "type": "number",
+        "default": 100,
+        "description": "Maximum value"
+      },
+      "step": {
+        "type": "number",
+        "default": 1,
+        "description": "Step increment"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Slider value={volume} onChange={setVolume} min={0} max={100} />"
+    ],
+    "useCases": [
+      "Volume controls",
+      "Range inputs",
+      "Value selection"
+    ]
+  },
+  "Alert": {
+    "category": "molecule",
+    "description": "Informational alert component",
+    "props": {
+      "variant": {
+        "type": "string",
+        "options": [
+          "default",
+          "success",
+          "warning",
+          "error"
+        ],
+        "default": "default",
+        "description": "Alert style"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Alert content"
+      }
+    },
+    "examples": [
+      "<Alert variant='success'><AlertTitle>Success!</AlertTitle><AlertDescription>Your changes have been saved.</AlertDescription></Alert>",
+      "<Alert variant='error'><AlertTitle>Error</AlertTitle><AlertDescription>Something went wrong.</AlertDescription></Alert>"
+    ],
+    "useCases": [
+      "Success messages",
+      "Error notifications",
+      "Warning alerts",
+      "Info messages",
+      "Status updates"
+    ],
+    "relatedComponents": [
+      "AlertTitle",
+      "AlertDescription"
+    ]
+  },
+  "AlertTitle": {
+    "category": "molecule",
+    "description": "Alert title component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Title content"
+      }
+    },
+    "examples": [
+      "<AlertTitle>Important Notice</AlertTitle>"
+    ],
+    "useCases": [
+      "Alert headings",
+      "Notification titles",
+      "Message headers"
+    ],
+    "relatedComponents": [
+      "Alert",
+      "AlertDescription"
+    ]
+  },
+  "AlertDescription": {
+    "category": "molecule",
+    "description": "Alert description component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Description content"
+      }
+    },
+    "examples": [
+      "<AlertDescription>This is additional information about the alert.</AlertDescription>"
+    ],
+    "useCases": [
+      "Alert details",
+      "Message content",
+      "Additional information"
+    ],
+    "relatedComponents": [
+      "Alert",
+      "AlertTitle"
+    ]
+  },
+  "Progress": {
+    "category": "molecule",
+    "description": "Progress bar component",
+    "props": {
+      "value": {
+        "type": "number",
+        "description": "Progress value (0-100)"
+      },
+      "max": {
+        "type": "number",
+        "default": 100,
+        "description": "Maximum value"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Progress value={75} />"
+    ],
+    "useCases": [
+      "Loading progress",
+      "Upload progress",
+      "Task completion"
+    ]
+  },
+  "Badge": {
+    "category": "molecule",
+    "description": "Badge component for labels and tags",
+    "props": {
+      "variant": {
+        "type": "string",
+        "options": [
+          "default",
+          "secondary",
+          "destructive",
+          "outline"
+        ],
+        "default": "default",
+        "description": "Badge style"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Badge content"
+      }
+    },
+    "examples": [
+      "<Badge>New</Badge>",
+      "<Badge variant='destructive'>Error</Badge>"
+    ],
+    "useCases": [
+      "Status indicators",
+      "Labels",
+      "Tags",
+      "Notifications"
+    ]
+  },
+  "Avatar": {
+    "category": "molecule",
+    "description": "User avatar component",
+    "props": {
+      "src": {
+        "type": "string",
+        "description": "Image source URL"
+      },
+      "alt": {
+        "type": "string",
+        "description": "Alt text"
+      },
+      "fallback": {
+        "type": "string",
+        "description": "Fallback text"
+      },
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Avatar size"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Avatar src='/avatar.jpg' alt='User' />",
+      "<Avatar fallback='JD' size='lg' />"
+    ],
+    "useCases": [
+      "User profiles",
+      "Team members",
+      "Account avatars"
+    ]
+  },
+  "Table": {
+    "category": "molecule",
+    "description": "Data table component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Table content"
+      }
+    },
+    "examples": [
+      "<Table><TableHeader><TableRow><TableHead>Name</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>John</TableCell></TableRow></TableBody></Table>"
+    ],
+    "useCases": [
+      "Data display",
+      "Lists",
+      "Structured information"
+    ],
+    "relatedComponents": [
+      "TableHeader",
+      "TableBody",
+      "TableRow",
+      "TableCell"
+    ]
+  },
+  "TableHeader": {
+    "category": "molecule",
+    "description": "Table header section",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Header content"
+      }
+    },
+    "examples": [
+      "<TableHeader><TableRow><TableHead>Column 1</TableHead></TableRow></TableHeader>"
+    ],
+    "useCases": [
+      "Table headers",
+      "Column labels",
+      "Table structure"
+    ],
+    "relatedComponents": [
+      "Table",
+      "TableHead"
+    ]
+  },
+  "TableBody": {
+    "category": "molecule",
+    "description": "Table body section",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Body content"
+      }
+    },
+    "examples": [
+      "<TableBody><TableRow><TableCell>Data</TableCell></TableRow></TableBody>"
+    ],
+    "useCases": [
+      "Table data",
+      "Row content",
+      "Table structure"
+    ],
+    "relatedComponents": [
+      "Table",
+      "TableRow"
+    ]
+  },
+  "TableFooter": {
+    "category": "molecule",
+    "description": "Table footer section",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Footer content"
+      }
+    },
+    "examples": [
+      "<TableFooter><TableRow><TableCell>Total</TableCell></TableRow></TableFooter>"
+    ],
+    "useCases": [
+      "Table summaries",
+      "Footer content",
+      "Table structure"
+    ],
+    "relatedComponents": [
+      "Table",
+      "TableRow"
+    ]
+  },
+  "TableHead": {
+    "category": "molecule",
+    "description": "Table header cell",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Header content"
+      }
+    },
+    "examples": [
+      "<TableHead>Name</TableHead>"
+    ],
+    "useCases": [
+      "Column headers",
+      "Table labels",
+      "Header cells"
+    ],
+    "relatedComponents": [
+      "TableHeader",
+      "TableCell"
+    ]
+  },
+  "TableRow": {
+    "category": "molecule",
+    "description": "Table row component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Row content"
+      }
+    },
+    "examples": [
+      "<TableRow><TableCell>Data 1</TableCell><TableCell>Data 2</TableCell></TableRow>"
+    ],
+    "useCases": [
+      "Table rows",
+      "Data rows",
+      "Row structure"
+    ],
+    "relatedComponents": [
+      "TableBody",
+      "TableCell"
+    ]
+  },
+  "TableCell": {
+    "category": "molecule",
+    "description": "Table cell component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Cell content"
+      }
+    },
+    "examples": [
+      "<TableCell>Cell content</TableCell>"
+    ],
+    "useCases": [
+      "Table data",
+      "Cell content",
+      "Table structure"
+    ],
+    "relatedComponents": [
+      "TableRow",
+      "TableHead"
+    ]
+  },
+  "TableCaption": {
+    "category": "molecule",
+    "description": "Table caption component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Caption content"
+      }
+    },
+    "examples": [
+      "<TableCaption>User data table</TableCaption>"
+    ],
+    "useCases": [
+      "Table descriptions",
+      "Accessibility",
+      "Table titles"
+    ],
+    "relatedComponents": [
+      "Table"
+    ]
+  },
+  "Calendar": {
+    "category": "molecule",
+    "description": "Calendar component for date selection",
+    "props": {
+      "value": {
+        "type": "Date",
+        "description": "Selected date"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Date change handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Calendar value={selectedDate} onChange={setSelectedDate} />"
+    ],
+    "useCases": [
+      "Date selection",
+      "Date pickers",
+      "Calendar interfaces"
+    ]
+  },
+  "Skeleton": {
+    "category": "molecule",
+    "description": "Loading skeleton component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Skeleton content"
+      }
+    },
+    "examples": [
+      "<Skeleton className='h-4 w-32' />"
+    ],
+    "useCases": [
+      "Loading states",
+      "Content placeholders",
+      "Progressive loading"
+    ]
+  },
+  "HoverCard": {
+    "category": "molecule",
+    "description": "Hover card component with trigger and content",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Hover card content"
+      }
+    },
+    "examples": [
+      "<HoverCard><HoverCardTrigger>Hover me</HoverCardTrigger><HoverCardContent>Content</HoverCardContent></HoverCard>"
+    ],
+    "useCases": [
+      "Tooltips",
+      "Preview cards",
+      "Contextual information"
+    ],
+    "relatedComponents": [
+      "HoverCardTrigger",
+      "HoverCardContent"
+    ]
+  },
+  "HoverCardTrigger": {
+    "category": "molecule",
+    "description": "Hover card trigger component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Trigger content"
+      }
+    },
+    "examples": [
+      "<HoverCardTrigger>Hover for info</HoverCardTrigger>"
+    ],
+    "useCases": [
+      "Hover triggers",
+      "Interactive elements",
+      "Preview triggers"
+    ],
+    "relatedComponents": [
+      "HoverCard",
+      "HoverCardContent"
+    ]
+  },
+  "HoverCardContent": {
+    "category": "molecule",
+    "description": "Hover card content component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Content"
+      }
+    },
+    "examples": [
+      "<HoverCardContent>Additional information</HoverCardContent>"
+    ],
+    "useCases": [
+      "Hover content",
+      "Preview information",
+      "Contextual details"
+    ],
+    "relatedComponents": [
+      "HoverCard",
+      "HoverCardTrigger"
+    ]
+  },
+  "Popover": {
+    "category": "molecule",
+    "description": "Popover component with trigger and content",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Popover content"
+      }
+    },
+    "examples": [
+      "<Popover><PopoverTrigger>Click me</PopoverTrigger><PopoverContent>Content</PopoverContent></Popover>"
+    ],
+    "useCases": [
+      "Dropdown menus",
+      "Context menus",
+      "Action menus"
+    ],
+    "relatedComponents": [
+      "PopoverTrigger",
+      "PopoverContent"
+    ]
+  },
+  "PopoverTrigger": {
+    "category": "molecule",
+    "description": "Popover trigger component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Trigger content"
+      }
+    },
+    "examples": [
+      "<PopoverTrigger>Open menu</PopoverTrigger>"
+    ],
+    "useCases": [
+      "Menu triggers",
+      "Dropdown triggers",
+      "Action triggers"
+    ],
+    "relatedComponents": [
+      "Popover",
+      "PopoverContent"
+    ]
+  },
+  "PopoverContent": {
+    "category": "molecule",
+    "description": "Popover content component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Content"
+      }
+    },
+    "examples": [
+      "<PopoverContent><Button>Action 1</Button><Button>Action 2</Button></PopoverContent>"
+    ],
+    "useCases": [
+      "Menu content",
+      "Dropdown content",
+      "Action lists"
+    ],
+    "relatedComponents": [
+      "Popover",
+      "PopoverTrigger"
+    ]
+  },
+  "ActionCard": {
+    "category": "molecule",
+    "description": "Card with action buttons",
+    "props": {
+      "title": {
+        "type": "string",
+        "description": "Card title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Card description"
+      },
+      "actions": {
+        "type": "array",
+        "description": "Action buttons"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<ActionCard title='Project' description='Manage your project' actions={[<Button>Edit</Button>, <Button>Delete</Button>]} />"
+    ],
+    "useCases": [
+      "Action items",
+      "Management cards",
+      "Interactive content"
+    ],
+    "relatedComponents": [
+      "Card",
+      "ContentCard"
+    ]
+  },
+  "ContentCard": {
+    "category": "molecule",
+    "description": "Card for content display",
+    "props": {
+      "title": {
+        "type": "string",
+        "description": "Card title"
+      },
+      "content": {
+        "type": "ReactNode",
+        "description": "Card content"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<ContentCard title='Article' content={<p>Article content...</p>} />"
+    ],
+    "useCases": [
+      "Content display",
+      "Article cards",
+      "Information cards"
+    ],
+    "relatedComponents": [
+      "Card",
+      "ActionCard"
+    ]
+  },
+  "FileList": {
+    "category": "molecule",
+    "description": "File listing component",
+    "props": {
+      "files": {
+        "type": "array",
+        "description": "File list"
+      },
+      "onFileSelect": {
+        "type": "function",
+        "description": "File selection handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<FileList files={files} onFileSelect={handleSelect} />"
+    ],
+    "useCases": [
+      "File management",
+      "Document lists",
+      "Asset browsers"
+    ]
+  },
+  "Notification": {
+    "category": "molecule",
+    "description": "Notification display component",
+    "props": {
+      "type": {
+        "type": "string",
+        "options": [
+          "info",
+          "success",
+          "warning",
+          "error"
+        ],
+        "description": "Notification type"
+      },
+      "title": {
+        "type": "string",
+        "description": "Notification title"
+      },
+      "message": {
+        "type": "string",
+        "description": "Notification message"
+      },
+      "onClose": {
+        "type": "function",
+        "description": "Close handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<Notification type='success' title='Success' message='Operation completed' onClose={handleClose} />"
+    ],
+    "useCases": [
+      "System notifications",
+      "Toast messages",
+      "Status updates"
+    ]
+  },
+  "SearchBar": {
+    "category": "molecule",
+    "description": "Search input with button",
+    "props": {
+      "placeholder": {
+        "type": "string",
+        "default": "Search...",
+        "description": "Placeholder text"
+      },
+      "value": {
+        "type": "string",
+        "description": "Search value"
+      },
+      "onSearch": {
+        "type": "function",
+        "description": "Search handler"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Value change handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<SearchBar placeholder='Search products...' onSearch={(query) => console.log(query)} />"
+    ],
+    "useCases": [
+      "Search functionality",
+      "Filter interfaces",
+      "Data lookup",
+      "Navigation search"
+    ],
+    "relatedComponents": [
+      "SearchBarNew",
+      "Input"
+    ]
+  },
+  "SearchBarNew": {
+    "category": "molecule",
+    "description": "Enhanced search bar with filters",
+    "props": {
+      "placeholder": {
+        "type": "string",
+        "default": "Search...",
+        "description": "Placeholder text"
+      },
+      "value": {
+        "type": "string",
+        "description": "Search value"
+      },
+      "onSearch": {
+        "type": "function",
+        "description": "Search handler"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Value change handler"
+      },
+      "showFilters": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show filter options"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<SearchBarNew placeholder='Search with filters...' showFilters onSearch={(query, filters) => handleSearch(query, filters)} />"
+    ],
+    "useCases": [
+      "Advanced search",
+      "Filtered search",
+      "Complex queries"
+    ],
+    "relatedComponents": [
+      "SearchBar",
+      "Input"
+    ]
+  }
+}

@@ -1,0 +1,745 @@
+{
+  "Button": {
+    "category": "atom",
+    "description": "Base button component with full variant support",
+    "props": {
+      "variant": {
+        "type": "string",
+        "options": [
+          "default",
+          "destructive",
+          "outline",
+          "secondary",
+          "ghost",
+          "link"
+        ],
+        "default": "default",
+        "description": "Visual style variant"
+      },
+      "size": {
+        "type": "string",
+        "options": [
+          "xs",
+          "sm",
+          "default",
+          "lg",
+          "icon"
+        ],
+        "default": "default",
+        "description": "Size variant"
+      },
+      "isLoading": {
+        "type": "boolean",
+        "default": false,
+        "description": "Shows loading spinner"
+      },
+      "leftIcon": {
+        "type": "ReactNode",
+        "description": "Icon on the left side"
+      },
+      "rightIcon": {
+        "type": "ReactNode",
+        "description": "Icon on the right side"
+      },
+      "enableAnalytics": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable click tracking"
+      },
+      "useThemeVariant": {
+        "type": "boolean",
+        "default": false,
+        "description": "Auto-adjust based on theme"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "type": {
+        "type": "string",
+        "options": [
+          "button",
+          "submit",
+          "reset"
+        ],
+        "default": "button",
+        "description": "Button type"
+      }
+    },
+    "examples": [
+      "<Button>Click me</Button>",
+      "<Button variant='primary' size='lg'>Large Primary</Button>",
+      "<Button variant='ghost' size='sm'>Small Ghost</Button>",
+      "<Button leftIcon={<Icon />} rightIcon={<ChevronRight />}>With Icons</Button>",
+      "<Button isLoading>Processing...</Button>"
+    ],
+    "useCases": [
+      "Primary actions",
+      "Secondary actions",
+      "Form submissions",
+      "Navigation elements",
+      "Interactive elements"
+    ],
+    "relatedComponents": [
+      "ButtonPrimary",
+      "ButtonSecondary",
+      "ButtonGhost",
+      "ButtonDanger"
+    ]
+  },
+  "Input": {
+    "category": "atom",
+    "description": "Text input component with validation and theme integration",
+    "props": {
+      "type": {
+        "type": "string",
+        "default": "text",
+        "description": "Input type"
+      },
+      "placeholder": {
+        "type": "string",
+        "description": "Placeholder text"
+      },
+      "value": {
+        "type": "string",
+        "description": "Controlled value"
+      },
+      "defaultValue": {
+        "type": "string",
+        "description": "Uncontrolled default value"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Required field"
+      },
+      "error": {
+        "type": "boolean",
+        "default": false,
+        "description": "Error state"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onChange": {
+        "type": "function",
+        "description": "Change handler"
+      },
+      "onBlur": {
+        "type": "function",
+        "description": "Blur handler"
+      },
+      "onFocus": {
+        "type": "function",
+        "description": "Focus handler"
+      }
+    },
+    "examples": [
+      "<Input placeholder='Enter your name' />",
+      "<Input type='email' required error={!isValid} placeholder='Email address' />",
+      "<Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' />"
+    ],
+    "useCases": [
+      "Text input fields",
+      "Email inputs",
+      "Password fields",
+      "Search inputs",
+      "Form fields"
+    ],
+    "relatedComponents": [
+      "FormInput",
+      "FormField"
+    ]
+  },
+  "Card": {
+    "category": "atom",
+    "description": "Content container with shadow and border options",
+    "props": {
+      "variant": {
+        "type": "string",
+        "options": [
+          "default",
+          "elevated",
+          "outlined"
+        ],
+        "default": "default",
+        "description": "Card style variant"
+      },
+      "padding": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Internal padding"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Card content"
+      }
+    },
+    "examples": [
+      "<Card><p>Simple card content</p></Card>",
+      "<Card variant='elevated' padding='lg'><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Content</CardContent></Card>"
+    ],
+    "useCases": [
+      "Content containers",
+      "Information panels",
+      "Form sections",
+      "Dashboard widgets",
+      "Product cards"
+    ],
+    "relatedComponents": [
+      "CardHeader",
+      "CardTitle",
+      "CardContent"
+    ]
+  },
+  "CardHeader": {
+    "category": "atom",
+    "description": "Card header section component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Header content"
+      }
+    },
+    "examples": [
+      "<CardHeader><CardTitle>Card Title</CardTitle></CardHeader>"
+    ],
+    "useCases": [
+      "Card headers",
+      "Section titles",
+      "Content organization"
+    ],
+    "relatedComponents": [
+      "Card",
+      "CardTitle",
+      "CardContent"
+    ]
+  },
+  "CardTitle": {
+    "category": "atom",
+    "description": "Card title component",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Title content"
+      }
+    },
+    "examples": [
+      "<CardTitle>Important Information</CardTitle>"
+    ],
+    "useCases": [
+      "Card titles",
+      "Section headings",
+      "Content labeling"
+    ],
+    "relatedComponents": [
+      "Card",
+      "CardHeader",
+      "CardContent"
+    ]
+  },
+  "CardContent": {
+    "category": "atom",
+    "description": "Card content section",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Content"
+      }
+    },
+    "examples": [
+      "<CardContent><p>This is the main content of the card.</p></CardContent>"
+    ],
+    "useCases": [
+      "Card body content",
+      "Main content areas",
+      "Information display"
+    ],
+    "relatedComponents": [
+      "Card",
+      "CardHeader",
+      "CardTitle"
+    ]
+  },
+  "StatusIndicator": {
+    "category": "atom",
+    "description": "Status display component",
+    "props": {
+      "status": {
+        "type": "string",
+        "options": [
+          "success",
+          "warning",
+          "error",
+          "info"
+        ],
+        "description": "Status type"
+      },
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Indicator size"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<StatusIndicator status='success' />",
+      "<StatusIndicator status='error' size='lg' />"
+    ],
+    "useCases": [
+      "Status indicators",
+      "Loading states",
+      "Validation feedback",
+      "System status"
+    ]
+  },
+  "ErrorBoundary": {
+    "category": "atom",
+    "description": "Error boundary component for error handling",
+    "props": {
+      "fallback": {
+        "type": "ReactNode",
+        "description": "Fallback UI to render on error"
+      },
+      "onError": {
+        "type": "function",
+        "description": "Error callback function"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Child components to wrap"
+      }
+    },
+    "examples": [
+      "<ErrorBoundary fallback={<div>Something went wrong</div>}><MyComponent /></ErrorBoundary>"
+    ],
+    "useCases": [
+      "Error handling",
+      "Graceful degradation",
+      "Debugging",
+      "User experience protection"
+    ]
+  },
+  "ButtonPrimary": {
+    "category": "atom",
+    "description": "Primary action button with enhanced styling",
+    "props": {
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Full width button"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonPrimary>Primary Action</ButtonPrimary>",
+      "<ButtonPrimary size='lg'>Large Primary</ButtonPrimary>"
+    ],
+    "useCases": [
+      "Primary actions",
+      "Main call-to-action buttons",
+      "Important user flows"
+    ],
+    "relatedComponents": [
+      "Button",
+      "ButtonSuccess",
+      "ButtonSecondary"
+    ]
+  },
+  "ButtonSecondary": {
+    "category": "atom",
+    "description": "Secondary action button",
+    "props": {
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Full width button"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonSecondary>Secondary Action</ButtonSecondary>"
+    ],
+    "useCases": [
+      "Secondary actions",
+      "Cancel buttons",
+      "Alternative options"
+    ],
+    "relatedComponents": [
+      "Button",
+      "ButtonPrimary",
+      "ButtonGhost"
+    ]
+  },
+  "ButtonGhost": {
+    "category": "atom",
+    "description": "Subtle secondary button with transparent background",
+    "props": {
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Full width button"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonGhost>Ghost Button</ButtonGhost>"
+    ],
+    "useCases": [
+      "Subtle actions",
+      "Menu items",
+      "Secondary navigation"
+    ],
+    "relatedComponents": [
+      "Button",
+      "ButtonSecondary"
+    ]
+  },
+  "ButtonDanger": {
+    "category": "atom",
+    "description": "Destructive action button for delete/cancel operations",
+    "props": {
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Full width button"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonDanger>Delete Item</ButtonDanger>"
+    ],
+    "useCases": [
+      "Delete actions",
+      "Destructive operations",
+      "Dangerous confirmations"
+    ],
+    "relatedComponents": [
+      "Button",
+      "ButtonPrimary"
+    ]
+  },
+  "ButtonSuccess": {
+    "category": "atom",
+    "description": "Success-themed button component",
+    "props": {
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Full width button"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disabled state"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonSuccess>Save Changes</ButtonSuccess>",
+      "<ButtonSuccess size='lg' fullWidth>Complete Setup</ButtonSuccess>"
+    ],
+    "useCases": [
+      "Success actions",
+      "Confirmation buttons",
+      "Positive user flows"
+    ],
+    "migrationNotes": "Consider migrating to Button with variant='default' for better consistency",
+    "relatedComponents": [
+      "Button",
+      "ButtonPrimary"
+    ]
+  },
+  "ButtonWithIcon": {
+    "category": "atom",
+    "description": "Button component with icon support",
+    "props": {
+      "icon": {
+        "type": "ReactNode",
+        "description": "Icon to display"
+      },
+      "iconPosition": {
+        "type": "string",
+        "options": [
+          "left",
+          "right"
+        ],
+        "default": "left",
+        "description": "Icon position"
+      },
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Button content"
+      }
+    },
+    "examples": [
+      "<ButtonWithIcon icon={<Icon />}>With Icon</ButtonWithIcon>"
+    ],
+    "useCases": [
+      "Icon buttons",
+      "Action buttons with icons",
+      "Enhanced UI elements"
+    ],
+    "relatedComponents": [
+      "Button",
+      "ButtonIconOnly"
+    ]
+  },
+  "ButtonIconOnly": {
+    "category": "atom",
+    "description": "Icon-only button component",
+    "props": {
+      "icon": {
+        "type": "ReactNode",
+        "description": "Icon to display"
+      },
+      "size": {
+        "type": "string",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Size variant"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "onClick": {
+        "type": "function",
+        "description": "Click handler"
+      },
+      "ariaLabel": {
+        "type": "string",
+        "description": "Accessibility label"
+      }
+    },
+    "examples": [
+      "<ButtonIconOnly icon={<Icon />} ariaLabel='Close' />"
+    ],
+    "useCases": [
+      "Icon-only buttons",
+      "Toolbar actions",
+      "Compact interfaces"
+    ],
+    "relatedComponents": [
+      "ButtonWithIcon",
+      "Button"
+    ]
+  },
+  "InputGroup": {
+    "category": "atom",
+    "description": "Input group component for combined inputs",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Input group content"
+      }
+    },
+    "examples": [
+      "<InputGroup><Input /><Button>Search</Button></InputGroup>"
+    ],
+    "useCases": [
+      "Combined input elements",
+      "Search bars",
+      "Form field groups"
+    ],
+    "relatedComponents": [
+      "Input",
+      "Button"
+    ]
+  }
+}

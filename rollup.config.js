@@ -40,7 +40,7 @@ const config = [
         pure: []
       })
     ],
-    external: ['react', 'react-dom', '@tamyla/ui-components']
+    external: ['react', 'react-dom', '@tamyla/ui-components', 'styled-components']
   },
   // TypeScript declarations
   {
@@ -50,7 +50,7 @@ const config = [
       format: 'esm'
     },
     plugins: [dts()],
-    external: ['react', 'react-dom', '@tamyla/ui-components']
+    external: ['react', 'react-dom', '@tamyla/ui-components', 'styled-components']
   }
 ];
 

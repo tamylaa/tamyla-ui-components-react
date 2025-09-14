@@ -1,0 +1,80 @@
+{
+  "EnhancedSearch": {
+    "category": "application",
+    "description": "Advanced search application",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Search application content"
+      }
+    },
+    "examples": [
+      "<EnhancedSearch><SearchInterface /></EnhancedSearch>"
+    ],
+    "useCases": [
+      "Search applications",
+      "Advanced search interfaces",
+      "Search dashboards"
+    ],
+    "relatedComponents": [
+      "SearchInterface",
+      "SearchBarNew"
+    ]
+  },
+  "ContentManager": {
+    "category": "application",
+    "description": "Content management system",
+    "props": {
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      "children": {
+        "type": "ReactNode",
+        "description": "Content management content"
+      }
+    },
+    "examples": [
+      "<ContentManager><Dashboard /></ContentManager>"
+    ],
+    "useCases": [
+      "CMS interfaces",
+      "Content management",
+      "Admin panels"
+    ],
+    "relatedComponents": [
+      "Dashboard",
+      "FileList"
+    ]
+  },
+  "CampaignSelector": {
+    "category": "application",
+    "description": "Campaign selection interface",
+    "props": {
+      "campaigns": {
+        "type": "array",
+        "description": "Available campaigns"
+      },
+      "onSelect": {
+        "type": "function",
+        "description": "Selection handler"
+      },
+      "className": {
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    },
+    "examples": [
+      "<CampaignSelector campaigns={campaigns} onSelect={handleSelect} />"
+    ],
+    "useCases": [
+      "Campaign management",
+      "Project selection",
+      "Workflow interfaces"
+    ]
+  }
+}

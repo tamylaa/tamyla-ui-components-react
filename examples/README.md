@@ -1,8 +1,56 @@
-# Sample HTML Examples - Tamyla UI Components React
+# Sample HTML### By Use Case
+- **Interactive Testing**: `interactive-testing.html`
+- **Complete Showcase**: `complete-showcase.html`
+- **Factory Bridge Demo**: `factory-bridge-docs.html`
+- **Responsive Design**: `responsive-theming-showcase.html`
+- **CSS Integration**: `css-responsive-showcase.html`
+
+## 🧩 Component Index
+
+### Buttons & Controls
+- **Button Variants**: `interactive-testing.html` (variants, sizes, states)
+- **ButtonPrimary/ButtonSecondary**: `complete-showcase.html`
+- **Icon Buttons**: `interactive-testing.html`
+- **Loading States**: `interactive-testing.html`
+
+### Form Components
+- **Input Fields**: `interactive-testing.html` (text, email, password)
+- **Input Validation**: `interactive-testing.html`
+- **Form Layout**: `complete-showcase.html`
+
+### Layout Components
+- **Cards**: `interactive-testing.html`, `complete-showcase.html`
+- **CardHeader/CardTitle**: `complete-showcase.html`
+- **Grid Systems**: `responsive-theming-showcase.html`
+- **Responsive Layout**: `css-responsive-showcase.html`
+
+### Advanced Features
+- **Factory Bridge**: `factory-bridge-docs.html`
+- **Redux Integration**: `complete-showcase.html`
+- **Theme Switching**: `themed-showcase.html`
+- **CSS Custom Properties**: `css-responsive-showcase.html`
+
+## 📁 Files Overviews - Tamyla UI Components React
 
 This directory contains comprehensive HTML examples demonstrating the React UI components and their integration with the vanilla ui-components library through the Factory Bridge pattern.
 
-## 📁 Files Overview
+## � Quick Component Lookup
+
+### By Category
+- **Buttons**: `interactive-testing.html`, `complete-showcase.html`
+- **Forms**: `interactive-testing.html`, `factory-bridge-docs.html`
+- **Cards**: `complete-showcase.html`, `interactive-testing.html`
+- **Layout**: `complete-showcase.html`, `responsive-theming-showcase.html`
+- **Theming**: `themed-showcase.html`, `responsive-theming-showcase.html`
+
+### By Use Case
+- **Interactive Testing**: `interactive-testing.html`
+- **Complete Showcase**: `complete-showcase.html`
+- **Factory Bridge Demo**: `factory-bridge-docs.html`
+- **Responsive Design**: `responsive-theming-showcase.html`
+- **CSS Integration**: `css-responsive-showcase.html`
+
+## �📁 Files Overview
 
 ### 1. `complete-showcase.html`
 **🎨 Complete Component Showcase**

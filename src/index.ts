@@ -289,6 +289,16 @@ export type { ComponentFactory as CommonComponentFactory } from './types/common'
 export type { ComponentFactory as FactoryComponentFactory, FactoryConfig } from './types/factory';
 
 // ============================================
+// LICENSE VALIDATION UTILITIES
+// ============================================
+
+// Export license validation utilities
+export * from './utils/license-validation';
+
+// Export premium components (with license checks)
+export { PremiumDashboard, usePremiumFeature, withPremiumCheck } from './components/premium/PremiumDashboard';
+
+// ============================================
 // CSS DESIGN TOKENS (MUST PRESERVE)
 // ============================================
 

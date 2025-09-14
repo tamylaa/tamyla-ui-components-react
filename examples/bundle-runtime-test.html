@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runtime Test - styled-components Integration</title>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- Load React and styled-components from CDN (simulating consumer environment) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/styled-components@6.1.19/dist/styled-components.min.js"></script>
+    
+    <!-- Load our built bundle -->
+    <script type="module">
+        import * as TamylaComponents from './dist/index.esm.js';
+        
+        console.log('=== Runtime Test Results ===');
+        console.log('Available components:', Object.keys(TamylaComponents));
+        
+        // Test styled-components integration
+        try {
+            const { ThemeProvider, Button, SearchBar } = TamylaComponents;
+            
+            console.log('✅ Components imported successfully');
+            console.log('ThemeProvider:', typeof ThemeProvider);
+            console.log('Button:', typeof Button);
+            console.log('SearchBar:', typeof SearchBar);
+            
+            // Test if styled-components is working
+            if (window.styled) {
+                console.log('✅ styled-components available globally');
+                
+                // Try to create a simple styled component
+                const TestDiv = window.styled.div`
+                    color: red;
+                    background: blue;
+                `;
+                console.log('✅ styled.div works:', typeof TestDiv);
+                
+            } else {
+                console.error('❌ styled-components not available globally');
+            }
+            
+            // Test theme provider functionality
+            if (ThemeProvider) {
+                console.log('✅ ThemeProvider available');
+                
+                // Try to render a component
+                const container = document.getElementById('root');
+                const element = React.createElement(
+                    ThemeProvider,
+                    { theme: { colors: { primary: '#007bff' } } },
+                    React.createElement('div', { id: 'test-content' }, 'Theme Provider Test')
+                );
+                
+                ReactDOM.render(element, container);
+                console.log('✅ ThemeProvider rendered successfully');
+            }
+            
+        } catch (error) {
+            console.error('❌ Runtime error:', error.message);
+            console.error('Full error:', error);
+            
+            if (error.message.includes('z.div is not a function')) {
+                console.error('🚨 CRITICAL: The z.div error is still present!');
+            }
+        }
+        
+    </script>
+</body>
+</html>

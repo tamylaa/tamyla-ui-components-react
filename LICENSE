@@ -19,3 +19,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## 📋 Dual Licensing Notice
+
+This project uses a **dual-licensing model**:
+
+### 🆓 Free Tier (MIT License)
+- **Core Components:** Basic UI components and utilities
+- **Open Source:** Full access to source code
+- **Community Support:** GitHub issues and discussions
+- **No Restrictions:** Commercial and personal use allowed
+
+### 💰 Commercial Tier (Commercial License Required)
+- **Premium Features:** Advanced components and enterprise features
+- **Commercial License:** Required for production use of premium features
+- **Priority Support:** Dedicated support channels
+- **White-label Rights:** Available for Enterprise licenses
+
+### 📖 Commercial License Agreement
+For commercial use of premium features, please refer to:
+**File:** `licenses/COMMERCIAL_LICENSE.md`
+**Web:** https://tamyla.com/licensing
+
+### 🔍 License Validation
+The software includes automatic license validation for premium features:
+- Free features work without any license
+- Premium features require a valid commercial license
+- License status is checked at runtime
+- Upgrade prompts guide users to commercial licensing
+
+### 📞 Contact for Commercial Licensing
+- **Email:** licensing@tamyla.com
+- **Web:** https://tamyla.com/pricing
+- **Phone:** 1-800-TAMYLA
+
+---
+
+*This dual-licensing structure ensures the project remains accessible to the open-source community while enabling sustainable commercial development.*
