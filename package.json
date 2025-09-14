@@ -56,7 +56,7 @@
     "lint": "eslint --config ./eslint.config.js src",
     "lint:fix": "eslint --config ./eslint.config.js src --fix",
     "type-check": "tsc --noEmit",
-    "check:cjs": "node scripts/check-cjs.js",
+    "check:cjs": "node scripts/test/check-cjs.js",
     "check:bundle": "node scripts/check-bundle.js",
     "debug:bundle": "node scripts/analyze-bundle-imports.js",
     "verify:fix": "node scripts/verify-bundle-fix.js",
