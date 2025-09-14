@@ -78,6 +78,7 @@
     "preprod:major": "node scripts/preprod-workflow.js major",
     "preprod:custom": "node scripts/preprod-workflow.js custom",
     "preprod:validate": "node scripts/preprod-workflow.js custom --dry-run --verbose",
+    "predeploy": "npm run registry:combine && npm run certify-exports && npm run type-check && npm run check:cjs && npm run check:bundle && npm run build",
     "workflow:report": "node scripts/generate-workflow-report.js",
     "workflow:dashboard": "node scripts/workflow-dashboard.js",
     "fix-any-types": "node scripts/fix-any-types.js",

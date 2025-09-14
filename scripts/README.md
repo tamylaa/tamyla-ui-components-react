@@ -17,6 +17,20 @@ scripts/
 
 ## Script Categories
 
+### Deployment Process
+
+**Before deploying** (recommended for developers):
+```bash
+npm run predeploy    # Full validation including registry combine
+```
+
+**Automatic CI/CD deployment** uses simplified `prepublishOnly`:
+```bash
+npm run prepublishOnly    # Excludes registry:combine (pre-committed)
+```
+
+The registry must be pre-combined and committed to avoid CI file resolution issues.
+
 ### Build Scripts (`scripts/build/`)
 - `split-registry.js` - Split/combine component registry for atomic design organization
 
