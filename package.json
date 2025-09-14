@@ -60,7 +60,7 @@
     "check:bundle": "node scripts/check-bundle.js",
     "debug:bundle": "node scripts/analyze-bundle-imports.js",
     "verify:fix": "node scripts/verify-bundle-fix.js",
-    "prepublishOnly": "npm run registry:combine && npm run certify-exports && npm run type-check && npm run check:cjs && npm run check:bundle && npm run build",
+    "prepublishOnly": "npm run certify-exports && npm run type-check && npm run check:cjs && npm run check:bundle && npm run build",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
     "analyze": "npm run build && npx bundle-analyzer dist/index.esm.js",
