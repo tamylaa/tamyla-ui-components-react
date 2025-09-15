@@ -24,12 +24,20 @@ scripts/
 npm run predeploy    # Full validation including registry combine
 ```
 
-**Automatic CI/CD deployment** uses simplified `prepublishOnly`:
-```bash
-npm run prepublishOnly    # Excludes registry:combine (pre-committed)
-```
+**CI/CD deployment** runs validation in GitHub Actions before semantic release:
+- Comprehensive validation runs in CI environment (certify-exports, type-check, check:cjs, check:bundle)
+- `prepublishOnly` only runs build step to avoid file resolution issues
+- Registry must be pre-combined and committed
 
-The registry must be pre-combined and committed to avoid CI file resolution issues.
+**Local validation steps**:
+```bash
+npm run registry:combine  # Combine registry parts
+npm run certify-exports   # Validate all exports (142/142 expected)
+npm run type-check       # TypeScript compilation check
+npm run check:cjs        # CommonJS pattern check
+npm run check:bundle     # Bundle certification (219.9KB target)
+npm run build           # Create distribution bundle
+```
 
 ### Build Scripts (`scripts/build/`)
 - `split-registry.js` - Split/combine component registry for atomic design organization

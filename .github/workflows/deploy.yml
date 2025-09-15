@@ -123,6 +123,15 @@ jobs:
     - name: Build for release
       run: npm run build
     
+    - name: Run comprehensive validation
+      run: |
+        echo "🔍 Running comprehensive validation before release..."
+        npm run certify-exports
+        npm run type-check 
+        npm run check:cjs
+        npm run check:bundle
+        echo "✅ All validation steps completed successfully"
+    
     - name: Semantic Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
