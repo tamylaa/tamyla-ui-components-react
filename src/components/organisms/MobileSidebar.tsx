@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
 

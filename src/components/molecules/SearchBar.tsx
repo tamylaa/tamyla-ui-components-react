@@ -11,7 +11,7 @@
  */
 
 import React, { useCallback } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 import { useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store/store';

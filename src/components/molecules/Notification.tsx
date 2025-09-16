@@ -4,7 +4,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { styled, keyframes } from 'styled-components';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 import { ComponentEventData } from '../../types/factory';
 import { useAppDispatch } from '../../store/hooks';
