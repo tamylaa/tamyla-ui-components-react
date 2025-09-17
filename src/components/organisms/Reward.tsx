@@ -187,7 +187,7 @@ const Reward = forwardRef<RewardHandle, RewardProps>((props, ref) => {
         // Handle missing peer dependency gracefully
         let uiComponents: { RewardSystem?: new (config: RewardSystemConfig) => RewardSystemInstance } | null = null;
         try {
-          uiComponents = await import(/* @vite-ignore */ moduleName);
+          uiComponents = await import(/* webpackIgnore: true */ moduleName);
         } catch (importError) {
           logger.warn('Peer dependency @tamyla/ui-components not available:', importError, 'Reward');
         }

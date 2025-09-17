@@ -54,7 +54,7 @@ const loadFactory = async (factoryName: string) => {
     // Handle missing peer dependency gracefully
     let uiComponents: any = null;
     try {
-      uiComponents = await import(/* @vite-ignore */ moduleName);
+      uiComponents = await import(/* webpackIgnore: true */ moduleName);
     } catch (importError) {
       logger.warn('Peer dependency @tamyla/ui-components not available', { error: importError }, 'UnifiedBridge');
     }

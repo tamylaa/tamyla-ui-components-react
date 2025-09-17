@@ -161,7 +161,7 @@ export async function safeDynamicImport<T = any>(
 ): Promise<T | null> {
   return safeAsync(
     async () => {
-      const module = await import(/* @vite-ignore */ moduleSpecifier);
+      const module = await import(/* webpackIgnore: true */ moduleSpecifier);
       return module as T;
     },
     {
