@@ -155,6 +155,9 @@ export { designTokens } from './core/design-tokens';
 // Theme provider and styling
 export { TamylaThemeProvider, GlobalStyles, useTamylaTheme } from './core/theme-provider-new';
 
+// CSP Compatibility utilities for trading portals
+export { CSPProvider, AutoCSPProvider, getCSPNonce, useCSPConfig } from './utils/csp-compatibility';
+
 // Store exports - Explicitly preserve these for external consumers
 import { store, persistor, authActions, uiActions, themeActions, componentActions } from './store/store';
 

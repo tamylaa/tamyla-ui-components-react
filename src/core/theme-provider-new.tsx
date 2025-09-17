@@ -8,6 +8,7 @@ import { ThemeProvider as StyledThemeProvider, createGlobalStyle, DefaultTheme }
 import { useAppSelector } from '../store/hooks';
 import { ThemeState } from '../store/slices/themeSlice';
 import { designTokens } from './design-tokens';
+import { AutoCSPProvider } from '../utils/csp-compatibility';
 
 // Theme context interface
 interface ThemeContextValue {
@@ -250,13 +251,15 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
   }), [themeState]);
 
   return (
-    <ThemeContext.Provider value={themeContextValue}>
-      <GlobalStyles />
+    <AutoCSPProvider>
+      <ThemeContext.Provider value={themeContextValue}>
+        <GlobalStyles />
 
-      <StyledThemeProvider theme={styledTheme as unknown as DefaultTheme}>
-        {children}
-      </StyledThemeProvider>
-    </ThemeContext.Provider>
+        <StyledThemeProvider theme={styledTheme as unknown as DefaultTheme}>
+          {children}
+        </StyledThemeProvider>
+      </ThemeContext.Provider>
+    </AutoCSPProvider>
   );
 };
 
