@@ -7,6 +7,7 @@
 import type { ComponentFactory, FactoryConfig } from '../types/common';
 import logger from './logger';
 import { safeDynamicImport } from './async-safety';
+import { safeCreateElement } from './ssr-safe';
 
 // Local interface for AbortSignal to avoid ESLint issues
 interface AbortSignalLike {
@@ -153,8 +154,9 @@ export function createMockFactory(factoryName: string): ComponentFactory {
   return {
     create: (config: FactoryConfig = {}) => {
       logger.debug(`Mock ${factoryName} create called`, { config }, 'MockFactory');
+      const element = safeCreateElement('div');
       return {
-        element: document.createElement('div'),
+        element: element || document.createElement('div'), // Fallback for compatibility
         destroy: () => {
           logger.debug(`Mock ${factoryName} destroyed`, null, 'MockFactory');
         },
@@ -183,7 +185,8 @@ export function createMockFactory(factoryName: string): ComponentFactory {
 
     createSearchInterface: (config: FactoryConfig = {}) => {
       logger.debug(`Mock ${factoryName} createSearchInterface called`, { config }, 'MockFactory');
-      return { element: document.createElement('div'), config };
+      const element = safeCreateElement('div');
+      return { element: element || document.createElement('div'), config }; // Fallback for compatibility
     }
   };
 }

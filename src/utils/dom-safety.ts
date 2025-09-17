@@ -5,6 +5,7 @@
 
 import DOMPurify from 'dompurify';
 import { Logger } from './logger';
+import { safeCreateElement as ssrSafeCreateElement, isBrowser as ssrIsBrowser } from './ssr-safe';
 
 // Initialize logger instance
 const logger = new Logger({ enableConsole: true });
@@ -77,7 +78,14 @@ export function safeCreateElementFromHTML(
   level: 'strict' | 'moderate' | 'permissive' = 'moderate'
 ): HTMLElement {
   const sanitizedHTML = sanitizeHTML(html, level);
-  const tempDiv = document.createElement('div');
+  const tempDiv = ssrSafeCreateElement('div');
+  if (!tempDiv) {
+    // SSR fallback - create basic div
+    const fallbackDiv = ssrSafeCreateElement('div') || document.createElement('div');
+    fallbackDiv.textContent = 'Content not available in SSR';
+    return fallbackDiv;
+  }
+  
   tempDiv.innerHTML = sanitizedHTML;
 
   const firstChild = tempDiv.firstElementChild;
@@ -86,7 +94,7 @@ export function safeCreateElementFromHTML(
   }
 
   // Fallback: create safe div with text content
-  const fallbackDiv = document.createElement('div');
+  const fallbackDiv = ssrSafeCreateElement('div') || document.createElement('div');
   fallbackDiv.textContent = html;
   fallbackDiv.className = 'sanitization-fallback';
   return fallbackDiv;
@@ -112,21 +120,14 @@ export function isHTMLSafe(html: string): boolean {
 }
 
 /**
- * SSR-safe window/document access
- */
-export function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof document !== 'undefined';
-}
-
-/**
- * Safe DOM element creation with validation
+ * Safe DOM element creation with validation (SSR-safe)
  */
 export function safeCreateElement(
   tagName: string,
   attributes?: Record<string, string>,
   textContent?: string
 ): HTMLElement | null {
-  if (!isBrowser()) {
+  if (!ssrIsBrowser()) {
     return null;
   }
 
@@ -138,7 +139,7 @@ export function safeCreateElement(
       tagName = 'div';
     }
 
-    const element = document.createElement(tagName);
+    const element = ssrSafeCreateElement(tagName as keyof HTMLElementTagNameMap) || document.createElement(tagName);
 
     // Safely set attributes
     if (attributes) {
@@ -238,3 +239,6 @@ export class SafeEventManager {
 
 // Global event manager instance
 export const globalEventManager = new SafeEventManager();
+
+// Re-export centralized SSR utilities for backward compatibility
+export { isBrowser } from './ssr-safe';

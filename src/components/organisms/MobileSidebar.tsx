@@ -7,6 +7,12 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react
 import { styled } from 'styled-components';
 import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
+import { 
+  safeCreateElement, 
+  safeDocumentAddEventListener, 
+  safeDocumentRemoveEventListener,
+  isBrowser 
+} from '../../utils/ssr-safe';
 
 // TODO: Import when properly exported from ui-components
 // import { MobileSidebar as MobileSidebarFactory } from '@tamyla/ui-components';
@@ -237,13 +243,15 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
   const [mounted, setMounted] = React.useState(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isBrowser()) return;
 
     // TODO: Replace with actual MobileSidebar when properly exported
     // eslint-disable-next-line no-console
     console.warn('MobileSidebar component: Using placeholder implementation. ui-components MobileSidebar needs to be properly exported.');
 
-    const sidebarElement = document.createElement('div');
+    const sidebarElement = safeCreateElement('div');
+    if (!sidebarElement) return;
+    
     sidebarElement.className = `tmyl-mobile-sidebar ${className || ''}`;
 
     const sidebarHTML = `
@@ -363,7 +371,7 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
     }
 
     if (closeOnEscape) {
-      document.addEventListener('keydown', handleKeyDown);
+      safeDocumentAddEventListener('keydown', handleKeyDown);
     }
 
     function handleClose() {
@@ -383,7 +391,7 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
         sidebarElement.parentNode.removeChild(sidebarElement);
       }
       if (closeOnEscape) {
-        document.removeEventListener('keydown', handleKeyDown);
+        safeDocumentRemoveEventListener('keydown', handleKeyDown);
       }
     };
 

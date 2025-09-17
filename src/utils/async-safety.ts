@@ -4,6 +4,7 @@
  */
 
 import { Logger } from './logger';
+import { safeSetTimeout } from './ssr-safe';
 
 // Local interface for AbortSignal to avoid ESLint issues
 interface AbortSignalLike {
@@ -210,7 +211,7 @@ export function safeJSONStringify(
  * Debounced async operation to prevent rapid successive calls
  */
 export class DebouncedAsync<T> {
-  private timeoutId: number | null = null;
+  private timeoutId: number | null | undefined = null;
   private lastPromise: Promise<T | null> | null = null;
 
   constructor(
@@ -224,9 +225,9 @@ export class DebouncedAsync<T> {
       clearTimeout(this.timeoutId);
     }
 
-    // Create new promise
+    // Create new promise with SSR-safe timeout
     this.lastPromise = new Promise<T | null>((resolve) => {
-      this.timeoutId = window.setTimeout(async () => {
+      this.timeoutId = safeSetTimeout(async () => {
         try {
           const result = await this.operation(...args);
           resolve(result);

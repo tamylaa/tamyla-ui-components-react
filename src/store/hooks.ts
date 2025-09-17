@@ -8,6 +8,13 @@ import { useEffect, useCallback } from 'react';
 import { store } from './store';
 import { authActions, type User } from './slices/authSlice';
 import { uiActions } from './slices/uiSlice';
+import { 
+  safeSetTimeout, 
+  safeClearTimeout, 
+  safeWindowAddEventListener, 
+  safeWindowRemoveEventListener,
+  isBrowser 
+} from '../utils/ssr-safe';
 import { Logger } from '../utils/logger';
 import { safeFetch } from '../utils/async-safety';
 import type { ComponentProps, ComponentState, FilterValue, SearchResult } from '../types/common';
@@ -285,23 +292,23 @@ export const useComponent = (componentId: string, componentName?: string) => {
   };
 };
 
-// Responsive Hook with improved memory management
+// Responsive Hook with improved memory management (SSR-safe)
 export const useResponsive = () => {
   const viewport = useAppSelector(state => state.ui.viewport);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return; // SSR guard
+    if (!isBrowser()) return; // SSR guard
 
-    let timeoutId: number | null = null;
+    let timeoutId: number | undefined = undefined;
 
     // Debounced resize handler to prevent excessive updates
     const handleResize = () => {
-      if (timeoutId) {
-        window.clearTimeout(timeoutId);
+      if (timeoutId !== undefined) {
+        safeClearTimeout(timeoutId);
       }
 
-      timeoutId = window.setTimeout(() => {
+      timeoutId = safeSetTimeout(() => {
         try {
           dispatch(uiActions.updateViewport({
             width: window.innerWidth,
@@ -310,21 +317,21 @@ export const useResponsive = () => {
         } catch (error) {
           logger.error('Viewport update failed:', error, 'useViewport');
         }
-        timeoutId = null;
+        timeoutId = undefined;
       }, 16); // ~60fps throttling
     };
 
     // Initial check
     handleResize();
 
-    window.addEventListener('resize', handleResize, { passive: true });
+    safeWindowAddEventListener('resize', handleResize, { passive: true });
 
     return () => {
       try {
-        if (timeoutId) {
-          window.clearTimeout(timeoutId);
+        if (timeoutId !== undefined) {
+          safeClearTimeout(timeoutId);
         }
-        window.removeEventListener('resize', handleResize);
+        safeWindowRemoveEventListener('resize', handleResize);
       } catch (error) {
         logger.error('Failed to cleanup resize listener:', error, 'useViewport');
       }

@@ -8,6 +8,11 @@ import { styled, keyframes } from 'styled-components';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 import { ComponentEventData } from '../../types/factory';
 import { useAppDispatch } from '../../store/hooks';
+import { 
+  safeSetInterval, 
+  safeClearInterval, 
+  isBrowser 
+} from '../../utils/ssr-safe';
 import { uiActions } from '../../store/store';
 import { responsiveSizes, responsiveSpacing } from '../../utils/responsive-utils';
 
@@ -288,14 +293,14 @@ export const Notification: React.FC<NotificationProps> = React.memo(({
     return () => clearTimeout(timeoutId);
   }, [onClose, dispatch, notificationId]);
 
-  // Auto-dismiss functionality with proper cleanup
+  // Auto-dismiss functionality with proper cleanup (SSR-safe)
   useEffect(() => {
-    if (duration <= 0) return;
+    if (duration <= 0 || !isBrowser()) return;
 
-    let intervalId: number | null = null;
+    let intervalId: number | undefined = undefined;
     let isMounted = true;
 
-    intervalId = window.setInterval(() => {
+    intervalId = safeSetInterval(() => {
       if (!isMounted) return;
 
       setRemainingTime(prev => {
@@ -312,9 +317,9 @@ export const Notification: React.FC<NotificationProps> = React.memo(({
 
     return () => {
       isMounted = false;
-      if (intervalId) {
-        window.clearInterval(intervalId);
-        intervalId = null;
+      if (intervalId !== undefined) {
+        safeClearInterval(intervalId);
+        intervalId = undefined;
       }
     };
   }, [duration, handleClose]);

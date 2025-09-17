@@ -3,7 +3,9 @@
  * Tests one component at a time to verify our enhanced factory methods work
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { styled } from 'styled-components';
+import { safeSetTimeout, safeClearTimeout } from '../utils/ssr-safe';
 
 // Test just the Button component with our enhanced factory methods
 import { ReactButton } from '../core/factory/factory-components';
@@ -106,11 +108,11 @@ const FactoryMethodTest: React.FC = () => {
 
   useEffect(() => {
     // Run tests after component mounts
-    const timer = window.setTimeout(() => {
+    const timer = safeSetTimeout(() => {
       testEnhancedFactoryMethods();
     }, 1000);
 
-    return () => window.clearTimeout(timer);
+    return () => safeClearTimeout(timer);
   }, [testEnhancedFactoryMethods]);
 
   return (
