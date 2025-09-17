@@ -126,6 +126,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     className
   });
 
+  // Set default autocomplete based on input type
+  const getDefaultAutocomplete = (type?: string) => {
+    switch (type) {
+      case 'email':
+        return 'email';
+      case 'password':
+        return 'current-password';
+      case 'tel':
+        return 'tel';
+      case 'url':
+        return 'url';
+      case 'search':
+        return 'off'; // Search inputs typically don't need autocomplete
+      default:
+        return 'off';
+    }
+  };
+
+  const autocomplete = props.autoComplete || getDefaultAutocomplete(props.type);
+
   return (
     <div className="space-y-2">
       {label && (
@@ -159,6 +179,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           disabled={disabled || uiState.loading.global}
           aria-invalid={error}
           aria-describedby={error ? `${inputId}-error` : helpText ? `${inputId}-help` : undefined}
+          autoComplete={autocomplete}
           {...props}
         />
 

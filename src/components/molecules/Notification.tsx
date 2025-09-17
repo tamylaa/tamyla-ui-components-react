@@ -8,10 +8,10 @@ import { styled, keyframes } from 'styled-components';
 import { createFactoryComponent } from '../../core/factory/factory-bridge';
 import { ComponentEventData } from '../../types/factory';
 import { useAppDispatch } from '../../store/hooks';
-import { 
-  safeSetInterval, 
-  safeClearInterval, 
-  isBrowser 
+import {
+  safeSetInterval,
+  safeClearInterval,
+  isBrowser
 } from '../../utils/ssr-safe';
 import { uiActions } from '../../store/store';
 import { responsiveSizes, responsiveSpacing } from '../../utils/responsive-utils';

@@ -133,7 +133,7 @@ export function requireFeature(feature: string, license?: LicenseInfo): void {
  */
 export function getCurrentLicense(): LicenseInfo | undefined {
   // Mock implementation - replace with actual license retrieval
-  const storedLicense = typeof window !== 'undefined' ? localStorage.getItem('tamyla-license-key') : null;
+  const storedLicense = typeof window !== 'undefined' ? localStorage.getItem('tamyla-license-key') : null; // eslint-disable-line no-undef
   if (storedLicense) {
     const validation = validateLicense(storedLicense);
     return validation.valid ? validation.license : undefined;

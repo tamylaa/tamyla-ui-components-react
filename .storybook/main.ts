@@ -19,6 +19,12 @@ const config = {
 
   docs: {
     autodocs: true
+  },
+
+  webpackFinal: async (config) => {
+    // Configure devtool to avoid eval for CSP compliance
+    config.devtool = 'cheap-module-source-map';
+    return config;
   }
 };
 

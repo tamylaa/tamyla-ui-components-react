@@ -229,6 +229,26 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
     );
   };
 
+  // Set default autocomplete based on input type
+  const getDefaultAutocomplete = (type?: string) => {
+    switch (type) {
+      case 'email':
+        return 'email';
+      case 'password':
+        return 'current-password';
+      case 'tel':
+        return 'tel';
+      case 'url':
+        return 'url';
+      case 'search':
+        return 'off';
+      default:
+        return 'off';
+    }
+  };
+
+  const autocomplete = props.autoComplete || getDefaultAutocomplete(props.type);
+
   return (
     <FormField name={name} error={error} isRequired={isRequired}>
       <FormItem>
@@ -249,6 +269,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
               disabled={props.disabled || uiState.loading.global}
               aria-invalid={!!error}
               aria-describedby={error ? `${name}-error` : description ? `${name}-description` : undefined}
+              autoComplete={autocomplete}
               {...props}
             />
             {endIcon && (
@@ -310,6 +331,9 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>((
     }
   }, [onChange, enableAnalytics, analyticsEvent, name, dispatch]);
 
+  // Set default autocomplete (usually 'off' for textareas)
+  const autocomplete = props.autoComplete || 'off';
+
   return (
     <FormField name={name} error={error} isRequired={isRequired}>
       <FormItem>
@@ -328,6 +352,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>((
             disabled={props.disabled || uiState.loading.global}
             aria-invalid={!!error}
             aria-describedby={error ? `${name}-error` : description ? `${name}-description` : undefined}
+            autoComplete={autocomplete}
             {...props}
           />
         </FormControl>

@@ -85,7 +85,7 @@ export function safeCreateElementFromHTML(
     fallbackDiv.textContent = 'Content not available in SSR';
     return fallbackDiv;
   }
-  
+
   tempDiv.innerHTML = sanitizedHTML;
 
   const firstChild = tempDiv.firstElementChild;
@@ -139,7 +139,7 @@ export function safeCreateElement(
       tagName = 'div';
     }
 
-    const element = ssrSafeCreateElement(tagName as keyof HTMLElementTagNameMap) || document.createElement(tagName);
+    const element = ssrSafeCreateElement(tagName as keyof HTMLElementTagNameMap) || document.createElement(tagName); // eslint-disable-line no-undef
 
     // Safely set attributes
     if (attributes) {

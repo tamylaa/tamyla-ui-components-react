@@ -7,11 +7,11 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react
 import { styled } from 'styled-components';
 import { responsiveSizes, touchUtilities, combineResponsive } from '../../utils/responsive-utils';
 import { createThemeStyles, combineThemeClasses } from '../../utils/theme-utils';
-import { 
-  safeCreateElement, 
-  safeDocumentAddEventListener, 
+import {
+  safeCreateElement,
+  safeDocumentAddEventListener,
   safeDocumentRemoveEventListener,
-  isBrowser 
+  isBrowser
 } from '../../utils/ssr-safe';
 
 // TODO: Import when properly exported from ui-components
@@ -251,7 +251,7 @@ export const MobileSidebar = forwardRef<MobileSidebarHandle, MobileSidebarProps>
 
     const sidebarElement = safeCreateElement('div');
     if (!sidebarElement) return;
-    
+
     sidebarElement.className = `tmyl-mobile-sidebar ${className || ''}`;
 
     const sidebarHTML = `

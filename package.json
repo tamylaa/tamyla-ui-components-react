@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/ui-components-react",
-  "version": "5.0.0",
+  "version": "6.0.3",
   "description": "React-based UI component library with Factory Bridge pattern - integrates seamlessly with @tamyla/ui-components. Enhanced AI agent discoverability with structured component registry, comprehensive Storybook (8 components), and detailed guides.",
   "type": "module",
   "sideEffects": [

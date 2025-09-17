@@ -8,12 +8,12 @@ import { useEffect, useCallback } from 'react';
 import { store } from './store';
 import { authActions, type User } from './slices/authSlice';
 import { uiActions } from './slices/uiSlice';
-import { 
-  safeSetTimeout, 
-  safeClearTimeout, 
-  safeWindowAddEventListener, 
+import {
+  safeSetTimeout,
+  safeClearTimeout,
+  safeWindowAddEventListener,
   safeWindowRemoveEventListener,
-  isBrowser 
+  isBrowser
 } from '../utils/ssr-safe';
 import { Logger } from '../utils/logger';
 import { safeFetch } from '../utils/async-safety';

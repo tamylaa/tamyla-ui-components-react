@@ -21,7 +21,7 @@ export const isSSR = (): boolean => {
  * Safe access to window object with fallback
  */
 export const safeWindow = <T = any>(
-  accessor: (window: Window & typeof globalThis) => T,
+  accessor: (window: Window & typeof globalThis) => T, // eslint-disable-line no-undef
   fallback?: T
 ): T | undefined => {
   if (isBrowser()) {
@@ -39,7 +39,7 @@ export const safeWindow = <T = any>(
  * Safe access to document object with fallback
  */
 export const safeDocument = <T = any>(
-  accessor: (document: Document) => T,
+  accessor: (document: Document) => T, // eslint-disable-line no-undef
   fallback?: T
 ): T | undefined => {
   if (isBrowser()) {
@@ -94,9 +94,9 @@ export const safeClearInterval = (id: number | undefined): void => {
 /**
  * Safe addEventListener for window
  */
-export const safeWindowAddEventListener = <K extends keyof WindowEventMap>(
+export const safeWindowAddEventListener = <K extends keyof WindowEventMap>( // eslint-disable-line no-undef
   type: K,
-  listener: (this: Window, ev: WindowEventMap[K]) => any,
+  listener: (this: Window, ev: WindowEventMap[K]) => any, // eslint-disable-line no-undef
   options?: boolean | AddEventListenerOptions
 ): void => {
   safeWindow(w => w.addEventListener(type, listener, options));
@@ -105,10 +105,10 @@ export const safeWindowAddEventListener = <K extends keyof WindowEventMap>(
 /**
  * Safe removeEventListener for window
  */
-export const safeWindowRemoveEventListener = <K extends keyof WindowEventMap>(
+export const safeWindowRemoveEventListener = <K extends keyof WindowEventMap>( // eslint-disable-line no-undef
   type: K,
-  listener: (this: Window, ev: WindowEventMap[K]) => any,
-  options?: boolean | EventListenerOptions
+  listener: (this: Window, ev: WindowEventMap[K]) => any, // eslint-disable-line no-undef
+  options?: boolean | EventListenerOptions // eslint-disable-line no-undef
 ): void => {
   safeWindow(w => w.removeEventListener(type, listener, options));
 };
@@ -116,9 +116,9 @@ export const safeWindowRemoveEventListener = <K extends keyof WindowEventMap>(
 /**
  * Safe addEventListener for document
  */
-export const safeDocumentAddEventListener = <K extends keyof DocumentEventMap>(
+export const safeDocumentAddEventListener = <K extends keyof DocumentEventMap>( // eslint-disable-line no-undef
   type: K,
-  listener: (this: Document, ev: DocumentEventMap[K]) => any,
+  listener: (this: Document, ev: DocumentEventMap[K]) => any, // eslint-disable-line no-undef
   options?: boolean | AddEventListenerOptions
 ): void => {
   safeDocument(d => d.addEventListener(type, listener, options));
@@ -127,10 +127,10 @@ export const safeDocumentAddEventListener = <K extends keyof DocumentEventMap>(
 /**
  * Safe removeEventListener for document
  */
-export const safeDocumentRemoveEventListener = <K extends keyof DocumentEventMap>(
+export const safeDocumentRemoveEventListener = <K extends keyof DocumentEventMap>( // eslint-disable-line no-undef
   type: K,
-  listener: (this: Document, ev: DocumentEventMap[K]) => any,
-  options?: boolean | EventListenerOptions
+  listener: (this: Document, ev: DocumentEventMap[K]) => any, // eslint-disable-line no-undef
+  options?: boolean | EventListenerOptions // eslint-disable-line no-undef
 ): void => {
   safeDocument(d => d.removeEventListener(type, listener, options));
 };
@@ -138,19 +138,19 @@ export const safeDocumentRemoveEventListener = <K extends keyof DocumentEventMap
 /**
  * Safe createElement
  */
-export const safeCreateElement = <K extends keyof HTMLElementTagNameMap>(
+export const safeCreateElement = <K extends keyof HTMLElementTagNameMap>( // eslint-disable-line no-undef
   tagName: K,
-  options?: ElementCreationOptions
-): HTMLElementTagNameMap[K] | undefined => {
+  options?: ElementCreationOptions // eslint-disable-line no-undef
+): HTMLElementTagNameMap[K] | undefined => { // eslint-disable-line no-undef
   return safeDocument(d => d.createElement(tagName, options));
 };
 
 /**
  * Safe querySelector
  */
-export const safeQuerySelector = <K extends keyof HTMLElementTagNameMap>(
+export const safeQuerySelector = <K extends keyof HTMLElementTagNameMap>( // eslint-disable-line no-undef
   selectors: string
-): Element | null => {
+): Element | null => { // eslint-disable-line no-undef
   return safeDocument(d => d.querySelector(selectors)) || null;
 };
 
@@ -179,11 +179,11 @@ export class SSRSafeLazy<T> {
     if (isSSR()) {
       return undefined;
     }
-    
+
     if (this.instance === undefined) {
       this.instance = this.factory();
     }
-    
+
     return this.instance;
   }
 

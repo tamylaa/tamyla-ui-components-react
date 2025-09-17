@@ -17,10 +17,10 @@ export interface CSPProviderProps {
  * CSP-compatible wrapper for styled-components
  * Use this instead of direct styled-components usage in CSP-strict environments
  */
-export const CSPProvider: React.FC<CSPProviderProps> = ({ 
-  children, 
+export const CSPProvider: React.FC<CSPProviderProps> = ({
+  children,
   nonce,
-  disableCSSOMInjection = true 
+  disableCSSOMInjection = true
 }) => {
   const managerProps: any = {
     enableVendorPrefixes: false,
@@ -98,7 +98,7 @@ export function useCSPConfig() {
       const nonce = getCSPNonce();
       const hasCSPMeta = !!document.querySelector('meta[http-equiv="Content-Security-Policy"]');
       const hasCSPHeader = document.querySelector('meta[name="csp-enabled"]')?.getAttribute('content') === 'true';
-      
+
       setConfig({
         nonce,
         hasCSP: hasCSPMeta || hasCSPHeader,

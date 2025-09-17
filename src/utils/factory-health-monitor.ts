@@ -7,13 +7,13 @@ import React from 'react';
 import { Logger } from '../utils/logger';
 import { safeFetch, safeAsync } from '../utils/async-safety';
 import { dynamicImportUIComponents } from '../utils/dynamic-ui-components';
-import { 
-  isBrowser, 
-  safeSetInterval, 
-  safeClearInterval, 
-  safeWindowAddEventListener, 
+import {
+  isBrowser,
+  safeSetInterval,
+  safeClearInterval,
+  safeWindowAddEventListener,
   safeWindowRemoveEventListener,
-  createSSRSafeSingleton 
+  createSSRSafeSingleton
 } from '../utils/ssr-safe';
 
 // Local interface for AbortSignal to avoid ESLint issues
@@ -316,7 +316,7 @@ export class FactoryHealthMonitor {
 }
 
 // SSR-safe lazy factory health monitor instance
-const factoryHealthMonitorLazy = createSSRSafeSingleton(() => 
+const factoryHealthMonitorLazy = createSSRSafeSingleton(() =>
   new FactoryHealthMonitor({
     checkInterval: 60000, // 1 minute for production
     timeout: 15000,
