@@ -4,12 +4,24 @@
  */
 
 import logger from '../../utils/logger';
+import { factoryOptimizer } from './factory-optimizer';
+import type { ComponentData, FactoryProps } from '../../types/factory-components';
+
+interface FactoryModule {
+  [key: string]: unknown;
+  default?: unknown;
+}
+
+interface FactoryFunction {
+  create: (props: FactoryProps) => HTMLElement;
+}
 
 export class FactoryImporter {
   private static instance: FactoryImporter | null = null;
   private factories: Map<string, any> = new Map();
   private initialized = false;
   private initializationPromise: Promise<void> | null = null;
+  private loadingPromises = new Map<string, Promise<void>>();
 
   private constructor() {
     this.createMockFactories();
@@ -24,52 +36,79 @@ export class FactoryImporter {
 
   private async initializeFactories(): Promise<void> {
     if (this.initialized) return;
-    this.initialized = true;
 
-    try {
-      // Try to import factories from @tamyla/ui-components
-      await this.loadFactoriesFromUIComponents();
-    } catch (error) {
-      logger.warn('Failed to load factories', { error }, 'FactoryImporter');
+    // Prevent concurrent initialization
+    if (this.initializationPromise) {
+      return this.initializationPromise;
     }
+
+    this.initializationPromise = (async () => {
+      try {
+        // Try to import factories from @tamyla/ui-components
+        await this.loadFactoriesFromUIComponents();
+        this.initialized = true;
+      } catch (error) {
+        logger.warn('Failed to load factories', { error }, 'FactoryImporter');
+        // Don't mark as initialized on failure so we can retry
+      }
+    })();
+
+    return this.initializationPromise;
   }
 
   private async loadFactoriesFromUIComponents(): Promise<void> {
-    try {
-      // Skip dynamic import in test environment
-      if ((globalThis as any).jest !== undefined || process.env.NODE_ENV === 'test') {
-        logger.info('Skipping dynamic import in test environment', null, 'FactoryImporter');
-        return;
-      }
-
-      // Only load in browser environment
-      if (typeof window === 'undefined') {
-        return; // Keep using mock factories in SSR
-      }
-
-      // Import the main UI components module with fallback handling
-      const moduleName = '@tamyla/' + 'ui-components';
-      // @ts-ignore - Peer dependency may not be available during CI type checking
-      const uiComponents = await import(moduleName).catch(() => null);
-
-      if (!uiComponents) {
-        logger.warn('@tamyla/ui-components not available, keeping mock factories', null, 'FactoryImporter');
-        return;
-      }
-
-      // Don't clear mock factories - instead, replace them selectively
-      // this.factories.clear(); // REMOVED - keep mock factories as fallbacks
-      this.loadFromModule(uiComponents);
-
-      // Success - factories loaded from @tamyla/ui-components
-      logger.info('Real factories loaded from @tamyla/ui-components', null, 'FactoryImporter');
-    } catch (error) {
-      logger.warn('Failed to load real factories, using mocks', { error }, 'FactoryImporter');
-      // Fallback to mock factories if import fails
-      if (this.factories.size === 0) {
-        this.createMockFactories();
-      }
+    const moduleKey = '@tamyla/ui-components';
+    
+    // Prevent concurrent loading of the same module
+    if (this.loadingPromises.has(moduleKey)) {
+      return this.loadingPromises.get(moduleKey);
     }
+
+    const loadingPromise = (async () => {
+      try {
+        // Skip dynamic import in test environment
+        if ((globalThis as any).jest !== undefined || process.env.NODE_ENV === 'test') {
+          logger.info('Skipping dynamic import in test environment', null, 'FactoryImporter');
+          return;
+        }
+
+        // Only load in browser environment
+        if (typeof window === 'undefined') {
+          return; // Keep using mock factories in SSR
+        }
+
+        // Import the main UI components module with timeout
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Module load timeout')), 5000);
+        });
+
+        const loadPromise = import(moduleKey).catch(() => null);
+        const uiComponents = await Promise.race([loadPromise, timeoutPromise]);
+
+        if (!uiComponents) {
+          logger.warn('@tamyla/ui-components not available, keeping mock factories', null, 'FactoryImporter');
+          return;
+        }
+
+        // Load factories with performance optimization
+        this.loadFromModule(uiComponents);
+
+        // Success - factories loaded from @tamyla/ui-components
+        logger.info('Real factories loaded from @tamyla/ui-components', null, 'FactoryImporter');
+      } catch (error) {
+        logger.warn('Failed to load real factories, using mocks', { error }, 'FactoryImporter');
+        // Fallback to mock factories if import fails
+        if (this.factories.size === 0) {
+          this.createMockFactories();
+        }
+      } finally {
+        // Clean up loading promise
+        this.loadingPromises.delete(moduleKey);
+      }
+    })();
+
+    this.loadingPromises.set(moduleKey, loadingPromise);
+    return loadingPromise;
   }
 
   private createSSRSafeFactories(): void {
@@ -137,7 +176,7 @@ export class FactoryImporter {
     // ALL factories follow the same pattern: { create: (props) => HTMLElement }
 
     const createInputFactory = () => ({
-      create: (props: any = {}) => {
+      create: (props: FactoryProps = {}) => {
         const container = document.createElement('div');
         container.className = 'tamyla-input-container';
 
@@ -153,7 +192,7 @@ export class FactoryImporter {
         input.style.cssText = 'width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;';
 
         if (props.placeholder) input.placeholder = props.placeholder;
-        if (props.value) input.value = props.value;
+        if (props.value) input.value = String(props.value);
         if (props.type) input.type = props.type;
         if (props.disabled) input.disabled = props.disabled;
         if (props.required) input.required = props.required;
@@ -164,10 +203,10 @@ export class FactoryImporter {
     });
 
     const createButtonFactory = () => ({
-      create: (props: any = {}) => {
+      create: (props: FactoryProps = {}) => {
         const button = document.createElement('button');
         button.className = 'tamyla-button';
-        button.textContent = props.text || props.children || 'Button';
+        button.textContent = String(props.text || props.children || 'Button');
         button.style.cssText = 'padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-family: inherit; background: #007acc; color: white;';
 
         if (props.disabled) button.disabled = props.disabled;
@@ -459,7 +498,7 @@ export class FactoryImporter {
     }
   }
 
-  private loadFromModule(module: any): void {
+  private loadFromModule(module: FactoryModule): void {
     logger.info('Loading factories from module...', null, 'FactoryImporter');
 
     // Core factories - import with error handling

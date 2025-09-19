@@ -183,8 +183,12 @@ export interface StyledTheme {
   highContrast: boolean;
 }
 
-// Main theme provider component
+// Main theme provider component with hydration-safe initialization
 export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ children }) => {
+  // Theme readiness state to prevent hydration race conditions
+  const [isThemeReady, setIsThemeReady] = React.useState(false);
+  const [isHydrated, setIsHydrated] = React.useState(false);
+
   // Always call hooks at the top level - never conditionally
   let themeState: ThemeState;
   let hasReduxError = false;
@@ -217,18 +221,35 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
     };
   }
 
-  // Apply theme class to document body with SSR safety
+  // Hydration-safe theme initialization
   React.useEffect(() => {
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
-      return; // SSR guard
+    // Mark as hydrated on client side
+    setIsHydrated(true);
+    
+    // Delayed theme readiness to prevent hydration mismatch
+    const timer = setTimeout(() => {
+      setIsThemeReady(true);
+    }, 0); // Next tick to ensure DOM is ready
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // SSR-safe theme application
+  React.useLayoutEffect(() => {
+    if (!isHydrated || typeof window === 'undefined') {
+      return; // Skip on server or before hydration
     }
 
     const currentTheme = themeState.mode === 'auto'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : themeState.currentTheme;
 
+    // Apply theme immediately after hydration
     document.documentElement.classList.toggle('dark', currentTheme === 'dark');
-  }, [themeState.mode, themeState.currentTheme]);
+    
+    // Force theme readiness after DOM update
+    setIsThemeReady(true);
+  }, [isHydrated, themeState.mode, themeState.currentTheme]);
 
   // Create enhanced theme object for styled-components
   const styledTheme: StyledTheme = React.useMemo(() => ({
@@ -250,11 +271,11 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
     highContrast: themeState.highContrast
   }), [themeState]);
 
+  // Render immediately to prevent visual disruption, but ensure CSS injection order
   return (
     <AutoCSPProvider>
       <ThemeContext.Provider value={themeContextValue}>
         <GlobalStyles />
-
         <StyledThemeProvider theme={styledTheme as unknown as DefaultTheme}>
           {children}
         </StyledThemeProvider>

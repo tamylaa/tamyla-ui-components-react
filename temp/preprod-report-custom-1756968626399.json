@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-09-04T06:50:26.391Z",
+  "releaseType": "custom",
+  "steps": {
+    "setup": {
+      "executed": true,
+      "success": true,
+      "duration": 1,
+      "timestamp": "2025-09-04T06:50:26.393Z"
+    },
+    "code-quality": {
+      "executed": true,
+      "success": true,
+      "duration": 0,
+      "timestamp": "2025-09-04T06:50:26.394Z"
+    },
+    "testing": {
+      "executed": true,
+      "success": true,
+      "duration": 1,
+      "timestamp": "2025-09-04T06:50:26.396Z"
+    },
+    "validation": {
+      "executed": true,
+      "success": true,
+      "duration": 1,
+      "timestamp": "2025-09-04T06:50:26.397Z"
+    },
+    "build": {
+      "executed": true,
+      "success": true,
+      "duration": 0,
+      "timestamp": "2025-09-04T06:50:26.398Z"
+    },
+    "integration": {
+      "executed": true,
+      "success": false,
+      "duration": 0,
+      "error": "package.json missing exports field",
+      "timestamp": "2025-09-04T06:50:26.398Z"
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 5,
+    "failed": 1,
+    "skipped": 0
+  },
+  "duration": 6
+}

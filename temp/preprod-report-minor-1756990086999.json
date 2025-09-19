@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-09-04T12:47:25.424Z",
+  "releaseType": "minor",
+  "steps": {
+    "setup": {
+      "executed": true,
+      "success": true,
+      "duration": 1,
+      "timestamp": "2025-09-04T12:47:25.426Z"
+    },
+    "code-quality": {
+      "executed": true,
+      "success": true,
+      "duration": 12418,
+      "timestamp": "2025-09-04T12:47:37.844Z"
+    },
+    "testing": {
+      "executed": true,
+      "success": true,
+      "duration": 1698,
+      "timestamp": "2025-09-04T12:47:39.543Z"
+    },
+    "validation": {
+      "executed": true,
+      "success": true,
+      "duration": 121,
+      "timestamp": "2025-09-04T12:47:39.664Z"
+    },
+    "build": {
+      "executed": true,
+      "success": true,
+      "duration": 5028,
+      "timestamp": "2025-09-04T12:47:44.692Z"
+    },
+    "integration": {
+      "executed": true,
+      "success": true,
+      "duration": 136,
+      "timestamp": "2025-09-04T12:47:44.828Z"
+    },
+    "documentation": {
+      "executed": true,
+      "success": true,
+      "duration": 0,
+      "timestamp": "2025-09-04T12:47:44.829Z"
+    },
+    "security": {
+      "executed": true,
+      "success": true,
+      "duration": 22166,
+      "timestamp": "2025-09-04T12:48:06.996Z"
+    },
+    "performance": {
+      "executed": false,
+      "skipped": true,
+      "reason": "configured_skip",
+      "timestamp": "2025-09-04T12:48:06.996Z"
+    },
+    "manual-review": {
+      "executed": true,
+      "success": false,
+      "duration": 2,
+      "error": "Manual review required",
+      "timestamp": "2025-09-04T12:48:06.998Z"
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 8,
+    "failed": 1,
+    "skipped": 1
+  },
+  "duration": 41574
+}

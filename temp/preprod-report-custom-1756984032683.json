@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-09-04T11:06:55.469Z",
+  "releaseType": "custom",
+  "steps": {
+    "setup": {
+      "executed": true,
+      "success": true,
+      "duration": 0,
+      "timestamp": "2025-09-04T11:06:55.471Z"
+    },
+    "code-quality": {
+      "executed": true,
+      "success": false,
+      "duration": 17209,
+      "error": "Command failed: npx tsc --noEmit",
+      "timestamp": "2025-09-04T11:07:12.681Z"
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "duration": 17211
+}

@@ -3,11 +3,14 @@
  * Uses the registry and importer for clean separation of concerns
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { factoryRegistry } from './factory-registry';
-import { safeSetInnerHTML, safeCreateElementFromHTML, globalEventManager } from '../../utils/dom-safety';
+import { globalEventManager } from '../../utils/dom-safety';
+import { createFactoryFallback, createFactoryErrorDisplay, safeCleanupFactoryElement } from './safe-factory-elements';
+import { memoryManager } from '../../utils/memory-management';
 import { Logger } from '../../utils/logger';
 import type { ComponentEventHandler } from '../../types/factory';
+import type { FactoryCreatedElement, ComponentData } from '../../types/factory-components';
 
 // Initialize logger instance
 const logger = new Logger({ enableConsole: true });
@@ -22,11 +25,7 @@ export interface FactoryComponentProps {
 }
 
 // WeakMap for tracking component instances to prevent memory leaks
-const componentInstances = new WeakMap<HTMLElement, {
-  cleanup?: () => void;
-  instance?: unknown;
-  listeners?: Array<{ type: string; handler: EventListener }>;
-}>();
+const componentInstances = new WeakMap<HTMLElement, ComponentData>();
 
 const FactoryComponent: React.FC<FactoryComponentProps> = ({
   factory,
@@ -41,9 +40,113 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const cleanupFunctionsRef = useRef<Array<() => void>>([]);
 
-  const factoryInstance = factoryRegistry.getFactory(factory);
+  // Create stable references for props that change frequently
+  const stableFactory = useRef(factory);
+  const stableConfig = useRef(config);
+  const stableOnEvent = useRef(onEvent);
+  
+  // Update stable refs when props change
+  React.useEffect(() => {
+    stableFactory.current = factory;
+    stableConfig.current = config;
+    stableOnEvent.current = onEvent;
+  }, [factory, config, onEvent]);
 
-  // Comprehensive cleanup function
+  // State to track current factory instance to avoid unnecessary re-renders
+  const currentFactoryRef = React.useRef(factoryRegistry.getFactory(factory));
+  const [factoryVersion, setFactoryVersion] = React.useState(0);
+
+  // Stable factory creation function to prevent recreations
+  const createFactoryElement = useCallback((signal: AbortSignal) => {
+    const currentFactoryInstance = currentFactoryRef.current;
+    if (!currentFactoryInstance) return null;
+
+    let element: HTMLElement;
+
+    // Prepare config with container reference using stable refs
+    const enhancedConfig = {
+      ...stableConfig.current,
+      children,
+      container: containerRef.current,
+      signal
+    };
+
+    // Handle different factory types with better detection
+    if (typeof currentFactoryInstance === 'function') {
+      try {
+        const result = currentFactoryInstance(enhancedConfig);
+
+        if (signal.aborted) return null;
+
+        if (result instanceof HTMLElement) {
+          element = result;
+        } else if (result && typeof result === 'object' && result.element instanceof HTMLElement) {
+          element = result.element;
+        } else {
+          element = createFactoryFallback(stableFactory.current, 'fallback');
+        }
+      } catch (error) {
+        logger.error(`Factory ${stableFactory.current} creation error:`, error, 'FactoryBridgeCore');
+        element = createFactoryFallback(stableFactory.current, 'error', String(error));
+      }
+    } else if (currentFactoryInstance && typeof currentFactoryInstance === 'object' && currentFactoryInstance !== null && 'create' in currentFactoryInstance && typeof (currentFactoryInstance as Record<string, unknown>).create === 'function') {
+      const factoryWithCreate = currentFactoryInstance as { create: (config: unknown) => unknown };
+      const result = factoryWithCreate.create(enhancedConfig);
+      element = (result as { element?: HTMLElement })?.element || (result as HTMLElement);
+    } else {
+      element = createFactoryFallback(stableFactory.current, 'fallback');
+    }
+
+    return element;
+  }, [children]); // Only depend on children which can change
+
+  // Enhanced event handler setup with memory management
+  const setupEventHandlers = useCallback((element: HTMLElement, signal: AbortSignal) => {
+    if (!stableOnEvent.current || signal.aborted) return;
+
+    const handleEvent = (event: Event) => {
+      if (!signal.aborted && stableOnEvent.current) {
+        const eventData = {
+          type: event.type,
+          target: stableFactory.current,
+          data: { event, factory: stableFactory.current, config: stableConfig.current },
+          timestamp: Date.now()
+        };
+        stableOnEvent.current(eventData);
+      }
+    };
+
+    const eventTypes = ['click', 'change', 'input', 'submit', 'mouseenter', 'mouseleave'];
+    const container = containerRef.current;
+    if (!container) return;
+
+    const componentData = componentInstances.get(container);
+    
+    eventTypes.forEach(eventType => {
+      // Track event listeners through memory manager for automatic cleanup
+      const eventHandleId = memoryManager.trackEventListener(
+        element,
+        eventType,
+        handleEvent,
+        {
+          factoryId: stableFactory.current,
+          componentType: 'factory-bridge',
+          eventType,
+          container
+        },
+        { signal }
+      );
+
+      // Store cleanup handle for manual cleanup if needed
+      cleanupFunctionsRef.current.push(() => memoryManager.cleanup(eventHandleId));
+
+      if (componentData?.listeners) {
+        componentData.listeners.push({ type: eventType, handler: handleEvent });
+      }
+    });
+  }, []); // No dependencies - uses stable refs
+
+  // Comprehensive cleanup function with memory management and stable dependencies
   const performCleanup = useCallback(() => {
     // Abort any pending operations
     if (abortControllerRef.current) {
@@ -51,8 +154,18 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
       abortControllerRef.current = null;
     }
 
+    // Release managed resources through memory manager
+    const container = containerRef.current;
+    if (container) {
+      // Clean up any tracked resources for this factory
+      memoryManager.cleanupByFilter(metadata => 
+        metadata?.factoryId === stableFactory.current || 
+        metadata?.componentType === 'factory-bridge'
+      );
+    }
+
     // Run all cleanup functions
-    cleanupFunctionsRef.current.forEach(cleanup => {
+    cleanupFunctionsRef.current.forEach((cleanup: () => void) => {
       try {
         cleanup();
       } catch (error) {
@@ -76,10 +189,11 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
           }
         }
 
-        // Remove event listeners
-        if (componentData.listeners) {
+        // Remove event listeners from the actual DOM element, not container
+        if (componentData.listeners && componentRef.current instanceof HTMLElement) {
+          const element = componentRef.current as HTMLElement;
           componentData.listeners.forEach(({ type, handler }) => {
-            container.removeEventListener(type, handler);
+            element.removeEventListener(type, handler);
           });
         }
 
@@ -87,227 +201,170 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
         componentInstances.delete(container);
       }
 
-      // Clean DOM
-      globalEventManager.cleanupElement(container);
-      while (container.firstChild) {
-        container.removeChild(container.firstChild);
+      // Clean DOM - only remove our managed elements
+      const children = Array.from(container.children);
+      children.forEach((child: Element) => {
+        // Only remove elements we created, not React children
+        if (child !== componentRef.current && !child.hasAttribute('data-reactroot')) {
+          container.removeChild(child);
+        }
+      });
+
+      // Use safer cleanup
+      if (globalEventManager && typeof globalEventManager.cleanupElement === 'function') {
+        globalEventManager.cleanupElement(container);
       }
     }
 
     componentRef.current = null;
-  }, []);
+  }, []); // Empty dependencies - function is stable
 
-  useEffect(() => {
+  // Optimized factory upgrade effect with proper dependencies
+  React.useEffect(() => {
+    if (factoryVersion === 0) return; // Skip initial render
+
     const container = containerRef.current;
-    if (!factoryInstance || !container) {
-      return performCleanup;
-    }
+    if (!container) return;
 
-    // Create abort controller for this effect
+    // Only recreate DOM element when factory actually upgrades
+    // This prevents unnecessary recreation on prop changes
+    performCleanup();
+
+    // Create abort controller for this upgrade
     abortControllerRef.current = new AbortController();
     const { signal } = abortControllerRef.current;
 
-    // Check for abort before proceeding
-    if (signal.aborted) {
-      return performCleanup;
-    }
-
     try {
-      let element: HTMLElement;
-
-      // Prepare config with container reference
-      const enhancedConfig = {
-        ...config,
-        children,
-        container: container, // Pass the React container to factories that need it
-        signal // Pass abort signal for async operations
-      };
-
-      // Handle different factory types with better detection
-      if (typeof factoryInstance === 'function') {
-        // First check if it's a bound method that returns DOM elements
-        try {
-          const result = factoryInstance(enhancedConfig);
-
-          if (signal.aborted) {
-            return performCleanup;
-          }
-
-          // If it's already a DOM element, use it directly
-          if (result instanceof HTMLElement) {
-            element = result;
-          } else if (result && typeof result === 'object' && result.element instanceof HTMLElement) {
-            element = result.element;
-          } else {
-            // Create fallback
-            const fallback = document.createElement('div');
-            fallback.className = `factory-bridge-fallback tamyla-${factory.toLowerCase()}`;
-            fallback.textContent = `${factory} component`;
-            element = fallback;
-          }
-        } catch (error) {
-          logger.error(`Factory ${factory} creation error:`, error, 'FactoryBridgeCore');
-          const fallback = document.createElement('div');
-          fallback.className = `factory-bridge-error tamyla-${factory.toLowerCase()}`;
-          fallback.textContent = `${factory} component error`;
-          element = fallback;
+      const element = createFactoryElement(signal);
+      
+      if (element && element instanceof HTMLElement && !signal.aborted) {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
         }
-      } else if (factoryInstance && typeof factoryInstance === 'object' && factoryInstance !== null && 'create' in factoryInstance && typeof (factoryInstance as Record<string, unknown>).create === 'function') {
-        const factoryWithCreate = factoryInstance as { create: (config: unknown) => unknown };
-        const result = factoryWithCreate.create(enhancedConfig);
-        element = (result as { element?: HTMLElement })?.element || (result as HTMLElement);
-      } else {
-        throw new Error(`Factory ${factory} doesn't have a recognized creation method`);
-      }
 
-      // Validate that we got a proper DOM element
-      if (!element || !(element instanceof HTMLElement)) {
-        // Create a safe fallback element
-        const fallback = document.createElement('div');
-        fallback.className = `factory-bridge-fallback tamyla-${factory.toLowerCase()}`;
-        fallback.textContent = `${factory} component (fallback)`;
+        container.appendChild(element);
+        componentRef.current = element;
 
-        // If we got something that might have useful content, try to extract it
-        if (element && typeof element === 'object') {
-          try {
-            if (typeof element === 'string') {
-              fallback.textContent = element;
-            } else if (element && typeof element === 'object') {
-              const elem = element as Record<string, unknown>;
-              if ('innerHTML' in elem && typeof elem.innerHTML === 'string') {
-                // 🔒 SECURITY FIX: Use safe HTML sanitization
-                safeSetInnerHTML(fallback, elem.innerHTML as string, 'moderate');
-              } else if ('textContent' in elem && typeof elem.textContent === 'string') {
-                fallback.textContent = elem.textContent as string;
-              } else if ('outerHTML' in elem && typeof elem.outerHTML === 'string') {
-                // 🔒 SECURITY FIX: Use safe element creation
-                element = safeCreateElementFromHTML(elem.outerHTML as string, 'moderate');
-              } else {
-                element = fallback;
-              }
-            } else {
-              element = fallback;
-            }
-          } catch (conversionError) {
-            logger.error(`Factory ${factory} conversion error:`, conversionError, 'FactoryBridgeCore');
-            element = fallback;
-          }
-        } else {
-          element = fallback;
-        }
-      }
-
-      if (!element) {
-        throw new Error(`Factory ${factory} returned null/undefined after fallback creation`);
-      }
-
-      // Ensure element is properly detached before appending
-      if (element.parentNode) {
-        element.parentNode.removeChild(element);
-      }
-
-      // Mount the element
-      try {
-        if (!signal.aborted) {
-          container.appendChild(element);
-          componentRef.current = element;
-
-          // Register component instance for memory management
-          const listeners: Array<{ type: string; handler: EventListener }> = [];
-          componentInstances.set(container, {
-            instance: element,
-            listeners,
-            cleanup: () => {
-              // Component-specific cleanup logic
-              if ((element as any).destroy && typeof (element as any).destroy === 'function') {
-                try {
-                  (element as any).destroy();
-                } catch (destroyError) {
-                  logger.error('Component destroy error:', destroyError, 'FactoryBridgeCore');
-                }
+        // Register component instance with proper cleanup
+        const listeners: Array<{ type: string; handler: EventListener }> = [];
+        componentInstances.set(container, {
+          instance: element,
+          listeners,
+          cleanup: () => {
+            // Type-safe destroy method check
+            const factoryElement = element as FactoryCreatedElement;
+            if (factoryElement.destroy && typeof factoryElement.destroy === 'function') {
+              try {
+                factoryElement.destroy();
+              } catch (destroyError) {
+                logger.error('Component destroy error:', destroyError, 'FactoryBridgeCore');
               }
             }
-          });
-        }
-      } catch (appendError) {
-        if (!signal.aborted) {
-          // Create final fallback if even appendChild fails
-          const errorFallback = document.createElement('div');
-          errorFallback.className = `factory-bridge-error tamyla-${factory.toLowerCase()}`;
-          errorFallback.textContent = `${factory} component failed to mount`;
-          errorFallback.title = `Error: ${appendError instanceof Error ? appendError.message : 'Unknown append error'}`;
-
-          container.appendChild(errorFallback);
-          componentRef.current = errorFallback;
-        }
-      }
-
-      // Set up event handling if provided
-      if (onEvent && element instanceof HTMLElement && !signal.aborted) {
-        const handleEvent = (event: Event) => {
-          if (!signal.aborted) {
-            const eventData = {
-              type: event.type,
-              target: factory,
-              data: { event, factory, config },
-              timestamp: Date.now()
-            };
-            onEvent(eventData);
-          }
-        };
-
-        // 🔒 SECURITY FIX: Use safe event management
-        const eventTypes = ['click', 'change', 'input', 'submit', 'mouseenter', 'mouseleave'];
-        const componentData = componentInstances.get(container);
-
-        eventTypes.forEach(eventType => {
-          element.addEventListener(eventType, handleEvent, { signal });
-
-          // Track listeners for cleanup
-          if (componentData?.listeners) {
-            componentData.listeners.push({ type: eventType, handler: handleEvent });
           }
         });
 
-        // Add to cleanup functions
-        cleanupFunctionsRef.current.push(() => {
-          eventTypes.forEach(eventType => {
-            element.removeEventListener(eventType, handleEvent);
-          });
-        });
+        // Set up event handling
+        setupEventHandlers(element, signal);
       }
-
     } catch (error) {
       if (container && !signal.aborted) {
-        // 🔒 SECURITY FIX: Use safe HTML instead of innerHTML
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = 'color: var(--color-error-text, #dc2626); padding: var(--spacing-2, 8px); border: 1px solid var(--color-error-border, #ef4444); border-radius: var(--border-radius-md, 4px); background: var(--color-error-bg, #fee2e2);';
-
-        const title = document.createElement('strong');
-        title.textContent = `Factory Error: ${factory}`;
-
-        const message = document.createElement('br');
-        const errorText = document.createElement('span');
-        errorText.textContent = String(error);
-
-        const availableText = document.createElement('small');
-        availableText.textContent = `Available: ${factoryRegistry.getAvailableFactories().join(', ')}`;
-
-        errorDiv.appendChild(title);
-        errorDiv.appendChild(message);
-        errorDiv.appendChild(errorText);
-        errorDiv.appendChild(document.createElement('br'));
-        errorDiv.appendChild(availableText);
+        const errorDiv = createFactoryErrorDisplay(
+          stableFactory.current,
+          error instanceof Error ? error : new Error(String(error)),
+          factoryRegistry.getAvailableFactories()
+        );
 
         container.appendChild(errorDiv);
         componentRef.current = errorDiv;
       }
     }
 
-    // Return cleanup function
     return performCleanup;
+  }, [factoryVersion, performCleanup, createFactoryElement, setupEventHandlers]); // Proper dependencies
 
-  }, [factory, config, onEvent, factoryInstance, children, performCleanup]);
+  // Optimized initial setup effect with proper dependencies
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Create abort controller for initial setup
+    abortControllerRef.current = new AbortController();
+    const { signal } = abortControllerRef.current;
+
+    try {
+      const element = createFactoryElement(signal);
+      
+      if (element && element instanceof HTMLElement && !signal.aborted) {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+
+        container.appendChild(element);
+        componentRef.current = element;
+
+        // Register component instance with proper cleanup
+        const listeners: Array<{ type: string; handler: EventListener }> = [];
+        componentInstances.set(container, {
+          instance: element,
+          listeners,
+          cleanup: () => {
+            // Type-safe destroy method check
+            const factoryElement = element as FactoryCreatedElement;
+            if (factoryElement.destroy && typeof factoryElement.destroy === 'function') {
+              try {
+                factoryElement.destroy();
+              } catch (destroyError) {
+                logger.error('Component destroy error:', destroyError, 'FactoryBridgeCore');
+              }
+            }
+          }
+        });
+
+        // Set up event handling
+        setupEventHandlers(element, signal);
+      }
+    } catch (error) {
+      if (container && !signal.aborted) {
+        const errorDiv = createFactoryErrorDisplay(
+          stableFactory.current,
+          error instanceof Error ? error : new Error(String(error)),
+          factoryRegistry.getAvailableFactories()
+        );
+
+        container.appendChild(errorDiv);
+        componentRef.current = errorDiv;
+      }
+    }
+
+    return performCleanup;
+  }, [performCleanup, createFactoryElement, setupEventHandlers]); // Stable dependencies only
+
+  // Optimized factory upgrade detection with stable factory reference
+  React.useEffect(() => {
+    // Only check for upgrades once, after initial mount
+    const checkForFactoryUpgrade = () => {
+      const latestFactory = factoryRegistry.getFactory(stableFactory.current);
+      // Check if we have a real factory now (different reference than initial)
+      if (latestFactory !== currentFactoryRef.current) {
+        currentFactoryRef.current = latestFactory;
+        setFactoryVersion(prev => prev + 1);
+      }
+    };
+
+    // Check after a delay to allow async factory loading to complete
+    const timeoutId = setTimeout(checkForFactoryUpgrade, 100);
+
+    // Add to cleanup functions for proper tracking
+    cleanupFunctionsRef.current.push(() => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    });
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []); // Empty dependency array - uses stable factory reference
 
   return (
     <div

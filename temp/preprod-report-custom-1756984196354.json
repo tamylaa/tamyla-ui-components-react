@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-09-04T11:09:32.717Z",
+  "releaseType": "custom",
+  "steps": {
+    "setup": {
+      "executed": true,
+      "success": true,
+      "duration": 1,
+      "timestamp": "2025-09-04T11:09:32.720Z"
+    },
+    "code-quality": {
+      "executed": true,
+      "success": true,
+      "duration": 20229,
+      "timestamp": "2025-09-04T11:09:52.949Z"
+    },
+    "testing": {
+      "executed": true,
+      "success": true,
+      "duration": 2992,
+      "timestamp": "2025-09-04T11:09:55.942Z"
+    },
+    "validation": {
+      "executed": true,
+      "success": false,
+      "duration": 409,
+      "error": "Command failed: node scripts/react-component-validation.js --report",
+      "timestamp": "2025-09-04T11:09:56.352Z"
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0
+  },
+  "duration": 23636
+}
