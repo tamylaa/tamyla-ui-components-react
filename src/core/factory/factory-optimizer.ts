@@ -1,7 +1,9 @@
 /**
  * Factory Performance Optimizer
- * Implements caching and performance optimizations for factory creation
+ * Provides caching and performance optimizations for factory element creation
  */
+
+/// <reference lib="dom" />
 
 import { Logger } from '../../utils/logger';
 
@@ -51,7 +53,7 @@ export class FactoryPerformanceOptimizer {
 
     // Create new element
     const element = createFn();
-    
+
     // Cache if within limits
     if (this.elementCache.size < this.maxCacheSize) {
       this.elementCache.set(cacheKey, element.cloneNode(true) as HTMLElement);
@@ -76,7 +78,7 @@ export class FactoryPerformanceOptimizer {
     const template = document.createDocumentFragment();
     const div = document.createElement('div');
     div.innerHTML = htmlContent;
-    
+
     while (div.firstChild) {
       template.appendChild(div.firstChild);
     }

@@ -3,6 +3,8 @@
  * Provides systematic cleanup for event listeners, timeouts, and other resources
  */
 
+/// <reference lib="dom" />
+
 import { Logger } from './logger';
 
 const logger = new Logger({ enableConsole: true });
@@ -83,7 +85,7 @@ export class MemoryLeakPrevention {
     options?: boolean | AddEventListenerOptions
   ): string {
     const id = Math.random().toString(36).substr(2, 9);
-    
+
     element.addEventListener(type, listener, options);
 
     this.resources.set(id, {
@@ -107,7 +109,7 @@ export class MemoryLeakPrevention {
     options?: boolean | AddEventListenerOptions
   ): string {
     const id = `listener_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     element.addEventListener(type, listener, options);
 
     this.resources.set(id, {
@@ -237,8 +239,8 @@ export class MemoryLeakPrevention {
     this.cleanupQueue.clear();
 
     logger.info(
-      `Cleaned up ${cleanedCount} resources in ${Date.now() - startTime}ms`, 
-      null, 
+      `Cleaned up ${cleanedCount} resources in ${Date.now() - startTime}ms`,
+      null,
       'MemoryLeakPrevention'
     );
   }
@@ -267,8 +269,8 @@ export class MemoryLeakPrevention {
     }
 
     logger.debug(
-      `Cleaned up ${cleanedCount} filtered resources in ${Date.now() - startTime}ms`, 
-      null, 
+      `Cleaned up ${cleanedCount} filtered resources in ${Date.now() - startTime}ms`,
+      null,
       'MemoryLeakPrevention'
     );
   }

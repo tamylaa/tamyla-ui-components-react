@@ -49,7 +49,16 @@ export default [js.configs.recommended, {
       RequestInit: 'readonly',
       Response: 'readonly',
       AbortController: 'readonly',
-      navigator: 'readonly'
+      navigator: 'readonly',
+      EventTarget: 'readonly',
+      EventListenerOrEventListenerObject: 'readonly',
+      FrameRequestCallback: 'readonly',
+      requestAnimationFrame: 'readonly',
+      cancelAnimationFrame: 'readonly',
+      DocumentFragment: 'readonly',
+      performance: 'readonly',
+      Element: 'readonly',
+      AbortSignal: 'readonly'
     }
   },
   plugins: {
