@@ -58,7 +58,7 @@ export class FactoryImporter {
 
   private async loadFactoriesFromUIComponents(): Promise<void> {
     const moduleKey = '@tamyla/ui-components';
-    
+
     // Prevent concurrent loading of the same module
     if (this.loadingPromises.has(moduleKey)) {
       return this.loadingPromises.get(moduleKey);

@@ -44,7 +44,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
   const stableFactory = useRef(factory);
   const stableConfig = useRef(config);
   const stableOnEvent = useRef(onEvent);
-  
+
   // Update stable refs when props change
   React.useEffect(() => {
     stableFactory.current = factory;
@@ -121,7 +121,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
     if (!container) return;
 
     const componentData = componentInstances.get(container);
-    
+
     eventTypes.forEach(eventType => {
       // Track event listeners through memory manager for automatic cleanup
       const eventHandleId = memoryManager.trackEventListener(
@@ -158,8 +158,8 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
     const container = containerRef.current;
     if (container) {
       // Clean up any tracked resources for this factory
-      memoryManager.cleanupByFilter(metadata => 
-        metadata?.factoryId === stableFactory.current || 
+      memoryManager.cleanupByFilter(metadata =>
+        metadata?.factoryId === stableFactory.current ||
         metadata?.componentType === 'factory-bridge'
       );
     }
@@ -236,7 +236,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
 
     try {
       const element = createFactoryElement(signal);
-      
+
       if (element && element instanceof HTMLElement && !signal.aborted) {
         if (element.parentNode) {
           element.parentNode.removeChild(element);
@@ -293,7 +293,7 @@ const FactoryComponent: React.FC<FactoryComponentProps> = ({
 
     try {
       const element = createFactoryElement(signal);
-      
+
       if (element && element instanceof HTMLElement && !signal.aborted) {
         if (element.parentNode) {
           element.parentNode.removeChild(element);

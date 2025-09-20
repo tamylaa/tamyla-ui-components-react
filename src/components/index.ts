@@ -110,6 +110,17 @@ export { default as Reward } from './organisms/Reward';
 export { default as Modal } from './organisms/Modal';
 export { default as MobileSidebar } from './organisms/MobileSidebar';
 
+// Search Package Components (Native React)
+export {
+  SearchResultsList,
+  RecentSearchesList,
+  SearchStatusIndicator,
+  SearchInput,
+  SearchContainer,
+  createDefaultSearchStatuses,
+  useSearchState
+} from './organisms/search-package';
+
 // ===== APPLICATIONS =====
 // Full application features
 export { default as CampaignSelector } from './applications/CampaignSelector';

@@ -26,6 +26,7 @@
   "files": [
     "dist",
     "src/core/design-tokens.css",
+    "src/components/organisms/search-package/styles/search-components.css",
     "README.md",
     "API_REFERENCE.md",
     "MIGRATION_GUIDE.md",

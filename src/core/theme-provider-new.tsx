@@ -225,7 +225,7 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
   React.useEffect(() => {
     // Mark as hydrated on client side
     setIsHydrated(true);
-    
+
     // Delayed theme readiness to prevent hydration mismatch
     const timer = setTimeout(() => {
       setIsThemeReady(true);
@@ -246,7 +246,7 @@ export const TamylaThemeProvider: React.FC<TamylaThemeProviderProps> = ({ childr
 
     // Apply theme immediately after hydration
     document.documentElement.classList.toggle('dark', currentTheme === 'dark');
-    
+
     // Force theme readiness after DOM update
     setIsThemeReady(true);
   }, [isHydrated, themeState.mode, themeState.currentTheme]);

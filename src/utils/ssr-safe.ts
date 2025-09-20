@@ -150,7 +150,7 @@ export const safeCreateElement = <K extends keyof HTMLElementTagNameMap>( // esl
  */
 export const safeQuerySelector = <K extends keyof HTMLElementTagNameMap>( // eslint-disable-line no-undef
   selectors: string
-): Element | null => { // eslint-disable-line no-undef
+): Element | null => {
   return safeDocument(d => d.querySelector(selectors)) || null;
 };
 

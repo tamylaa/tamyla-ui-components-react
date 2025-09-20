@@ -1,17 +1,17 @@
 {
-  "timestamp": "2025-09-17T09:58:54.734Z",
-  "duration": "19.53s",
+  "timestamp": "2025-09-20T14:08:47.661Z",
+  "duration": "19.32s",
   "status": "REACT_CERTIFIED_ZERO_ISSUES",
   "version": "6.0.3",
-  "totalFixes": 35,
+  "totalFixes": 34,
   "errors": [],
   "warnings": [
+    "Found 3 uncommitted changes in repository",
     "Repository already exists on GitHub"
   ],
   "fixes": [
     "Updated TypeScript configuration",
-    "All changes committed",
-    "Found 99 total commits in repository",
+    "Found 101 total commits in repository",
     "Found 1 remote repository(ies)",
     "Current branch: main",
     "✓ name: @tamyla/ui-components-react",
@@ -21,14 +21,14 @@
     "✓ module: dist/index.esm.js",
     "Package exports configuration found",
     "Found 3 distribution files",
-    "  index.d.ts: 96.94KB",
-    "  index.esm.js: 223.50KB",
-    "  index.esm.js.map: 965.41KB",
+    "  index.d.ts: 102.58KB",
+    "  index.esm.js: 237.36KB",
+    "  index.esm.js.map: 1025.41KB",
     "ESM entry point: dist/index.esm.js",
     "TypeScript definitions: dist/index.d.ts",
     "Advanced exports configuration detected",
     "Package is public - ready for NPM publishing",
-    "Files configuration includes 16 entries",
+    "Files configuration includes 17 entries",
     "✓ README.md",
     "✓ LICENSE",
     "✓ .gitignore",
@@ -47,7 +47,7 @@
   ],
   "gitStatus": {
     "branch": "main",
-    "commits": 99,
+    "commits": 101,
     "status": "clean"
   },
   "packageInfo": {
