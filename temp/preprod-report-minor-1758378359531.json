@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-09-20T14:25:36.495Z",
+  "releaseType": "minor",
+  "steps": {
+    "setup": {
+      "executed": true,
+      "success": true,
+      "duration": 0,
+      "timestamp": "2025-09-20T14:25:36.497Z"
+    },
+    "code-quality": {
+      "executed": true,
+      "success": true,
+      "duration": 20555,
+      "timestamp": "2025-09-20T14:25:57.053Z"
+    },
+    "testing": {
+      "executed": true,
+      "success": false,
+      "duration": 2476,
+      "error": "Command failed: node scripts/react-component-validation.js --json > temp/validation-results.json",
+      "timestamp": "2025-09-20T14:25:59.529Z"
+    }
+  },
+  "summary": {
+    "total": 11,
+    "passed": 2,
+    "failed": 1,
+    "skipped": 0
+  },
+  "duration": 23033
+}
